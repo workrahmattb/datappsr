@@ -17,27 +17,40 @@ class MaputraForm
             ->components([
                 TextInput::make('nama')
                     ->required()
-                    ->label('Nama Lengkap'),
+                    ->label('Nama Lengkap')
+                    ->maxLength(255)
+                    ->dehydrateStateUsing(fn ($state) => strip_tags($state)),
                 TextInput::make('tempat_lahir')
                     ->required()
-                    ->label('Tempat Lahir'),
+                    ->label('Tempat Lahir')
+                    ->maxLength(255)
+                    ->dehydrateStateUsing(fn ($state) => strip_tags($state)),
                 DatePicker::make('tanggal_lahir')
                     ->required()
                     ->label('Tanggal Lahir'),
                 TextInput::make('nik')
                     ->label('No. NIK (Nomor Induk Kependudukan)')
                     ->inputMode('numeric')
-                    ->rule('regex:/^[0-9]+$/'),
+                    ->length(16)
+                    ->rule('regex:/^[0-9]{16}$/')
+                    ->helperText('NIK harus 16 digit')
+                    ->dehydrateStateUsing(fn ($state) => strip_tags($state)),
                 TextInput::make('kk')
                     ->label('No. KK (Kartu Keluarga)')
                     ->inputMode('numeric')
-                    ->rule('regex:/^[0-9]+$/'),
+                    ->length(16)
+                    ->rule('regex:/^[0-9]{16}$/')
+                    ->helperText('No. KK harus 16 digit')
+                    ->dehydrateStateUsing(fn ($state) => strip_tags($state)),
                 TextInput::make('nama_kk')
                     ->label('Nama Kepala Keluarga'),
                 TextInput::make('nisn')
                     ->label('NISN (Nomor Induk Siswa Nasional)')
                     ->inputMode('numeric')
-                    ->rule('regex:/^[0-9]+$/'),
+                    ->length(10)
+                    ->rule('regex:/^[0-9]{10}$/')
+                    ->helperText('NISN harus 10 digit')
+                    ->dehydrateStateUsing(fn ($state) => strip_tags($state)),
                 TextInput::make('nis')
                     ->label('NIS (Nomor Induk Siswa)')
                     ->numeric(),
@@ -51,11 +64,22 @@ class MaputraForm
                 Select::make('tahun_ajaran')
                     ->label('Tahun Ajaran')
                     ->options([
+                                '2023/2024' => '2023/2024',
+                                '2024/2025' => '2024/2025',
                                 '2025/2026' => '2025/2026',
                                 '2026/2027' => '2026/2027',
                                 '2027/2028' => '2027/2028',
                                 '2028/2029' => '2028/2029',
-                            ]),
+                            ])
+                    ->nullable(),
+
+                Select::make('kelas_id')
+                    ->label('Kelas')
+                    ->relationship('kelas', 'name')
+                    ->searchable()
+                    ->preload()
+                    ->nullable()
+                    ->helperText('Pilih kelas dari daftar kelas yang tersedia'),
 
                 DatePicker::make('tgl_masuk')
                     ->label('Tanggal Masuk'),
@@ -87,7 +111,9 @@ class MaputraForm
                                  'Swasta' => 'Swasta',
                              ]),
                 TextInput::make('nama_sekolah_sebelumnya')
-                    ->label('Nama Sekolah Sebelumnya'),
+                    ->label('Nama Sekolah Sebelumnya')
+                    ->maxLength(255)
+                    ->dehydrateStateUsing(fn ($state) => strip_tags($state)),
                 TextInput::make('npsn_sekolah_sebelumnya')
                     ->label('No. NPSN Sekolah Sebelumnya')
                     ->numeric(),
@@ -106,11 +132,18 @@ class MaputraForm
                 TextInput::make('nik_ayah')
                     ->label('No. NIK Ayah')
                     ->inputMode('numeric')
-                    ->rule('regex:/^[0-9]+$/'),
+                    ->length(16)
+                    ->rule('regex:/^[0-9]{16}$/')
+                    ->helperText('NIK harus 16 digit')
+                    ->dehydrateStateUsing(fn ($state) => strip_tags($state)),
                 TextInput::make('nama_ayah')
-                    ->label('Nama Ayah'),
+                    ->label('Nama Ayah')
+                    ->maxLength(255)
+                    ->dehydrateStateUsing(fn ($state) => strip_tags($state)),
                 TextInput::make('tempat_lahir_ayah')
-                    ->label('Tempat Lahir Ayah'),
+                    ->label('Tempat Lahir Ayah')
+                    ->maxLength(255)
+                    ->dehydrateStateUsing(fn ($state) => strip_tags($state)),
                 DatePicker::make('tanggal_lahir_ayah')
                     ->label('Tanggal Lahir Ayah'),
                 Select::make('status_ayah')
@@ -189,11 +222,18 @@ class MaputraForm
                 TextInput::make('nik_ibu')
                     ->label('No. NIK Ibu')
                     ->inputMode('numeric')
-                    ->rule('regex:/^[0-9]+$/'),
+                    ->length(16)
+                    ->rule('regex:/^[0-9]{16}$/')
+                    ->helperText('NIK harus 16 digit')
+                    ->dehydrateStateUsing(fn ($state) => strip_tags($state)),
                 TextInput::make('nama_ibu')
-                    ->label('Nama Ibu'),
+                    ->label('Nama Ibu')
+                    ->maxLength(255)
+                    ->dehydrateStateUsing(fn ($state) => strip_tags($state)),
                 TextInput::make('tempat_lahir_ibu')
-                    ->label('Tempat Lahir Ibu'),
+                    ->label('Tempat Lahir Ibu')
+                    ->maxLength(255)
+                    ->dehydrateStateUsing(fn ($state) => strip_tags($state)),
                 DatePicker::make('tanggal_lahir_ibu')
                     ->label('Tanggal Lahir Ibu'),
                 Select::make('status_ibu')
@@ -300,60 +340,28 @@ class MaputraForm
                 TextInput::make('nik_wali')
                     ->label('No. NIK Wali'),
                 TextInput::make('nama_wali')
-                    ->label('Nama Wali'),
+                    ->label('Nama Wali')
+                    ->maxLength(255)
+                    ->dehydrateStateUsing(fn ($state) => strip_tags($state)),
                 TextInput::make('tempat_lahir_wali')
-                    ->label('Tempat Lahir Wali'),
+                    ->label('Tempat Lahir Wali')
+                    ->maxLength(255)
+                    ->dehydrateStateUsing(fn ($state) => strip_tags($state)),
                 DatePicker::make('tanggal_lahir_wali')
                     ->label('Tanggal Lahir Wali'),
-                 Select::make('hubungan_wali')
-                    ->label('Hubungan Dengan Wali')
-                    ->options([
-                                 'Kakek/Nenek' => 'Kakek/Nenek',
-                                 'Paman/Bibi' => 'Paman/Bibi',
-                                 'Saudara Kandung' => 'Saudara Kandung',
-                                 'Lainnya' => 'Lainnya',
-                             ]),
                 TextInput::make('no_hp_wali')
                     ->label('Nomor Whatsapp Wali'),
                 Select::make('pendidikan_wali')
                     ->label('Pendidikan Terakhir Wali')
                     ->options([
-                        'dibawah 800.000' => 'Dibawah 800.000',
-                        '800.001 - 1.200.000' => '800.001 - 1.200.000',
-                        '1.200.001 - 1.800.000' => '1.200.001 - 1.800.000',
-                        '1.800.001 - 2.500.000' => '1.800.001 - 2.500.000',
-                        '2.500.001 - 3.500.000' => '2.500.001 - 3.500.000',
-                        '3.500.001 - 4.800.000' => '3.500.001 - 4.800.000',
-                        '4.800.001 - 6.500.000' => '4.800.001 - 6.500.000',
-                        '6.500.001 - 10.000.000' => '6.500.001 - 10.000.000',
-                        '10.000.001 - 20.000.000' => '10.000.001 - 20.000.000',
-                        'diatas 20.000.001' => 'Diatas 20.000.001',
-                    ])
-                    ->searchable()
-                    ->getOptionLabelUsing(fn ($value) => [
-                        // data lama (biar tetap terbaca)
-                        'Tidak Ada Penghasilan' => 'Tidak Ada Penghasilan',
-                        '0 - 1 Juta' => '0 - 1 Juta',
-                        '1 - 3 Juta' => '1 - 3 Juta',
-                        '3 - 5 Juta' => '3 - 5 Juta',
-                        '5 - 10 Juta' => '5 - 10 Juta',
-                        '10 - 20 Juta' => '10 - 20 Juta',
-                        '20 - 50 Juta' => '20 - 50 Juta',
-                        '50 Juta Lebih' => '50 Juta Lebih',
-                        'Tidak Tahu' => 'Tidak Tahu',
-
-                        // data baru
-                        'dibawah 800.000' => 'Dibawah 800.000',
-                        '800.001 - 1.200.000' => '800.001 - 1.200.000',
-                        '1.200.001 - 1.800.000' => '1.200.001 - 1.800.000',
-                        '1.800.001 - 2.500.000' => '1.800.001 - 2.500.000',
-                        '2.500.001 - 3.500.000' => '2.500.001 - 3.500.000',
-                        '3.500.001 - 4.800.000' => '3.500.001 - 4.800.000',
-                        '4.800.001 - 6.500.000' => '4.800.001 - 6.500.000',
-                        '6.500.001 - 10.000.000' => '6.500.001 - 10.000.000',
-                        '10.000.001 - 20.000.000' => '10.000.001 - 20.000.000',
-                        'diatas 20.000.001' => 'Diatas 20.000.001',
-                    ][$value] ?? $value),
+                                 'Tidak/Belum Sekolah' => 'Tidak/Belum Sekolah',
+                                 'SD/Sederajat' => 'SD/Sederajat',
+                                 'SMP/Sederajat' => 'SMP/Sederajat',
+                                 'SMA/Sederajat' => 'SMA/Sederajat',
+                                 'Diploma' => 'Diploma',
+                                 'Sarjana' => 'Sarjana',
+                                 'Pasca Sarjana' => 'Pasca Sarjana',
+                             ]),
                 Select::make('pekerjaan_wali')
                     ->label('Pekerjaan Wali')
                     ->options([
@@ -382,21 +390,34 @@ class MaputraForm
                 FileUpload::make('fotokk')
                     ->label('Foto Kartu Keluarga (KK)')
                     ->disk('public')
+                    ->directory('dokumen-siswa/kk')
+                    ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/jpg', 'application/pdf'])
+                    ->maxSize(5120)
                     ->downloadable()
                     ->openable()
-                    ->previewable(),
+                    ->previewable()
+                    ->helperText('Format: JPG/PNG/PDF, Max: 5MB'),
+
                 FileUpload::make('fotoakta')
                     ->label('Foto Akta Kelahiran')
                     ->disk('public')
+                    ->directory('dokumen-siswa/akta')
+                    ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/jpg', 'application/pdf'])
+                    ->maxSize(5120)
                     ->downloadable()
                     ->openable()
-                    ->previewable(),
+                    ->previewable()
+                    ->helperText('Format: JPG/PNG/PDF, Max: 5MB'),
                 FileUpload::make('fototransfer')
                     ->label('Bukti Foto Transfer')
                     ->disk('public')
+                    ->directory('dokumen-siswa/transfer')
+                    ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/jpg', 'application/pdf'])
+                    ->maxSize(5120)
                     ->downloadable()
                     ->openable()
-                    ->previewable(),
+                    ->previewable()
+                    ->helperText('Format: JPG/PNG/PDF, Max: 5MB'),
             ]);
     }
 }

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Maputri extends Model
 {
@@ -24,6 +25,7 @@ class Maputri extends Model
         'cita_cita',
         'anak_ke',
         'tahun_ajaran',
+        'kelas_id',
         'jumlah_saudara',
         'tgl_masuk',
         'kks',
@@ -78,4 +80,12 @@ class Maputri extends Model
         'fototransfer',
 
     ];
+
+    /**
+     * Get the kelas that the student belongs to
+     */
+    public function kelas(): BelongsTo
+    {
+        return $this->belongsTo(Kelas::class);
+    }
 }

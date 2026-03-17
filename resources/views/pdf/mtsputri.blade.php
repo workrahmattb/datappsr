@@ -109,8 +109,8 @@
             <td>{{ $record->nama }}</td>
         </tr>
         <tr>
-            <th>NIS</th>
-            <td>{{ $record->nis }}</td>
+            <th>NISN</th>
+            <td>{{ $record->nisn }}</td>
         </tr>
         <tr>
             <th>Kelas</th>

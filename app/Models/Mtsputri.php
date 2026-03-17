@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Mtsputri extends Model
 {
@@ -24,6 +26,7 @@ class Mtsputri extends Model
         'cita_cita',
         'anak_ke',
         'tahun_ajaran',
+        'kelas_id',
         'jumlah_saudara',
         'tgl_masuk',
         'kks',
@@ -76,6 +79,88 @@ class Mtsputri extends Model
         'fotokk',
         'fotoakta',
         'fototransfer',
-
     ];
+
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'tanggal_lahir' => 'date',
+            'tanggal_lahir_ayah' => 'date',
+            'tanggal_lahir_ibu' => 'date',
+            'tanggal_lahir_wali' => 'date',
+        ];
+    }
+
+    /**
+     * Sanitize nama attribute to prevent XSS
+     */
+    protected function nama(): Attribute
+    {
+        return Attribute::make(
+            set: fn ($value) => strip_tags($value),
+        );
+    }
+
+    /**
+     * Sanitize tempat_lahir attribute to prevent XSS
+     */
+    protected function tempatLahir(): Attribute
+    {
+        return Attribute::make(
+            set: fn ($value) => strip_tags($value),
+        );
+    }
+
+    /**
+     * Sanitize nama_kk attribute to prevent XSS
+     */
+    protected function namaKk(): Attribute
+    {
+        return Attribute::make(
+            set: fn ($value) => strip_tags($value),
+        );
+    }
+
+    /**
+     * Sanitize nama_ayah attribute to prevent XSS
+     */
+    protected function namaAyah(): Attribute
+    {
+        return Attribute::make(
+            set: fn ($value) => strip_tags($value),
+        );
+    }
+
+    /**
+     * Sanitize nama_ibu attribute to prevent XSS
+     */
+    protected function namaIbu(): Attribute
+    {
+        return Attribute::make(
+            set: fn ($value) => strip_tags($value),
+        );
+    }
+
+    /**
+     * Sanitize nama_wali attribute to prevent XSS
+     */
+    protected function namaWali(): Attribute
+    {
+        return Attribute::make(
+            set: fn ($value) => strip_tags($value),
+        );
+    }
+
+    /**
+     * Get the kelas that the student belongs to
+     */
+    public function kelas(): BelongsTo
+    {
+        return $this->belongsTo(Kelas::class);
+    }
 }

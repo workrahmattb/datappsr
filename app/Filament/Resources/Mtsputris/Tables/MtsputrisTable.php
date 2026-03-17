@@ -5,19 +5,20 @@ namespace App\Filament\Resources\Mtsputris\Tables;
 use App\Models\Mtsputri;
 use Filament\Tables\Table;
 use Filament\Actions\Action;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ExportAction;
+use Filament\Actions\ImportAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Forms\Components\Select;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Tables\Columns\TextColumn;
+
 use Filament\Tables\Columns\ImageColumn;
 use Spatie\SimpleExcel\SimpleExcelWriter;
-
-use Barryvdh\DomPDF\Facade\Pdf;
-
+use App\Filament\Imports\MtsputriImporter;
 
 class MtsputrisTable
 {
@@ -126,7 +127,10 @@ class MtsputrisTable
                 DeleteAction::make()->label('Hapus'),
             ])
             ->headerActions([
-            Action::make('export')
+                ImportAction::make()
+                ->label('Import Data')
+                ->importer(MtsputriImporter::class),
+                Action::make('export')
                 ->label('Export Berdasarkan Tahun Ajaran')
                 ->icon('heroicon-o-arrow-down-tray')
 
@@ -143,6 +147,7 @@ class MtsputrisTable
                         ->searchable()
                         ->required(),
                 ])
+
 
                 ->action(function (array $data) {
 
