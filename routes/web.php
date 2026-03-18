@@ -30,7 +30,7 @@ Route::get('/', function () {
 
 Route::get('/beranda', function () {
     return view('testcoba');
-})->name('home');
+})->name('beranda');
 
 Route::view('dashboard', 'dashboard')
     ->middleware(['auth', 'verified'])
