@@ -8,10 +8,12 @@
     <title>@yield('title', 'Dashboard') - {{ config('app.name', 'Laravel') }}</title>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @fluxStyles
 
     @stack('styles')
 </head>
 <body class="min-h-screen bg-gray-100">
+    @fluxScripts
     <div class="flex h-screen overflow-hidden">
         <!-- Sidebar -->
         <aside class="w-64 bg-slate-800 text-white flex-shrink-0 hidden md:block">
@@ -144,7 +146,14 @@
         </div>
     </div>
 
+    <!-- Livewire Toast Notification -->
     <script>
+        document.addEventListener('livewire:init', () => {
+            Livewire.on('success', (message) => {
+                alert(message);
+            });
+        });
+
         document.getElementById('mobile-menu-btn')?.addEventListener('click', function() {
             document.getElementById('mobile-menu').classList.toggle('hidden');
         });
