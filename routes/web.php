@@ -21,11 +21,12 @@ Route::get('/pendaftaran', PendaftaranForm::class)->name('pendaftaran');
 Route::get('/daftar-ulang', \App\Livewire\DaftarUlangTable::class)->name('daftar-ulang.table');
 Route::get('/daftar-ulang/{id}', \App\Livewire\DaftarUlangForm::class)->name('daftar-ulang.form');
 
-// Cetak Rapor Route
+// Cetak Rapor Route (butuh auth)
 Route::get('/cetak-rapor/generate', [CetakRaporController::class, 'generate'])
     ->name('cetak-rapor.generate')
     ->middleware(['auth']);
 
+// Public Routes (Front End)
 Route::get('/', function () {
     return view('welcome');
 })->name('home');
@@ -34,7 +35,7 @@ Route::get('/beranda', function () {
     return view('testcoba');
 })->name('beranda');
 
-// Admin Routes
+// Admin Routes (Butuh Login)
 Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/', \App\Livewire\Admin\Dashboard::class)->name('dashboard');
     
@@ -73,7 +74,7 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
     Route::get('maputris/{maputri}/edit', [\App\Http\Controllers\Admin\MaputriController::class, 'edit'])->name('maputris.edit');
     Route::put('maputris/{maputri}', [\App\Http\Controllers\Admin\MaputriController::class, 'update'])->name('maputris.update');
     Route::delete('maputris/{maputri}', [\App\Http\Controllers\Admin\MaputriController::class, 'destroy'])->name('maputris.destroy');
-    
+
     // Pendaftaran
     Route::get('pendaftarans', \App\Livewire\Admin\PendaftaransTable::class)->name('pendaftarans.index');
     Route::get('pendaftarans/create', [\App\Http\Controllers\Admin\PendaftaranController::class, 'create'])->name('pendaftarans.create');
@@ -83,23 +84,4 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
     Route::put('pendaftarans/{pendaftaran}', [\App\Http\Controllers\Admin\PendaftaranController::class, 'update'])->name('pendaftarans.update');
     Route::delete('pendaftarans/{pendaftaran}', [\App\Http\Controllers\Admin\PendaftaranController::class, 'destroy'])->name('pendaftarans.destroy');
     Route::get('pendaftarans-export', [\App\Http\Controllers\Admin\PendaftaranController::class, 'export'])->name('pendaftarans.export');
-});
-
-Route::middleware(['auth'])->group(function () {
-    Route::redirect('settings', 'settings/profile');
-
-    Volt::route('settings/profile', 'settings.profile')->name('profile.edit');
-    Volt::route('settings/password', 'settings.password')->name('user-password.edit');
-    Volt::route('settings/appearance', 'settings.appearance')->name('appearance.edit');
-
-    Volt::route('settings/two-factor', 'settings.two-factor')
-        ->middleware(
-            when(
-                Features::canManageTwoFactorAuthentication()
-                    && Features::optionEnabled(Features::twoFactorAuthentication(), 'confirmPassword'),
-                ['password.confirm'],
-                [],
-            ),
-        )
-        ->name('two-factor.show');
 });
