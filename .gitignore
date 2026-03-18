@@ -1,3 +1,4 @@
+# Laravel core
 /.phpunit.cache
 /node_modules
 /public/build
@@ -16,8 +17,56 @@ Homestead.yaml
 npm-debug.log
 yarn-error.log
 /auth.json
+
+# IDE
 /.fleet
 /.idea
 /.nova
 /.vscode
 /.zed
+
+# Laravel & PHP
+/.DS_Store
+/Thumbs.db
+/storage/*.key
+/storage/logs/*
+/storage/framework/cache/*
+/storage/framework/sessions/*
+/storage/framework/views/*
+/bootstrap/cache/*
+!bootstrap/cache/.gitignore
+/homestead.yaml
+/phpunit.xml
+/.env
+/.env.*
+!/.env.example
+/composer.lock
+!/composer.json
+/package-lock.json
+!/package.json
+
+# Database
+/database/*.sqlite
+/database/*.sqlite-journal
+/.sqlite
+
+# Testing
+/.phpunit.result.cache
+/phpunit.xml
+/coverage
+/.phpunit.cache
+
+# Frontend
+/node_modules
+/npm-debug.log
+/yarn-error.log
+/public/hot
+/public/mix-manifest.json
+/public/storage
+
+# System
+.DS_Store
+Thumbs.db
+._*
+.Spotlight-V100
+.Trashes

@@ -3,12 +3,26 @@
 use App\Livewire\Guru;
 use Livewire\Volt\Volt;
 use App\Livewire\HelloWorld;
+use App\Livewire\PendaftaranForm;
 use Laravel\Fortify\Features;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\CetakRaporController;
 
 Route::get('/lagibelajar', HelloWorld::class);
 
+Route::get('/pendaftaran', PendaftaranForm::class)->name('pendaftaran');
+
+// Daftar Ulang Routes (Public - No Auth Required)
+Route::get('/daftar-ulang', \App\Livewire\DaftarUlangTable::class)->name('daftar-ulang.table');
+Route::get('/daftar-ulang/{id}', \App\Livewire\DaftarUlangForm::class)->name('daftar-ulang.form');
+
+
 Route::get('/guru', Guru::class);
+
+// Cetak Rapor Route
+Route::get('/cetak-rapor/generate', [CetakRaporController::class, 'generate'])
+    ->name('cetak-rapor.generate')
+    ->middleware(['auth']);
 
 Route::get('/', function () {
     return view('welcome');
