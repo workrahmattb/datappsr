@@ -10,6 +10,7 @@
                         </svg>
                     </div>
                     <h1 class="text-2xl font-bold text-white mb-1">Pendaftaran Ulang Berhasil!</h1>
+                    <p class="text-green-100 text-sm mb-2">Terima kasih telah melakukan pendaftaran ulang di <br> <span class="font-bold text-base">Pondok Pesantren Syafa'aturrasul</span></p>
                     <p class="text-green-100 text-sm">Data Anda telah tersimpan ke {{ $pendaftaran->jenjang_pendidikan }}</p>
                 </div>
 
@@ -89,6 +90,7 @@
                 <!-- Header -->
                 <div class="bg-gradient-to-r from-green-600 to-emerald-600 px-6 sm:px-8 py-8">
                     <h1 class="text-3xl font-bold text-white mb-2">Form Pendaftaran Ulang</h1>
+                    <h2 class="text-xl font-semibold text-green-50 mb-3">Pondok Pesantren Syafa'aturrasul</h2>
                     <p class="text-green-100">{{ $pendaftaran->jenjang_pendidikan }} - TA {{ $pendaftaran->tahun_ajaran }}</p>
                     <p class="text-green-200 text-sm mt-2">Lengkapi semua data dengan benar dan jujur</p>
                 </div>

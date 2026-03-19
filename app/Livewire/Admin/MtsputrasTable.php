@@ -3,7 +3,7 @@
 namespace App\Livewire\Admin;
 
 use App\Models\Mtsputra;
-
+use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Livewire\Attributes\Layout;
@@ -15,6 +15,8 @@ class MtsputrasTable extends Component
 
     public string $search = '';
     public ?string $tahunAjaran = null;
+    public $deleteId = null;
+    public string $deleteStudentName = '';
 
     protected $queryString = [
         'search' => ['except' => ''],
@@ -31,11 +33,38 @@ class MtsputrasTable extends Component
         $this->resetPage();
     }
 
-    public function delete($id): void
+    public function confirmDelete($id, $name): void
     {
-        if (confirm('Yakin ingin menghapus data siswa ini?')) {
-            Mtsputra::destroy($id);
-            $this->dispatch('success', 'Data siswa berhasil dihapus.');
+        $this->deleteId = $id;
+        $this->deleteStudentName = $name;
+        $this->dispatch('modal-show', ...['name' => 'delete-confirm']);
+    }
+
+    public function closeModal(): void
+    {
+        $this->dispatch('modal-close', ...['name' => 'delete-confirm']);
+        $this->deleteId = null;
+        $this->deleteStudentName = '';
+    }
+
+    public function deleteConfirmed(): void
+    {
+        if ($this->deleteId) {
+            $mtsputra = Mtsputra::find($this->deleteId);
+            
+            if ($mtsputra) {
+                // Delete associated files
+                if ($mtsputra->fotokk) Storage::disk('public')->delete($mtsputra->fotokk);
+                if ($mtsputra->fotoakta) Storage::disk('public')->delete($mtsputra->fotoakta);
+                if ($mtsputra->fototransfer) Storage::disk('public')->delete($mtsputra->fototransfer);
+                
+                $mtsputra->delete();
+                $this->dispatch('success', 'Data siswa berhasil dihapus.');
+            }
+            
+            $this->dispatch('modal-close', ...['name' => 'delete-confirm']);
+            $this->deleteId = null;
+            $this->deleteStudentName = '';
         }
     }
 

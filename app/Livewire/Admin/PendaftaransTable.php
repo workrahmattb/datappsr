@@ -3,6 +3,7 @@
 namespace App\Livewire\Admin;
 
 use App\Models\Pendaftaran;
+use Illuminate\Support\Facades\Storage;
 
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -19,6 +20,9 @@ class PendaftaransTable extends Component
     public ?string $tahunAjaran = null;
     #[Validate('in:pending,completed')]
     public string $status = '';
+    public bool $showDeleteModal = false;
+    public $deleteId = null;
+    public string $deleteItemName = '';
 
     protected $queryString = [
         'search' => ['except' => ''],
@@ -41,11 +45,39 @@ class PendaftaransTable extends Component
         $this->resetPage();
     }
 
-    public function delete($id): void
+    public function confirmDelete($id, $name): void
     {
-        if (confirm('Yakin ingin menghapus data pendaftaran ini?')) {
-            Pendaftaran::destroy($id);
-            $this->dispatch('success', 'Data pendaftaran berhasil dihapus.');
+        $this->deleteId = $id;
+        $this->deleteItemName = $name;
+        $this->showDeleteModal = true;
+    }
+
+    public function closeModal(): void
+    {
+        $this->showDeleteModal = false;
+        $this->deleteId = null;
+        $this->deleteItemName = '';
+    }
+
+    public function deleteConfirmed(): void
+    {
+        if ($this->deleteId) {
+            $pendaftaran = Pendaftaran::find($this->deleteId);
+
+            if ($pendaftaran) {
+                // Delete associated files
+                if ($pendaftaran->fotokk) Storage::disk('public')->delete($pendaftaran->fotokk);
+                if ($pendaftaran->fotoakta) Storage::disk('public')->delete($pendaftaran->fotoakta);
+                if ($pendaftaran->fototransfer) Storage::disk('public')->delete($pendaftaran->fototransfer);
+                if ($pendaftaran->buktitransfer) Storage::disk('public')->delete($pendaftaran->buktitransfer);
+
+                $pendaftaran->delete();
+                $this->dispatch('success', 'Data pendaftaran berhasil dihapus.');
+            }
+
+            $this->showDeleteModal = false;
+            $this->deleteId = null;
+            $this->deleteItemName = '';
         }
     }
 

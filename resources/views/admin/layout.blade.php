@@ -193,10 +193,25 @@
         </div>
     </div>
 
+    <!-- Toast Notification -->
+    <div id="toast-notification"
+        style="position: fixed; top: 1.25rem; right: 1.25rem; z-index: 9999; display: none;"
+        class="flex items-center gap-3 bg-white border border-emerald-200 text-emerald-800 px-5 py-3 rounded-lg shadow-md">
+        <svg class="w-5 h-5 text-emerald-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+        <span id="toast-message" class="text-sm font-medium"></span>
+    </div>
+
     <script>
         document.addEventListener('livewire:init', () => {
             Livewire.on('success', (message) => {
-                alert(message);
+                const toast = document.getElementById('toast-notification');
+                const msg = document.getElementById('toast-message');
+                msg.textContent = Array.isArray(message) ? message[0] : message;
+                toast.style.display = 'flex';
+                clearTimeout(toast._timeout);
+                toast._timeout = setTimeout(() => { toast.style.display = 'none'; }, 3000);
             });
         });
 

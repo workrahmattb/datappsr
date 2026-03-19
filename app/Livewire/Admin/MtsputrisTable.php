@@ -3,7 +3,7 @@
 namespace App\Livewire\Admin;
 
 use App\Models\Mtsputri;
-
+use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Livewire\Attributes\Layout;
@@ -15,6 +15,8 @@ class MtsputrisTable extends Component
 
     public string $search = '';
     public ?string $tahunAjaran = null;
+    public $deleteId = null;
+    public string $deleteStudentName = '';
 
     protected $queryString = [
         'search' => ['except' => ''],
@@ -31,11 +33,38 @@ class MtsputrisTable extends Component
         $this->resetPage();
     }
 
-    public function delete($id): void
+    public function confirmDelete($id, $name): void
     {
-        if (confirm('Yakin ingin menghapus data siswi ini?')) {
-            Mtsputri::destroy($id);
-            $this->dispatch('success', 'Data siswi berhasil dihapus.');
+        $this->deleteId = $id;
+        $this->deleteStudentName = $name;
+        $this->dispatch('modal-show', ...['name' => 'delete-confirm']);
+    }
+
+    public function closeModal(): void
+    {
+        $this->dispatch('modal-close', ...['name' => 'delete-confirm']);
+        $this->deleteId = null;
+        $this->deleteStudentName = '';
+    }
+
+    public function deleteConfirmed(): void
+    {
+        if ($this->deleteId) {
+            $mtsputri = Mtsputri::find($this->deleteId);
+
+            if ($mtsputri) {
+                // Delete associated files
+                if ($mtsputri->fotokk) Storage::disk('public')->delete($mtsputri->fotokk);
+                if ($mtsputri->fotoakta) Storage::disk('public')->delete($mtsputri->fotoakta);
+                if ($mtsputri->fototransfer) Storage::disk('public')->delete($mtsputri->fototransfer);
+
+                $mtsputri->delete();
+                $this->dispatch('success', 'Data siswi berhasil dihapus.');
+            }
+
+            $this->dispatch('modal-close', ...['name' => 'delete-confirm']);
+            $this->deleteId = null;
+            $this->deleteStudentName = '';
         }
     }
 
