@@ -31,15 +31,6 @@
                     <label class="block text-sm font-medium text-gray-700">NISN</label>
                     <input type="text" name="nisn" value="{{ old('nisn', $mtsputra->nisn) }}" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 focus:outline-none focus:ring-blue-500 focus:border-blue-500">
                 </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">Kelas</label>
-                    <select name="kelas_id" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 focus:outline-none focus:ring-blue-500 focus:border-blue-500">
-                        <option value="">Pilih Kelas</option>
-                        @foreach($kelas as $k)
-                            <option value="{{ $k->id }}" {{ $mtsputra->kelas_id == $k->id ? 'selected' : '' }}>{{ $k->nama }}</option>
-                        @endforeach
-                    </select>
-                </div>
             </div>
         </div>
 

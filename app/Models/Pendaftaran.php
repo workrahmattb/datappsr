@@ -5,7 +5,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 
 class Pendaftaran extends Model
@@ -27,7 +26,6 @@ class Pendaftaran extends Model
         'nis',
         'anak_ke',
         'tahun_ajaran',
-        'kelas_id',
         'jumlah_saudara',
         'tgl_masuk',
         'kks',
@@ -114,11 +112,4 @@ class Pendaftaran extends Model
         };
     }
 
-    /**
-     * Get the kelas that the pendaftaran belongs to
-     */
-    public function kelas(): BelongsTo
-    {
-        return $this->belongsTo(Kelas::class);
-    }
 }

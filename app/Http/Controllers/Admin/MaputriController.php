@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Maputri;
-use App\Models\Kelas;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -12,7 +11,7 @@ class MaputriController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Maputri::with('kelas')->latest();
+        $query = Maputri::latest();
 
         if ($request->has('search') && $request->search) {
             $search = $request->search;
@@ -30,8 +29,7 @@ class MaputriController extends Controller
 
     public function create()
     {
-        $kelas = Kelas::all();
-        return view('admin.maputris.create', compact('kelas'));
+        return view('admin.maputris.create');
     }
 
     public function store(Request $request)
@@ -47,7 +45,6 @@ class MaputriController extends Controller
             'nis' => 'nullable|string|max:20',
             'anak_ke' => 'nullable|string|max:10',
             'tahun_ajaran' => 'nullable|string|max:20',
-            'kelas_id' => 'nullable|exists:kelas,id',
             'jumlah_saudara' => 'nullable|string|max:10',
             'tgl_masuk' => 'nullable|date',
             'kks' => 'nullable|string|max:50',
@@ -118,14 +115,12 @@ class MaputriController extends Controller
 
     public function show(Maputri $maputri)
     {
-        $maputri->load('kelas');
         return view('admin.maputris.show', compact('maputri'));
     }
 
     public function edit(Maputri $maputri)
     {
-        $kelas = Kelas::all();
-        return view('admin.maputris.edit', compact('maputri', 'kelas'));
+        return view('admin.maputris.edit', compact('maputri'));
     }
 
     public function update(Request $request, Maputri $maputri)
@@ -141,7 +136,6 @@ class MaputriController extends Controller
             'nis' => 'nullable|string|max:20',
             'anak_ke' => 'nullable|string|max:10',
             'tahun_ajaran' => 'nullable|string|max:20',
-            'kelas_id' => 'nullable|exists:kelas,id',
             'jumlah_saudara' => 'nullable|string|max:10',
             'tgl_masuk' => 'nullable|date',
             'kks' => 'nullable|string|max:50',
@@ -223,5 +217,46 @@ class MaputriController extends Controller
 
         return redirect()->route('admin.maputris.index')
             ->with('success', 'Data siswi MA Putri berhasil dihapus.');
+    }
+
+    public function export(\Illuminate\Http\Request $request)
+    {
+        $filename = 'data-maputri-' . now()->format('Ymd-His') . '.xlsx';
+        
+        $query = Maputri::query();
+        
+        if ($request->has('tahun_ajaran') && $request->tahun_ajaran) {
+            $query->where('tahun_ajaran', $request->tahun_ajaran);
+        }
+        
+        return \Spatie\SimpleExcel\SimpleExcelWriter::streamDownload($filename)
+            ->addHeader([
+                'No', 'Nama', 'NISN', 'NIS', 'NIK', 'Tahun Ajaran',
+                'Tempat Lahir', 'Tanggal Lahir', 'Anak Ke', 'Jml Saudara', 'No KK',
+                'Nama Ayah', 'No HP Ayah', 'Nama Ibu', 'No HP Ibu',
+                'Alamat', 'Dibuat Pada'
+            ])
+            ->addRows($query->latest()->get()->map(function($p, $index) {
+                return [
+                    'No' => $index + 1,
+                    'Nama' => $p->nama,
+                    'NISN' => $p->nisn,
+                    'NIS' => $p->nis,
+                    'NIK' => $p->nik,
+                    'Tahun Ajaran' => $p->tahun_ajaran,
+                    'Tempat Lahir' => $p->tempat_lahir,
+                    'Tanggal Lahir' => $p->tanggal_lahir ? \Carbon\Carbon::parse($p->tanggal_lahir)->format('Y-m-d') : '-',
+                    'Anak Ke' => $p->anak_ke,
+                    'Jml Saudara' => $p->jumlah_saudara,
+                    'No KK' => $p->kk,
+                    'Nama Ayah' => $p->nama_ayah,
+                    'No HP Ayah' => $p->no_hp_ayah,
+                    'Nama Ibu' => $p->nama_ibu,
+                    'No HP Ibu' => $p->no_hp_ibu,
+                    'Alamat' => $p->alamat_rumah_tinggal ?? ($p->desa . ' ' . $p->kecamatan),
+                    'Dibuat Pada' => $p->created_at->format('Y-m-d H:i')
+                ];
+            }))
+            ->toBrowser();
     }
 }

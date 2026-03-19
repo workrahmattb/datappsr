@@ -242,7 +242,7 @@ class PendaftaranController extends Controller
         $filename = 'pendaftarans-' . now()->format('Y-m-d-His') . '.xlsx';
 
         return SimpleExcelWriter::streamDownload($filename)
-            ->addHeadings([
+            ->addHeader([
                 'ID', 'Nama', 'NISN', 'NIK', 'Jenjang', 'Status',
                 'Tempat Lahir', 'Tanggal Lahir', 'No HP Ayah', 'No HP Ibu',
                 'Alamat', 'Kelas', 'Tahun Ajaran', 'Created At'

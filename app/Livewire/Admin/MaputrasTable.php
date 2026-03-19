@@ -3,7 +3,7 @@
 namespace App\Livewire\Admin;
 
 use App\Models\Maputra;
-use App\Models\Kelas;
+
 use Livewire\Component;
 use Livewire\WithPagination;
 use Livewire\Attributes\Layout;
@@ -14,11 +14,11 @@ class MaputrasTable extends Component
     use WithPagination;
 
     public string $search = '';
-    public ?int $kelasId = null;
+    public ?string $tahunAjaran = null;
 
     protected $queryString = [
         'search' => ['except' => ''],
-        'kelasId' => ['except' => null],
+        'tahunAjaran' => ['except' => null],
     ];
 
     public function updatingSearch(): void
@@ -26,7 +26,7 @@ class MaputrasTable extends Component
         $this->resetPage();
     }
 
-    public function updatingKelasId(): void
+    public function updatingTahunAjaran(): void
     {
         $this->resetPage();
     }
@@ -41,7 +41,7 @@ class MaputrasTable extends Component
 
     public function render()
     {
-        $query = Maputra::with('kelas')->latest();
+        $query = Maputra::latest();
 
         if ($this->search) {
             $query->where(function($q) {
@@ -51,13 +51,13 @@ class MaputrasTable extends Component
             });
         }
 
-        if ($this->kelasId) {
-            $query->where('kelas_id', $this->kelasId);
+        if ($this->tahunAjaran) {
+            $query->where('tahun_ajaran', $this->tahunAjaran);
         }
 
         return view('livewire.admin.maputras-table', [
             'maputras' => $query->paginate(15),
-            'kelas' => Kelas::all(),
+            'tahunAjarans' => Maputra::whereNotNull('tahun_ajaran')->pluck('tahun_ajaran')->unique(),
         ]);
     }
 }

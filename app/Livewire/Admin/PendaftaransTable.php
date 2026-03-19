@@ -3,7 +3,7 @@
 namespace App\Livewire\Admin;
 
 use App\Models\Pendaftaran;
-use App\Models\Kelas;
+
 use Livewire\Component;
 use Livewire\WithPagination;
 use Livewire\Attributes\Layout;
@@ -16,13 +16,13 @@ class PendaftaransTable extends Component
     use WithPagination;
 
     public string $search = '';
-    public ?int $kelasId = null;
+    public ?string $tahunAjaran = null;
     #[Validate('in:pending,completed')]
     public string $status = '';
 
     protected $queryString = [
         'search' => ['except' => ''],
-        'kelasId' => ['except' => null],
+        'tahunAjaran' => ['except' => null],
         'status' => ['except' => ''],
     ];
 
@@ -31,7 +31,7 @@ class PendaftaransTable extends Component
         $this->resetPage();
     }
 
-    public function updatingKelasId(): void
+    public function updatingTahunAjaran(): void
     {
         $this->resetPage();
     }
@@ -81,7 +81,7 @@ class PendaftaransTable extends Component
 
     public function render()
     {
-        $query = Pendaftaran::with('kelas')->latest();
+        $query = Pendaftaran::latest();
 
         if ($this->search) {
             $query->where(function($q) {
@@ -91,8 +91,8 @@ class PendaftaransTable extends Component
             });
         }
 
-        if ($this->kelasId) {
-            $query->where('kelas_id', $this->kelasId);
+        if ($this->tahunAjaran) {
+            $query->where('tahun_ajaran', $this->tahunAjaran);
         }
 
         if ($this->status) {
@@ -101,7 +101,7 @@ class PendaftaransTable extends Component
 
         return view('livewire.admin.pendaftarans-table', [
             'pendaftarans' => $query->paginate(15),
-            'kelas' => Kelas::all(),
+            'tahunAjarans' => Pendaftaran::whereNotNull('tahun_ajaran')->pluck('tahun_ajaran')->unique(),
         ]);
     }
 }

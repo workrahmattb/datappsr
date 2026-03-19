@@ -7,7 +7,6 @@ use App\Models\Mtsputri;
 use App\Models\Maputra;
 use App\Models\Maputri;
 use App\Models\Pendaftaran;
-use App\Models\Kelas;
 use Livewire\Component;
 use Livewire\Attributes\Layout;
 
@@ -23,11 +22,21 @@ class Dashboard extends Component
             'maputri_count' => Maputri::count(),
             'pendaftaran_count' => Pendaftaran::count(),
             'pendaftaran_pending' => Pendaftaran::where('status_pendaftaran', 'pending')->count(),
-            'kelas_count' => Kelas::count(),
         ];
 
-        $recentPendaftarans = Pendaftaran::with('kelas')->latest()->take(10)->get();
+        $recentPendaftarans = Pendaftaran::latest()->take(10)->get();
+        $recentMtsputras = Mtsputra::latest()->take(5)->get();
+        $recentMtsputris = Mtsputri::latest()->take(5)->get();
+        $recentMaputras = Maputra::latest()->take(5)->get();
+        $recentMaputris = Maputri::latest()->take(5)->get();
 
-        return view('livewire.admin.dashboard', compact('stats', 'recentPendaftarans'));
+        return view('livewire.admin.dashboard', compact(
+            'stats', 
+            'recentPendaftarans',
+            'recentMtsputras',
+            'recentMtsputris',
+            'recentMaputras',
+            'recentMaputris'
+        ));
     }
 }
