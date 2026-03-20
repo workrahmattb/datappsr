@@ -35,7 +35,7 @@
                 </div>
             </div>
             <div class="mt-5 pt-4 border-t border-zinc-100">
-                <a href="{{ route('admin.mtsputras.index') }}" class="text-sm text-blue-600 hover:text-blue-700 font-semibold flex items-center transition-colors">
+                <a wire:navigate href="{{ route('admin.mtsputras.index') }}" class="text-sm text-blue-600 hover:text-blue-700 font-semibold flex items-center transition-colors">
                     Lihat Detail
                     <svg class="w-4 h-4 ml-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
@@ -59,7 +59,7 @@
                 </div>
             </div>
             <div class="mt-5 pt-4 border-t border-zinc-100">
-                <a href="{{ route('admin.mtsputris.index') }}" class="text-sm text-pink-600 hover:text-pink-700 font-semibold flex items-center transition-colors">
+                <a wire:navigate href="{{ route('admin.mtsputris.index') }}" class="text-sm text-pink-600 hover:text-pink-700 font-semibold flex items-center transition-colors">
                     Lihat Detail
                     <svg class="w-4 h-4 ml-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
@@ -83,7 +83,7 @@
                 </div>
             </div>
             <div class="mt-5 pt-4 border-t border-zinc-100">
-                <a href="{{ route('admin.maputras.index') }}" class="text-sm text-emerald-600 hover:text-emerald-700 font-semibold flex items-center transition-colors">
+                <a wire:navigate href="{{ route('admin.maputras.index') }}" class="text-sm text-emerald-600 hover:text-emerald-700 font-semibold flex items-center transition-colors">
                     Lihat Detail
                     <svg class="w-4 h-4 ml-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
@@ -107,7 +107,7 @@
                 </div>
             </div>
             <div class="mt-5 pt-4 border-t border-zinc-100">
-                <a href="{{ route('admin.maputris.index') }}" class="text-sm text-purple-600 hover:text-purple-700 font-semibold flex items-center transition-colors">
+                <a wire:navigate href="{{ route('admin.maputris.index') }}" class="text-sm text-purple-600 hover:text-purple-700 font-semibold flex items-center transition-colors">
                     Lihat Detail
                     <svg class="w-4 h-4 ml-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
@@ -131,7 +131,7 @@
                 </div>
             </div>
             <div class="mt-5 pt-4 border-t border-zinc-100">
-                <a href="{{ route('admin.pendaftarans.index') }}" class="text-sm text-amber-600 hover:text-amber-700 font-semibold flex items-center transition-colors">
+                <a wire:navigate href="{{ route('admin.pendaftarans.index') }}" class="text-sm text-amber-600 hover:text-amber-700 font-semibold flex items-center transition-colors">
                     Lihat Semua
                     <svg class="w-4 h-4 ml-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
@@ -155,7 +155,7 @@
                 </div>
             </div>
             <div class="mt-5 pt-4 border-t border-zinc-100">
-                <a href="{{ route('admin.pendaftarans.index', ['status' => 'pending']) }}" class="text-sm text-orange-600 hover:text-orange-700 font-semibold flex items-center transition-colors">
+                <a wire:navigate href="{{ route('admin.pendaftarans.index', ['status' => 'pending']) }}" class="text-sm text-orange-600 hover:text-orange-700 font-semibold flex items-center transition-colors">
                     Mulai Verifikasi
                     <svg class="w-4 h-4 ml-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
@@ -194,7 +194,7 @@
                 <h3 class="text-lg font-bold text-zinc-900 tracking-tight">Pendaftaran Terbaru</h3>
                 <p class="text-sm text-zinc-500 mt-1 font-medium">10 pendaftaran terakhir yang masuk ke dalam sistem</p>
             </div>
-            <a href="{{ route('admin.pendaftarans.index') }}" class="text-sm text-zinc-900 bg-white border border-zinc-200 hover:bg-zinc-50 font-semibold px-4 py-2 rounded-lg flex items-center transition-colors shadow-sm">
+            <a wire:navigate href="{{ route('admin.pendaftarans.index') }}" class="text-sm text-zinc-900 bg-white border border-zinc-200 hover:bg-zinc-50 font-semibold px-4 py-2 rounded-lg flex items-center transition-colors shadow-sm">
                 Lihat Semua
                 <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
@@ -290,7 +290,7 @@
                 <div>
                     <h3 class="text-md font-bold text-zinc-900 tracking-tight">Siswa MTs Putra Terbaru</h3>
                 </div>
-                <a href="{{ route('admin.mtsputras.index') }}" class="text-xs text-blue-600 hover:text-blue-700 font-semibold transition-colors">Lihat Semua</a>
+                <a wire:navigate href="{{ route('admin.mtsputras.index') }}" class="text-xs text-blue-600 hover:text-blue-700 font-semibold transition-colors">Lihat Semua</a>
             </div>
             <div class="overflow-x-auto">
                 <table class="min-w-full divide-y divide-zinc-200/80">
@@ -319,7 +319,7 @@
                 <div>
                     <h3 class="text-md font-bold text-zinc-900 tracking-tight">Siswi MTs Putri Terbaru</h3>
                 </div>
-                <a href="{{ route('admin.mtsputris.index') }}" class="text-xs text-pink-600 hover:text-pink-700 font-semibold transition-colors">Lihat Semua</a>
+                <a wire:navigate href="{{ route('admin.mtsputris.index') }}" class="text-xs text-pink-600 hover:text-pink-700 font-semibold transition-colors">Lihat Semua</a>
             </div>
             <div class="overflow-x-auto">
                 <table class="min-w-full divide-y divide-zinc-200/80">
@@ -348,7 +348,7 @@
                 <div>
                     <h3 class="text-md font-bold text-zinc-900 tracking-tight">Siswa MA Putra Terbaru</h3>
                 </div>
-                <a href="{{ route('admin.maputras.index') }}" class="text-xs text-emerald-600 hover:text-emerald-700 font-semibold transition-colors">Lihat Semua</a>
+                <a wire:navigate href="{{ route('admin.maputras.index') }}" class="text-xs text-emerald-600 hover:text-emerald-700 font-semibold transition-colors">Lihat Semua</a>
             </div>
             <div class="overflow-x-auto">
                 <table class="min-w-full divide-y divide-zinc-200/80">
@@ -377,7 +377,7 @@
                 <div>
                     <h3 class="text-md font-bold text-zinc-900 tracking-tight">Siswi MA Putri Terbaru</h3>
                 </div>
-                <a href="{{ route('admin.maputris.index') }}" class="text-xs text-purple-600 hover:text-purple-700 font-semibold transition-colors">Lihat Semua</a>
+                <a wire:navigate href="{{ route('admin.maputris.index') }}" class="text-xs text-purple-600 hover:text-purple-700 font-semibold transition-colors">Lihat Semua</a>
             </div>
             <div class="overflow-x-auto">
                 <table class="min-w-full divide-y divide-zinc-200/80">
