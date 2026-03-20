@@ -21,6 +21,7 @@
     <!-- Stats Cards -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <!-- Mts Putra -->
+        @if(auth()->user()->hasRole('admin') || auth()->user()->hasRole('mtsputra'))
         <div class="bg-white rounded-xl shadow-sm border border-zinc-200/80 p-6 hover:shadow-md transition-shadow duration-300">
             <div class="flex items-center justify-between">
                 <div class="flex-1">
@@ -43,8 +44,10 @@
                 </a>
             </div>
         </div>
+        @endif
 
         <!-- Mts Putri -->
+        @if(auth()->user()->hasRole('admin') || auth()->user()->hasRole('mtsputri'))
         <div class="bg-white rounded-xl shadow-sm border border-zinc-200/80 p-6 hover:shadow-md transition-shadow duration-300">
             <div class="flex items-center justify-between">
                 <div class="flex-1">
@@ -67,8 +70,10 @@
                 </a>
             </div>
         </div>
+        @endif
 
         <!-- MA Putra -->
+        @if(auth()->user()->hasRole('admin') || auth()->user()->hasRole('maputra'))
         <div class="bg-white rounded-xl shadow-sm border border-zinc-200/80 p-6 hover:shadow-md transition-shadow duration-300">
             <div class="flex items-center justify-between">
                 <div class="flex-1">
@@ -91,8 +96,10 @@
                 </a>
             </div>
         </div>
+        @endif
 
         <!-- MA Putri -->
+        @if(auth()->user()->hasRole('admin') || auth()->user()->hasRole('maputri'))
         <div class="bg-white rounded-xl shadow-sm border border-zinc-200/80 p-6 hover:shadow-md transition-shadow duration-300">
             <div class="flex items-center justify-between">
                 <div class="flex-1">
@@ -115,6 +122,7 @@
                 </a>
             </div>
         </div>
+        @endif
 
         <!-- Total Pendaftaran -->
         <div class="bg-white rounded-xl shadow-sm border border-zinc-200/80 p-6 hover:shadow-md transition-shadow duration-300">
@@ -176,12 +184,14 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                         </svg>
                     </a>
+                    @if(auth()->user()->hasRole('admin') || auth()->user()->hasRole('mtsputra'))
                     <a wire:navigate href="{{ route('admin.mtsputras.create') }}" class="group flex items-center justify-between px-3 py-2 bg-zinc-50 hover:bg-zinc-100 border border-zinc-200 text-zinc-700 rounded-lg text-sm font-medium transition-colors">
                         <span>Siswa MTs Putra</span>
                         <svg class="w-4 h-4 text-zinc-400 group-hover:text-zinc-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                         </svg>
                     </a>
+                    @endif
                 </div>
             </div>
         </div>
@@ -285,6 +295,7 @@
     <!-- Recent Resource Tables Grid -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <!-- MTs Putra -->
+        @if(auth()->user()->hasRole('admin') || auth()->user()->hasRole('mtsputra'))
         <div class="bg-white rounded-xl shadow-sm border border-zinc-200/80 overflow-hidden">
             <div class="px-6 py-4 border-b border-zinc-200/80 bg-zinc-50/50 flex items-center justify-between">
                 <div>
@@ -312,8 +323,10 @@
                 </table>
             </div>
         </div>
+        @endif
 
         <!-- MTs Putri -->
+        @if(auth()->user()->hasRole('admin') || auth()->user()->hasRole('mtsputri'))
         <div class="bg-white rounded-xl shadow-sm border border-zinc-200/80 overflow-hidden">
             <div class="px-6 py-4 border-b border-zinc-200/80 bg-zinc-50/50 flex items-center justify-between">
                 <div>
@@ -341,8 +354,10 @@
                 </table>
             </div>
         </div>
+        @endif
 
         <!-- MA Putra -->
+        @if(auth()->user()->hasRole('admin') || auth()->user()->hasRole('maputra'))
         <div class="bg-white rounded-xl shadow-sm border border-zinc-200/80 overflow-hidden">
             <div class="px-6 py-4 border-b border-zinc-200/80 bg-zinc-50/50 flex items-center justify-between">
                 <div>
@@ -370,8 +385,10 @@
                 </table>
             </div>
         </div>
+        @endif
 
         <!-- MA Putri -->
+        @if(auth()->user()->hasRole('admin') || auth()->user()->hasRole('maputri'))
         <div class="bg-white rounded-xl shadow-sm border border-zinc-200/80 overflow-hidden">
             <div class="px-6 py-4 border-b border-zinc-200/80 bg-zinc-50/50 flex items-center justify-between">
                 <div>
@@ -399,5 +416,6 @@
                 </table>
             </div>
         </div>
+        @endif
     </div>
 </div>

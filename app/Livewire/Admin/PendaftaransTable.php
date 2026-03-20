@@ -84,13 +84,18 @@ class PendaftaransTable extends Component
     {
         $filename = 'pendaftarans-' . now()->format('Y-m-d-His') . '.xlsx';
 
+        $query = Pendaftaran::latest();
+        if (!auth()->user()->hasRole('admin') && auth()->user()->jenjang) {
+            $query->where('jenjang_pendidikan', auth()->user()->jenjang);
+        }
+
         SimpleExcelWriter::streamDownload($filename)
             ->addHeadings([
                 'ID', 'Nama', 'NISN', 'NIK', 'Jenjang', 'Status',
                 'Tempat Lahir', 'Tanggal Lahir', 'No HP Ayah', 'No HP Ibu',
                 'Alamat', 'Tahun Ajaran', 'Created At'
             ])
-            ->addRows(Pendaftaran::latest()->get()->map(function($p) {
+            ->addRows($query->get()->map(function($p) {
                 return [
                     'id' => $p->id,
                     'nama' => $p->nama,
@@ -113,6 +118,10 @@ class PendaftaransTable extends Component
     public function render()
     {
         $query = Pendaftaran::latest();
+
+        if (!auth()->user()->hasRole('admin') && auth()->user()->jenjang) {
+            $query->where('jenjang_pendidikan', auth()->user()->jenjang);
+        }
 
         if ($this->search) {
             $query->where(function($q) {

@@ -23,6 +23,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role',
     ];
 
     /**
@@ -60,5 +61,27 @@ class User extends Authenticatable
             ->take(2)
             ->map(fn ($word) => Str::substr($word, 0, 1))
             ->implode('');
+    }
+
+    /**
+     * Check if user has a specific role
+     */
+    public function hasRole(string $role): bool
+    {
+        return $this->role === $role;
+    }
+
+    /**
+     * Get the corresponding jenjang for the user's role
+     */
+    public function getJenjangAttribute(): ?string
+    {
+        return match($this->role) {
+            'mtsputra' => 'MTs Putra',
+            'mtsputri' => 'MTs Putri',
+            'maputra' => 'MA Putra',
+            'maputri' => 'MA Putri',
+            default => null,
+        };
     }
 }

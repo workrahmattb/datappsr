@@ -14,11 +14,15 @@
                 <div>
                     <label class="block text-sm font-medium text-gray-700">Jenjang Pendidikan</label>
                     <select name="jenjang_pendidikan" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 focus:outline-none focus:ring-blue-500 focus:border-blue-500">
-                        <option value="">Pilih Jenjang</option>
-                        <option value="MTs Putri" {{ $pendaftaran->jenjang_pendidikan == 'MTs Putri' ? 'selected' : '' }}>MTs Putri</option>
-                        <option value="MTs Putra" {{ $pendaftaran->jenjang_pendidikan == 'MTs Putra' ? 'selected' : '' }}>MTs Putra</option>
-                        <option value="MA Putri" {{ $pendaftaran->jenjang_pendidikan == 'MA Putri' ? 'selected' : '' }}>MA Putri</option>
-                        <option value="MA Putra" {{ $pendaftaran->jenjang_pendidikan == 'MA Putra' ? 'selected' : '' }}>MA Putra</option>
+                        @if(auth()->user()->hasRole('admin'))
+                            <option value="">Pilih Jenjang</option>
+                            <option value="MTs Putri" {{ $pendaftaran->jenjang_pendidikan == 'MTs Putri' ? 'selected' : '' }}>MTs Putri</option>
+                            <option value="MTs Putra" {{ $pendaftaran->jenjang_pendidikan == 'MTs Putra' ? 'selected' : '' }}>MTs Putra</option>
+                            <option value="MA Putri" {{ $pendaftaran->jenjang_pendidikan == 'MA Putri' ? 'selected' : '' }}>MA Putri</option>
+                            <option value="MA Putra" {{ $pendaftaran->jenjang_pendidikan == 'MA Putra' ? 'selected' : '' }}>MA Putra</option>
+                        @else
+                            <option value="{{ auth()->user()->jenjang }}" selected>{{ auth()->user()->jenjang }}</option>
+                        @endif
                     </select>
                 </div>
                 <div>

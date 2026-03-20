@@ -51,6 +51,7 @@
                     <p class="px-4 text-xs font-semibold text-emerald-200 uppercase tracking-wider">Data Siswa</p>
                 </div>
 
+                @if(auth()->user()->hasRole('admin') || auth()->user()->hasRole('mtsputra'))
                 <a href="{{ route('admin.mtsputras.index') }}" wire:navigate
                    class="flex items-center px-4 py-3 rounded-lg {{ request()->routeIs('admin.mtsputras.*') ? 'bg-white/20 shadow-lg' : 'hover:bg-white/10' }} transition-all duration-200 group">
                     <svg class="w-5 h-5 mr-3 {{ request()->routeIs('admin.mtsputras.*') ? 'text-white' : 'text-emerald-200 group-hover:text-white' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -58,7 +59,9 @@
                     </svg>
                     <span class="font-medium">MTs Putra</span>
                 </a>
+                @endif
 
+                @if(auth()->user()->hasRole('admin') || auth()->user()->hasRole('mtsputri'))
                 <a href="{{ route('admin.mtsputris.index') }}" wire:navigate
                    class="flex items-center px-4 py-3 rounded-lg {{ request()->routeIs('admin.mtsputris.*') ? 'bg-white/20 shadow-lg' : 'hover:bg-white/10' }} transition-all duration-200 group">
                     <svg class="w-5 h-5 mr-3 {{ request()->routeIs('admin.mtsputris.*') ? 'text-white' : 'text-emerald-200 group-hover:text-white' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -66,7 +69,9 @@
                     </svg>
                     <span class="font-medium">MTs Putri</span>
                 </a>
+                @endif
 
+                @if(auth()->user()->hasRole('admin') || auth()->user()->hasRole('maputra'))
                 <a href="{{ route('admin.maputras.index') }}" wire:navigate
                    class="flex items-center px-4 py-3 rounded-lg {{ request()->routeIs('admin.maputras.*') ? 'bg-white/20 shadow-lg' : 'hover:bg-white/10' }} transition-all duration-200 group">
                     <svg class="w-5 h-5 mr-3 {{ request()->routeIs('admin.maputras.*') ? 'text-white' : 'text-emerald-200 group-hover:text-white' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -74,7 +79,9 @@
                     </svg>
                     <span class="font-medium">MA Putra</span>
                 </a>
+                @endif
 
+                @if(auth()->user()->hasRole('admin') || auth()->user()->hasRole('maputri'))
                 <a href="{{ route('admin.maputris.index') }}" wire:navigate
                    class="flex items-center px-4 py-3 rounded-lg {{ request()->routeIs('admin.maputris.*') ? 'bg-white/20 shadow-lg' : 'hover:bg-white/10' }} transition-all duration-200 group">
                     <svg class="w-5 h-5 mr-3 {{ request()->routeIs('admin.maputris.*') ? 'text-white' : 'text-emerald-200 group-hover:text-white' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -82,6 +89,7 @@
                     </svg>
                     <span class="font-medium">MA Putri</span>
                 </a>
+                @endif
 
                 <div class="pt-4 pb-2 border-t border-emerald-500">
                     <p class="px-4 text-xs font-semibold text-emerald-200 uppercase tracking-wider">Pendaftaran</p>
@@ -151,10 +159,18 @@
             <div id="mobile-menu" class="hidden md:hidden bg-emerald-700 text-white">
                 <nav class="p-4 space-y-2">
                     <a href="{{ route('admin.dashboard') }}" wire:navigate class="block py-2 px-4 hover:bg-white/10 rounded-lg">Dashboard</a>
+                    @if(auth()->user()->hasRole('admin') || auth()->user()->hasRole('mtsputra'))
                     <a href="{{ route('admin.mtsputras.index') }}" wire:navigate class="block py-2 px-4 hover:bg-white/10 rounded-lg">MTs Putra</a>
+                    @endif
+                    @if(auth()->user()->hasRole('admin') || auth()->user()->hasRole('mtsputri'))
                     <a href="{{ route('admin.mtsputris.index') }}" wire:navigate class="block py-2 px-4 hover:bg-white/10 rounded-lg">MTs Putri</a>
+                    @endif
+                    @if(auth()->user()->hasRole('admin') || auth()->user()->hasRole('maputra'))
                     <a href="{{ route('admin.maputras.index') }}" wire:navigate class="block py-2 px-4 hover:bg-white/10 rounded-lg">MA Putra</a>
+                    @endif
+                    @if(auth()->user()->hasRole('admin') || auth()->user()->hasRole('maputri'))
                     <a href="{{ route('admin.maputris.index') }}" wire:navigate class="block py-2 px-4 hover:bg-white/10 rounded-lg">MA Putri</a>
+                    @endif
                     <a href="{{ route('admin.pendaftarans.index') }}" wire:navigate class="block py-2 px-4 hover:bg-white/10 rounded-lg">Pendaftaran</a>
                     <form method="POST" action="{{ route('logout') }}" class="pt-2 border-t border-emerald-500">
                         @csrf

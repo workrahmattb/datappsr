@@ -40,44 +40,52 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
     Route::get('/', \App\Livewire\Admin\Dashboard::class)->name('dashboard');
     
     // Mtsputra
-    Route::get('mtsputras', \App\Livewire\Admin\MtsputrasTable::class)->name('mtsputras.index');
-    Route::get('mtsputras/create', [\App\Http\Controllers\Admin\MtsputraController::class, 'create'])->name('mtsputras.create');
-    Route::post('mtsputras', [\App\Http\Controllers\Admin\MtsputraController::class, 'store'])->name('mtsputras.store');
-    Route::get('mtsputras-export', [\App\Http\Controllers\Admin\MtsputraController::class, 'export'])->name('mtsputras.export');
-    Route::get('mtsputras/{mtsputra}', [\App\Http\Controllers\Admin\MtsputraController::class, 'show'])->name('mtsputras.show');
-    Route::get('mtsputras/{mtsputra}/edit', [\App\Http\Controllers\Admin\MtsputraController::class, 'edit'])->name('mtsputras.edit');
-    Route::put('mtsputras/{mtsputra}', [\App\Http\Controllers\Admin\MtsputraController::class, 'update'])->name('mtsputras.update');
-    Route::delete('mtsputras/{mtsputra}', [\App\Http\Controllers\Admin\MtsputraController::class, 'destroy'])->name('mtsputras.destroy');
+    Route::middleware(['\App\Http\Middleware\CheckRole::class,mtsputra'])->group(function () {
+        Route::get('mtsputras', \App\Livewire\Admin\MtsputrasTable::class)->name('mtsputras.index');
+        Route::get('mtsputras/create', [\App\Http\Controllers\Admin\MtsputraController::class, 'create'])->name('mtsputras.create');
+        Route::post('mtsputras', [\App\Http\Controllers\Admin\MtsputraController::class, 'store'])->name('mtsputras.store');
+        Route::get('mtsputras-export', [\App\Http\Controllers\Admin\MtsputraController::class, 'export'])->name('mtsputras.export');
+        Route::get('mtsputras/{mtsputra}', [\App\Http\Controllers\Admin\MtsputraController::class, 'show'])->name('mtsputras.show');
+        Route::get('mtsputras/{mtsputra}/edit', [\App\Http\Controllers\Admin\MtsputraController::class, 'edit'])->name('mtsputras.edit');
+        Route::put('mtsputras/{mtsputra}', [\App\Http\Controllers\Admin\MtsputraController::class, 'update'])->name('mtsputras.update');
+        Route::delete('mtsputras/{mtsputra}', [\App\Http\Controllers\Admin\MtsputraController::class, 'destroy'])->name('mtsputras.destroy');
+    });
     
     // Mtsputri
-    Route::get('mtsputris', \App\Livewire\Admin\MtsputrisTable::class)->name('mtsputris.index');
-    Route::get('mtsputris/create', [\App\Http\Controllers\Admin\MtsputriController::class, 'create'])->name('mtsputris.create');
-    Route::post('mtsputris', [\App\Http\Controllers\Admin\MtsputriController::class, 'store'])->name('mtsputris.store');
-    Route::get('mtsputris-export', [\App\Http\Controllers\Admin\MtsputriController::class, 'export'])->name('mtsputris.export');
-    Route::get('mtsputris/{mtsputri}', [\App\Http\Controllers\Admin\MtsputriController::class, 'show'])->name('mtsputris.show');
-    Route::get('mtsputris/{mtsputri}/edit', [\App\Http\Controllers\Admin\MtsputriController::class, 'edit'])->name('mtsputris.edit');
-    Route::put('mtsputris/{mtsputri}', [\App\Http\Controllers\Admin\MtsputriController::class, 'update'])->name('mtsputris.update');
-    Route::delete('mtsputris/{mtsputri}', [\App\Http\Controllers\Admin\MtsputriController::class, 'destroy'])->name('mtsputris.destroy');
+    Route::middleware(['\App\Http\Middleware\CheckRole::class,mtsputri'])->group(function () {
+        Route::get('mtsputris', \App\Livewire\Admin\MtsputrisTable::class)->name('mtsputris.index');
+        Route::get('mtsputris/create', [\App\Http\Controllers\Admin\MtsputriController::class, 'create'])->name('mtsputris.create');
+        Route::post('mtsputris', [\App\Http\Controllers\Admin\MtsputriController::class, 'store'])->name('mtsputris.store');
+        Route::get('mtsputris-export', [\App\Http\Controllers\Admin\MtsputriController::class, 'export'])->name('mtsputris.export');
+        Route::get('mtsputris/{mtsputri}', [\App\Http\Controllers\Admin\MtsputriController::class, 'show'])->name('mtsputris.show');
+        Route::get('mtsputris/{mtsputri}/edit', [\App\Http\Controllers\Admin\MtsputriController::class, 'edit'])->name('mtsputris.edit');
+        Route::put('mtsputris/{mtsputri}', [\App\Http\Controllers\Admin\MtsputriController::class, 'update'])->name('mtsputris.update');
+        Route::delete('mtsputris/{mtsputri}', [\App\Http\Controllers\Admin\MtsputriController::class, 'destroy'])->name('mtsputris.destroy');
+    });
     
     // Maputra
-    Route::get('maputras', \App\Livewire\Admin\MaputrasTable::class)->name('maputras.index');
-    Route::get('maputras/create', [\App\Http\Controllers\Admin\MaputraController::class, 'create'])->name('maputras.create');
-    Route::post('maputras', [\App\Http\Controllers\Admin\MaputraController::class, 'store'])->name('maputras.store');
-    Route::get('maputras-export', [\App\Http\Controllers\Admin\MaputraController::class, 'export'])->name('maputras.export');
-    Route::get('maputras/{maputra}', [\App\Http\Controllers\Admin\MaputraController::class, 'show'])->name('maputras.show');
-    Route::get('maputras/{maputra}/edit', [\App\Http\Controllers\Admin\MaputraController::class, 'edit'])->name('maputras.edit');
-    Route::put('maputras/{maputra}', [\App\Http\Controllers\Admin\MaputraController::class, 'update'])->name('maputras.update');
-    Route::delete('maputras/{maputra}', [\App\Http\Controllers\Admin\MaputraController::class, 'destroy'])->name('maputras.destroy');
+    Route::middleware(['\App\Http\Middleware\CheckRole::class,maputra'])->group(function () {
+        Route::get('maputras', \App\Livewire\Admin\MaputrasTable::class)->name('maputras.index');
+        Route::get('maputras/create', [\App\Http\Controllers\Admin\MaputraController::class, 'create'])->name('maputras.create');
+        Route::post('maputras', [\App\Http\Controllers\Admin\MaputraController::class, 'store'])->name('maputras.store');
+        Route::get('maputras-export', [\App\Http\Controllers\Admin\MaputraController::class, 'export'])->name('maputras.export');
+        Route::get('maputras/{maputra}', [\App\Http\Controllers\Admin\MaputraController::class, 'show'])->name('maputras.show');
+        Route::get('maputras/{maputra}/edit', [\App\Http\Controllers\Admin\MaputraController::class, 'edit'])->name('maputras.edit');
+        Route::put('maputras/{maputra}', [\App\Http\Controllers\Admin\MaputraController::class, 'update'])->name('maputras.update');
+        Route::delete('maputras/{maputra}', [\App\Http\Controllers\Admin\MaputraController::class, 'destroy'])->name('maputras.destroy');
+    });
     
     // Maputri
-    Route::get('maputris', \App\Livewire\Admin\MaputrisTable::class)->name('maputris.index');
-    Route::get('maputris/create', [\App\Http\Controllers\Admin\MaputriController::class, 'create'])->name('maputris.create');
-    Route::post('maputris', [\App\Http\Controllers\Admin\MaputriController::class, 'store'])->name('maputris.store');
-    Route::get('maputris-export', [\App\Http\Controllers\Admin\MaputriController::class, 'export'])->name('maputris.export');
-    Route::get('maputris/{maputri}', [\App\Http\Controllers\Admin\MaputriController::class, 'show'])->name('maputris.show');
-    Route::get('maputris/{maputri}/edit', [\App\Http\Controllers\Admin\MaputriController::class, 'edit'])->name('maputris.edit');
-    Route::put('maputris/{maputri}', [\App\Http\Controllers\Admin\MaputriController::class, 'update'])->name('maputris.update');
-    Route::delete('maputris/{maputri}', [\App\Http\Controllers\Admin\MaputriController::class, 'destroy'])->name('maputris.destroy');
+    Route::middleware(['\App\Http\Middleware\CheckRole::class,maputri'])->group(function () {
+        Route::get('maputris', \App\Livewire\Admin\MaputrisTable::class)->name('maputris.index');
+        Route::get('maputris/create', [\App\Http\Controllers\Admin\MaputriController::class, 'create'])->name('maputris.create');
+        Route::post('maputris', [\App\Http\Controllers\Admin\MaputriController::class, 'store'])->name('maputris.store');
+        Route::get('maputris-export', [\App\Http\Controllers\Admin\MaputriController::class, 'export'])->name('maputris.export');
+        Route::get('maputris/{maputri}', [\App\Http\Controllers\Admin\MaputriController::class, 'show'])->name('maputris.show');
+        Route::get('maputris/{maputri}/edit', [\App\Http\Controllers\Admin\MaputriController::class, 'edit'])->name('maputris.edit');
+        Route::put('maputris/{maputri}', [\App\Http\Controllers\Admin\MaputriController::class, 'update'])->name('maputris.update');
+        Route::delete('maputris/{maputri}', [\App\Http\Controllers\Admin\MaputriController::class, 'destroy'])->name('maputris.destroy');
+    });
 
     // Pendaftaran
     Route::get('pendaftarans', \App\Livewire\Admin\PendaftaransTable::class)->name('pendaftarans.index');

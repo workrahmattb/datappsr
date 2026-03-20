@@ -15,6 +15,10 @@ class PendaftaranController extends Controller
     {
         $query = Pendaftaran::latest();
 
+        if (!auth()->user()->hasRole('admin') && auth()->user()->jenjang) {
+            $query->where('jenjang_pendidikan', auth()->user()->jenjang);
+        }
+
         if ($request->has('search') && $request->search) {
             $search = $request->search;
             $query->where(function($q) use ($search) {
@@ -237,13 +241,18 @@ class PendaftaranController extends Controller
     {
         $filename = 'pendaftarans-' . now()->format('Y-m-d-His') . '.xlsx';
 
+        $query = Pendaftaran::latest();
+        if (!auth()->user()->hasRole('admin') && auth()->user()->jenjang) {
+            $query->where('jenjang_pendidikan', auth()->user()->jenjang);
+        }
+
         return SimpleExcelWriter::streamDownload($filename)
             ->addHeader([
                 'ID', 'Nama', 'NISN', 'NIK', 'Jenjang', 'Status',
                 'Tempat Lahir', 'Tanggal Lahir', 'No HP Ayah', 'No HP Ibu',
                 'Alamat', 'Kelas', 'Tahun Ajaran', 'Created At'
             ])
-            ->addRows(Pendaftaran::latest()->get()->map(function($p) {
+            ->addRows($query->get()->map(function($p) {
                 return [
                     'id' => $p->id,
                     'nama' => $p->nama,

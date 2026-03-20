@@ -13,11 +13,15 @@
                 <div>
                     <label class="block text-sm font-medium text-gray-700">Jenjang Pendidikan</label>
                     <select name="jenjang_pendidikan" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 focus:outline-none focus:ring-blue-500 focus:border-blue-500">
-                        <option value="">Pilih Jenjang</option>
-                        <option value="MTs Putri">MTs Putri</option>
-                        <option value="MTs Putra">MTs Putra</option>
-                        <option value="MA Putri">MA Putri</option>
-                        <option value="MA Putra">MA Putra</option>
+                        @if(auth()->user()->hasRole('admin'))
+                            <option value="">Pilih Jenjang</option>
+                            <option value="MTs Putri">MTs Putri</option>
+                            <option value="MTs Putra">MTs Putra</option>
+                            <option value="MA Putri">MA Putri</option>
+                            <option value="MA Putra">MA Putra</option>
+                        @else
+                            <option value="{{ auth()->user()->jenjang }}">{{ auth()->user()->jenjang }}</option>
+                        @endif
                     </select>
                 </div>
                 <div>
