@@ -8,52 +8,24 @@ return new class extends Migration
 {
     public function up(): void
     {
-        // Drop kelas_id foreign key + column from mtsputras
-        Schema::table('mtsputras', function (Blueprint $table) {
-            $table->dropForeign(['kelas_id']);
-            $table->dropColumn('kelas_id');
-        });
+        $tables = ['mtsputras', 'mtsputris', 'maputras', 'maputris', 'pendaftarans', 'nilais', 'pengajarans'];
 
-        // Drop kelas_id foreign key + column from mtsputris
-        Schema::table('mtsputris', function (Blueprint $table) {
-            $table->dropForeign(['kelas_id']);
-            $table->dropColumn('kelas_id');
-        });
+        foreach ($tables as $tableName) {
+            if (Schema::hasColumn($tableName, 'kelas_id')) {
+                // Try to drop foreign key if it exists
+                try {
+                    Schema::table($tableName, function (Blueprint $table) {
+                        $table->dropForeign(['kelas_id']);
+                    });
+                } catch (\Exception $e) {
+                    // Ignore exception if foreign key doesn't exist
+                }
 
-        // Drop kelas_id foreign key + column from maputras
-        Schema::table('maputras', function (Blueprint $table) {
-            $table->dropForeign(['kelas_id']);
-            $table->dropColumn('kelas_id');
-        });
-
-        // Drop kelas_id foreign key + column from maputris
-        Schema::table('maputris', function (Blueprint $table) {
-            $table->dropForeign(['kelas_id']);
-            $table->dropColumn('kelas_id');
-        });
-
-        // Drop kelas_id foreign key + column from pendaftarans (if it exists)
-        if (Schema::hasColumn('pendaftarans', 'kelas_id')) {
-            Schema::table('pendaftarans', function (Blueprint $table) {
-                $table->dropForeign(['kelas_id']);
-                $table->dropColumn('kelas_id');
-            });
-        }
-
-        // Drop kelas_id foreign key from nilais (if it exists)
-        if (Schema::hasColumn('nilais', 'kelas_id')) {
-            Schema::table('nilais', function (Blueprint $table) {
-                $table->dropForeign(['kelas_id']);
-                $table->dropColumn('kelas_id');
-            });
-        }
-
-        // Drop kelas_id from pengajarans (if it exists)
-        if (Schema::hasColumn('pengajarans', 'kelas_id')) {
-            Schema::table('pengajarans', function (Blueprint $table) {
-                $table->dropForeign(['kelas_id']);
-                $table->dropColumn('kelas_id');
-            });
+                // Drop the column
+                Schema::table($tableName, function (Blueprint $table) {
+                    $table->dropColumn('kelas_id');
+                });
+            }
         }
 
         // Finally, drop the kelas table itself
