@@ -13,11 +13,11 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        // Admin
+        // Admin (Super Admin)
         \App\Models\User::updateOrCreate(
-            ['email' => 'admin@admin.com'],
+            ['email' => 'admin@ppsr.local'],
             [
-                'name' => 'Administrator',
+                'name' => 'Super Administrator',
                 'password' => \Hash::make('password'),
                 'role' => 'admin',
             ]
