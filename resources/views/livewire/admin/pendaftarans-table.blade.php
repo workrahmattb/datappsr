@@ -158,7 +158,7 @@
     @endif
 
     <!-- Delete Confirmation Modal -->
-    <flux:modal wire:model="showDeleteModal" class="max-w-md">
+    <flux:modal name="delete-confirm" class="max-w-md" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); margin: 0;">
         <div class="p-6">
             <div class="flex items-center gap-4 mb-6">
                 <div class="w-12 h-12 rounded-full bg-red-100 border border-red-200 flex items-center justify-center shrink-0">
@@ -199,15 +199,13 @@
 
 @script
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        document.addEventListener('click', function(e) {
-            const deleteBtn = e.target.closest('.delete-btn');
-            if (deleteBtn) {
-                const id = deleteBtn.dataset.id;
-                const name = deleteBtn.dataset.name;
-                @this.call('confirmDelete', id, name);
-            }
-        });
+    document.addEventListener('click', function(e) {
+        const deleteBtn = e.target.closest('.delete-btn');
+        if (deleteBtn) {
+            const id = deleteBtn.dataset.id;
+            const name = deleteBtn.dataset.name;
+            $wire.call('confirmDelete', id, name);
+        }
     });
 </script>
 @endscript

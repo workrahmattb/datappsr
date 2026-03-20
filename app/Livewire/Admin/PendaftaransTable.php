@@ -20,7 +20,6 @@ class PendaftaransTable extends Component
     public ?string $tahunAjaran = null;
     #[Validate('in:pending,completed')]
     public string $status = '';
-    public bool $showDeleteModal = false;
     public $deleteId = null;
     public string $deleteItemName = '';
 
@@ -49,12 +48,12 @@ class PendaftaransTable extends Component
     {
         $this->deleteId = $id;
         $this->deleteItemName = $name;
-        $this->showDeleteModal = true;
+        $this->dispatch('modal-show', ...['name' => 'delete-confirm']);
     }
 
     public function closeModal(): void
     {
-        $this->showDeleteModal = false;
+        $this->dispatch('modal-close', ...['name' => 'delete-confirm']);
         $this->deleteId = null;
         $this->deleteItemName = '';
     }
@@ -75,7 +74,7 @@ class PendaftaransTable extends Component
                 $this->dispatch('success', 'Data pendaftaran berhasil dihapus.');
             }
 
-            $this->showDeleteModal = false;
+            $this->dispatch('modal-close', ...['name' => 'delete-confirm']);
             $this->deleteId = null;
             $this->deleteItemName = '';
         }
