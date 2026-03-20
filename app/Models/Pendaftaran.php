@@ -11,6 +11,13 @@ class Pendaftaran extends Model
 {
     use HasFactory;
 
+    public $timestamps = true;
+
+    protected $casts = [
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+    ];
+
     protected $fillable = [
         'jenjang_pendidikan',
         'status_pendaftaran',

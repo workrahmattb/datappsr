@@ -262,8 +262,8 @@
                         </td>
                         <td class="px-6 py-4 text-sm text-zinc-600 font-medium">
                             <div class="flex flex-col">
-                                <span>{{ $pendaftaran->created_at->format('d M Y') }}</span>
-                                <span class="text-xs text-zinc-400 mt-0.5">{{ $pendaftaran->created_at->format('H:i') }} WIB</span>
+                                <span>{{ $pendaftaran->created_at?->format('d M Y') ?? '-' }}</span>
+                                <span class="text-xs text-zinc-400 mt-0.5">{{ $pendaftaran->created_at?->format('H:i') ?? '-' }} WIB</span>
                             </div>
                         </td>
                         <td class="px-6 py-4 text-right text-sm font-medium">

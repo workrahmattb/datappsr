@@ -45,7 +45,10 @@ yarn-error.log
 /package-lock.json
 !/package.json
 
-
+# Database
+/database/*.sqlite
+/database/*.sqlite-journal
+/.sqlite
 
 # Testing
 /.phpunit.result.cache
