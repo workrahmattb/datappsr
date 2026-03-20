@@ -99,7 +99,7 @@
         </div>
 
         <div class="flex justify-end gap-2">
-            <a href="{{ route('admin.pendaftarans.index') }}" class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">Batal</a>
+            <a href="{{ route('admin.pendaftarans.index') }}" wire:navigate class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">Batal</a>
             <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">Update</button>
         </div>
     </form>

@@ -39,7 +39,7 @@
             </div>
             
             <nav class="mt-4 px-3 space-y-1">
-                <a href="{{ route('admin.dashboard') }}" 
+                <a href="{{ route('admin.dashboard') }}" wire:navigate
                    class="flex items-center px-4 py-3 rounded-lg {{ request()->routeIs('admin.dashboard') ? 'bg-white/20 shadow-lg' : 'hover:bg-white/10' }} transition-all duration-200 group">
                     <svg class="w-5 h-5 mr-3 {{ request()->routeIs('admin.dashboard') ? 'text-white' : 'text-emerald-200 group-hover:text-white' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
@@ -51,7 +51,7 @@
                     <p class="px-4 text-xs font-semibold text-emerald-200 uppercase tracking-wider">Data Siswa</p>
                 </div>
 
-                <a href="{{ route('admin.mtsputras.index') }}" 
+                <a href="{{ route('admin.mtsputras.index') }}" wire:navigate
                    class="flex items-center px-4 py-3 rounded-lg {{ request()->routeIs('admin.mtsputras.*') ? 'bg-white/20 shadow-lg' : 'hover:bg-white/10' }} transition-all duration-200 group">
                     <svg class="w-5 h-5 mr-3 {{ request()->routeIs('admin.mtsputras.*') ? 'text-white' : 'text-emerald-200 group-hover:text-white' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
@@ -59,7 +59,7 @@
                     <span class="font-medium">MTs Putra</span>
                 </a>
 
-                <a href="{{ route('admin.mtsputris.index') }}" 
+                <a href="{{ route('admin.mtsputris.index') }}" wire:navigate
                    class="flex items-center px-4 py-3 rounded-lg {{ request()->routeIs('admin.mtsputris.*') ? 'bg-white/20 shadow-lg' : 'hover:bg-white/10' }} transition-all duration-200 group">
                     <svg class="w-5 h-5 mr-3 {{ request()->routeIs('admin.mtsputris.*') ? 'text-white' : 'text-emerald-200 group-hover:text-white' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
@@ -67,7 +67,7 @@
                     <span class="font-medium">MTs Putri</span>
                 </a>
 
-                <a href="{{ route('admin.maputras.index') }}" 
+                <a href="{{ route('admin.maputras.index') }}" wire:navigate
                    class="flex items-center px-4 py-3 rounded-lg {{ request()->routeIs('admin.maputras.*') ? 'bg-white/20 shadow-lg' : 'hover:bg-white/10' }} transition-all duration-200 group">
                     <svg class="w-5 h-5 mr-3 {{ request()->routeIs('admin.maputras.*') ? 'text-white' : 'text-emerald-200 group-hover:text-white' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
@@ -75,7 +75,7 @@
                     <span class="font-medium">MA Putra</span>
                 </a>
 
-                <a href="{{ route('admin.maputris.index') }}" 
+                <a href="{{ route('admin.maputris.index') }}" wire:navigate
                    class="flex items-center px-4 py-3 rounded-lg {{ request()->routeIs('admin.maputris.*') ? 'bg-white/20 shadow-lg' : 'hover:bg-white/10' }} transition-all duration-200 group">
                     <svg class="w-5 h-5 mr-3 {{ request()->routeIs('admin.maputris.*') ? 'text-white' : 'text-emerald-200 group-hover:text-white' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
@@ -87,7 +87,7 @@
                     <p class="px-4 text-xs font-semibold text-emerald-200 uppercase tracking-wider">Pendaftaran</p>
                 </div>
 
-                <a href="{{ route('admin.pendaftarans.index') }}" 
+                <a href="{{ route('admin.pendaftarans.index') }}" wire:navigate
                    class="flex items-center px-4 py-3 rounded-lg {{ request()->routeIs('admin.pendaftarans.*') ? 'bg-white/20 shadow-lg' : 'hover:bg-white/10' }} transition-all duration-200 group">
                     <svg class="w-5 h-5 mr-3 {{ request()->routeIs('admin.pendaftarans.*') ? 'text-white' : 'text-emerald-200 group-hover:text-white' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
@@ -136,7 +136,7 @@
                     </div>
                     
                     <div class="flex items-center space-x-4">
-                        <a href="{{ route('admin.dashboard') }}" class="text-sm text-gray-600 hover:text-emerald-600 transition">
+                        <a href="{{ route('admin.dashboard') }}" wire:navigate class="text-sm text-gray-600 hover:text-emerald-600 transition">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
                             </svg>
@@ -150,12 +150,12 @@
             <!-- Mobile Menu -->
             <div id="mobile-menu" class="hidden md:hidden bg-emerald-700 text-white">
                 <nav class="p-4 space-y-2">
-                    <a href="{{ route('admin.dashboard') }}" class="block py-2 px-4 hover:bg-white/10 rounded-lg">Dashboard</a>
-                    <a href="{{ route('admin.mtsputras.index') }}" class="block py-2 px-4 hover:bg-white/10 rounded-lg">MTs Putra</a>
-                    <a href="{{ route('admin.mtsputris.index') }}" class="block py-2 px-4 hover:bg-white/10 rounded-lg">MTs Putri</a>
-                    <a href="{{ route('admin.maputras.index') }}" class="block py-2 px-4 hover:bg-white/10 rounded-lg">MA Putra</a>
-                    <a href="{{ route('admin.maputris.index') }}" class="block py-2 px-4 hover:bg-white/10 rounded-lg">MA Putri</a>
-                    <a href="{{ route('admin.pendaftarans.index') }}" class="block py-2 px-4 hover:bg-white/10 rounded-lg">Pendaftaran</a>
+                    <a href="{{ route('admin.dashboard') }}" wire:navigate class="block py-2 px-4 hover:bg-white/10 rounded-lg">Dashboard</a>
+                    <a href="{{ route('admin.mtsputras.index') }}" wire:navigate class="block py-2 px-4 hover:bg-white/10 rounded-lg">MTs Putra</a>
+                    <a href="{{ route('admin.mtsputris.index') }}" wire:navigate class="block py-2 px-4 hover:bg-white/10 rounded-lg">MTs Putri</a>
+                    <a href="{{ route('admin.maputras.index') }}" wire:navigate class="block py-2 px-4 hover:bg-white/10 rounded-lg">MA Putra</a>
+                    <a href="{{ route('admin.maputris.index') }}" wire:navigate class="block py-2 px-4 hover:bg-white/10 rounded-lg">MA Putri</a>
+                    <a href="{{ route('admin.pendaftarans.index') }}" wire:navigate class="block py-2 px-4 hover:bg-white/10 rounded-lg">Pendaftaran</a>
                     <form method="POST" action="{{ route('logout') }}" class="pt-2 border-t border-emerald-500">
                         @csrf
                         <button type="submit" class="block w-full text-left py-2 px-4 hover:bg-white/10 rounded-lg">Logout</button>

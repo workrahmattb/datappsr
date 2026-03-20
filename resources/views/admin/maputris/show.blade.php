@@ -22,10 +22,10 @@
             </div>
         </div>
         <div class="flex flex-wrap items-center gap-3">
-            <a href="{{ route($routePrefix . '.index') }}" class="bg-white border border-zinc-200 hover:bg-zinc-50 text-zinc-700 font-semibold px-4 py-2 rounded-lg text-sm transition-colors shadow-sm">
+            <a href="{{ route($routePrefix . '.index') }}" wire:navigate class="bg-white border border-zinc-200 hover:bg-zinc-50 text-zinc-700 font-semibold px-4 py-2 rounded-lg text-sm transition-colors shadow-sm">
                 Kembali
             </a>
-            <a href="{{ route($routePrefix . '.edit', $student) }}" class="bg-zinc-900 hover:bg-zinc-800 text-white font-semibold px-4 py-2 rounded-lg text-sm transition-colors shadow-sm">
+            <a href="{{ route($routePrefix . '.edit', $student) }}" wire:navigate class="bg-zinc-900 hover:bg-zinc-800 text-white font-semibold px-4 py-2 rounded-lg text-sm transition-colors shadow-sm">
                 Edit Data
             </a>
         </div>

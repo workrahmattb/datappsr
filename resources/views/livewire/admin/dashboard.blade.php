@@ -170,13 +170,13 @@
                 <p class="text-sm font-semibold text-zinc-500 tracking-wide mb-1">AKSI CEPAT</p>
                 <p class="text-lg font-bold text-zinc-900 mb-4">Pintasan Menu</p>
                 <div class="space-y-2">
-                    <a href="{{ route('admin.pendaftarans.create') }}" class="group flex items-center justify-between px-3 py-2 bg-zinc-50 hover:bg-zinc-100 border border-zinc-200 text-zinc-700 rounded-lg text-sm font-medium transition-colors">
+                    <a wire:navigate href="{{ route('admin.pendaftarans.create') }}" class="group flex items-center justify-between px-3 py-2 bg-zinc-50 hover:bg-zinc-100 border border-zinc-200 text-zinc-700 rounded-lg text-sm font-medium transition-colors">
                         <span>Pendaftaran Baru</span>
                         <svg class="w-4 h-4 text-zinc-400 group-hover:text-zinc-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                         </svg>
                     </a>
-                    <a href="{{ route('admin.mtsputras.create') }}" class="group flex items-center justify-between px-3 py-2 bg-zinc-50 hover:bg-zinc-100 border border-zinc-200 text-zinc-700 rounded-lg text-sm font-medium transition-colors">
+                    <a wire:navigate href="{{ route('admin.mtsputras.create') }}" class="group flex items-center justify-between px-3 py-2 bg-zinc-50 hover:bg-zinc-100 border border-zinc-200 text-zinc-700 rounded-lg text-sm font-medium transition-colors">
                         <span>Siswa MTs Putra</span>
                         <svg class="w-4 h-4 text-zinc-400 group-hover:text-zinc-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
@@ -257,7 +257,7 @@
                             </div>
                         </td>
                         <td class="px-6 py-4 text-right text-sm font-medium">
-                            <a href="{{ route('admin.pendaftarans.show', $pendaftaran) }}" class="inline-flex items-center justify-center bg-white border border-zinc-200 text-zinc-700 hover:bg-zinc-50 hover:text-zinc-900 px-3 py-1.5 rounded-lg transition-colors shadow-sm">
+                            <a wire:navigate href="{{ route('admin.pendaftarans.show', $pendaftaran) }}" class="inline-flex items-center justify-center bg-white border border-zinc-200 text-zinc-700 hover:bg-zinc-50 hover:text-zinc-900 px-3 py-1.5 rounded-lg transition-colors shadow-sm">
                                 Detail
                             </a>
                         </td>
