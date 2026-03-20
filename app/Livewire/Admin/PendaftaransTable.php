@@ -88,9 +88,9 @@ class PendaftaransTable extends Component
             ->addHeadings([
                 'ID', 'Nama', 'NISN', 'NIK', 'Jenjang', 'Status',
                 'Tempat Lahir', 'Tanggal Lahir', 'No HP Ayah', 'No HP Ibu',
-                'Kelas', 'Tahun Ajaran', 'Created At'
+                'Alamat', 'Tahun Ajaran', 'Created At'
             ])
-            ->addRows(Pendaftaran::with('kelas')->latest()->get()->map(function($p) {
+            ->addRows(Pendaftaran::latest()->get()->map(function($p) {
                 return [
                     'id' => $p->id,
                     'nama' => $p->nama,
@@ -102,7 +102,7 @@ class PendaftaransTable extends Component
                     'tanggal_lahir' => $p->tanggal_lahir,
                     'no_hp_ayah' => $p->no_hp_ayah,
                     'no_hp_ibu' => $p->no_hp_ibu,
-                    'kelas' => $p->kelas?->nama ?? '-',
+                    'alamat' => $p->alamat_rumah_tinggal ?? $p->alamat,
                     'tahun_ajaran' => $p->tahun_ajaran,
                     'created_at' => $p->created_at->format('Y-m-d H:i'),
                 ];

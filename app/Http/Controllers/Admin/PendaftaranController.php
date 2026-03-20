@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Pendaftaran;
-use App\Models\Kelas;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Spatie\SimpleExcel\SimpleExcelWriter;
@@ -14,7 +13,7 @@ class PendaftaranController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Pendaftaran::with('kelas')->latest();
+        $query = Pendaftaran::latest();
 
         if ($request->has('search') && $request->search) {
             $search = $request->search;
@@ -36,8 +35,7 @@ class PendaftaranController extends Controller
 
     public function create()
     {
-        $kelas = Kelas::all();
-        return view('admin.pendaftarans.create', compact('kelas'));
+        return view('admin.pendaftarans.create');
     }
 
     public function store(Request $request)
@@ -54,7 +52,7 @@ class PendaftaranController extends Controller
             'nis' => 'nullable|string|max:20',
             'anak_ke' => 'nullable|string|max:10',
             'tahun_ajaran' => 'nullable|string|max:20',
-            'kelas_id' => 'nullable|exists:kelas,id',
+
             'jumlah_saudara' => 'nullable|string|max:10',
             'tgl_masuk' => 'nullable|date',
             'kks' => 'nullable|string|max:50',
@@ -128,14 +126,12 @@ class PendaftaranController extends Controller
 
     public function show(Pendaftaran $pendaftaran)
     {
-        $pendaftaran->load('kelas');
         return view('admin.pendaftarans.show', compact('pendaftaran'));
     }
 
     public function edit(Pendaftaran $pendaftaran)
     {
-        $kelas = Kelas::all();
-        return view('admin.pendaftarans.edit', compact('pendaftaran', 'kelas'));
+        return view('admin.pendaftarans.edit', compact('pendaftaran'));
     }
 
     public function update(Request $request, Pendaftaran $pendaftaran)
@@ -152,7 +148,7 @@ class PendaftaranController extends Controller
             'nis' => 'nullable|string|max:20',
             'anak_ke' => 'nullable|string|max:10',
             'tahun_ajaran' => 'nullable|string|max:20',
-            'kelas_id' => 'nullable|exists:kelas,id',
+
             'jumlah_saudara' => 'nullable|string|max:10',
             'tgl_masuk' => 'nullable|date',
             'kks' => 'nullable|string|max:50',
@@ -247,7 +243,7 @@ class PendaftaranController extends Controller
                 'Tempat Lahir', 'Tanggal Lahir', 'No HP Ayah', 'No HP Ibu',
                 'Alamat', 'Kelas', 'Tahun Ajaran', 'Created At'
             ])
-            ->addRows(Pendaftaran::with('kelas')->latest()->get()->map(function($p) {
+            ->addRows(Pendaftaran::latest()->get()->map(function($p) {
                 return [
                     'id' => $p->id,
                     'nama' => $p->nama,
@@ -260,7 +256,7 @@ class PendaftaranController extends Controller
                     'no_hp_ayah' => $p->no_hp_ayah,
                     'no_hp_ibu' => $p->no_hp_ibu,
                     'alamat' => $p->alamat_rumah_tinggal ?? $p->alamat,
-                    'kelas' => $p->kelas?->nama ?? '-',
+
                     'tahun_ajaran' => $p->tahun_ajaran,
                     'created_at' => $p->created_at->format('Y-m-d H:i'),
                 ];
