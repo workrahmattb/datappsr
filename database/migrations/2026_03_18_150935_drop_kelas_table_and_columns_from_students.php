@@ -22,9 +22,13 @@ return new class extends Migration
                 }
 
                 // Drop the column
-                Schema::table($tableName, function (Blueprint $table) {
-                    $table->dropColumn('kelas_id');
-                });
+                try {
+                    Schema::table($tableName, function (Blueprint $table) {
+                        $table->dropColumn('kelas_id');
+                    });
+                } catch (\Exception $e) {
+                    // Ignore exception if column doesn't exist or other dropping error
+                }
             }
         }
 
