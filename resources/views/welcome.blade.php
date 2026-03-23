@@ -102,7 +102,7 @@
         </section> --}}
 
         <!-- Features Section -->
-        <section id="features" class="bg-white dark:bg-gray-800 py-12">
+        <!-- <section id="features" class="bg-white dark:bg-gray-800 py-12">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <h2 class="text-4xl font-bold text-gray-900 dark:text-white text-center mb-12">Features</h2>
 
@@ -129,7 +129,7 @@
                             </svg>
                         </div>
                         <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">Management</h3>
-                        <p class="text-gray-600 dark:text-gray-300">Kelola data siswa, nilai, dan informasi akademik
+                        <p class="text-gray-600 dark:text-gray-300">Kelola data siswa, informasi akademik
                             dengan mudah dalam satu platform.</p>
                     </div>
 
@@ -147,16 +147,16 @@
                     </div>
                 </div>
             </div>
-        </section>
+        </section> -->
 
         <!-- About Section -->
         <section id="about" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
             <h2 class="text-4xl font-bold text-gray-900 dark:text-white mb-8">About PPSR</h2>
             <div class="bg-green-50 dark:bg-gray-800 p-8 rounded-xl border-l-4 border-green-600">
                 <p class="text-gray-700 dark:text-gray-300 text-lg leading-relaxed">
-                    PPSR 2025 adalah sistem informasi terpadu untuk manajemen penilaian dan pendataan siswa yang
-                    dirancang khusus untuk memenuhi kebutuhan sekolah modern. Dengan antarmuka yang intuitif dan
-                    fitur-fitur canggih, sistem ini membantu sekolah dalam mengelola data akademik dengan lebih efisien.
+                    PPSR 2025 adalah sistem informasi terpadu untuk manajemen pendataan santri yang
+                    dirancang khusus untuk memenuhi kebutuhan Pondok Pesantren Modern. Dengan antarmuka yang intuitif dan
+                    fitur-fitur canggih, sistem ini membantu Pondok Pesantren dalam mengelola data lebih efisien.
                 </p>
             </div>
         </section>
@@ -168,7 +168,7 @@
             <div class="grid md:grid-cols-4 gap-8 mb-12">
                 <div>
                     <h4 class="text-white font-bold mb-4">PPSR 2025</h4>
-                    <p class="text-sm">Sistem Penilaian dan Pendataan Siswa yang modern dan terintegrasi.</p>
+                    <p class="text-sm">Sistem Pendaftaran yang modern dan terintegrasi Pondok Pesantren Syafaaturrasul Kuantan Singingi.</p>
                 </div>
 
                 <div>
@@ -193,9 +193,9 @@
                 <div>
                     <h4 class="text-white font-bold mb-4">Contact</h4>
                     <ul class="space-y-2 text-sm">
-                        <li>Email: info@ppsr.local</li>
-                        <li>Phone: +62 (0) 123-456-789</li>
-                        <li>Address: Jl. Education No. 123</li>
+                        <li>Email: syafaaturrasultatausaha@gmail.com</li>
+                        <li>Phone: +6285259875754</li>
+                        <li>KUANTAN SINGINGI, RIAU</li>
                     </ul>
                 </div>
             </div>
