@@ -29,24 +29,16 @@
             </div>
 
             <div class="flex gap-4">
-                @auth
-                    <a href="{{ route('dashboard') }}"
-                        class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition">
-                        Dashboard
-                    </a>
-                @else
-                    <a href="{{ route('login') }}"
+                    <a href="{{ route('pendaftaran') }}"
                         class="px-4 py-2 text-green-600 dark:text-green-400 border border-green-600 rounded-lg hover:bg-green-50 dark:hover:bg-gray-700 transition">
-                        Login
+                        Daftar
                     </a>
-                    @if (Route::has('register'))
-                        <a href="{{ route('register') }}"
-                            class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition">
-                            Register
-                        </a>
-                    @endif
-                @endauth
-            </div> 
+
+                    <a href="https://www.syafaaturrasul.com"
+                        class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition">
+                        Web
+                    </a>
+            </div>
         </nav>
     </header>
 
