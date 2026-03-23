@@ -20,15 +20,15 @@
             </div>
 
             <div class="hidden md:flex gap-8">
-                <a href="#about"
+                <!-- <a href="#about"
                     class="text-gray-700 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400 transition">About</a>
                 <a href="#features"
                     class="text-gray-700 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400 transition">Features</a>
                 <a href="#contact"
-                    class="text-gray-700 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400 transition">Contact</a>
+                    class="text-gray-700 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400 transition">Contact</a> -->
             </div>
 
-            {{-- <div class="flex gap-4">
+            <div class="flex gap-4">
                 @auth
                     <a href="{{ route('dashboard') }}"
                         class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition">
@@ -46,14 +46,14 @@
                         </a>
                     @endif
                 @endauth
-            </div> --}}
+            </div> 
         </nav>
     </header>
 
     <!-- Main Content -->
     <main class="flex-grow">
         <!-- Hero Section -->
-        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <!-- <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
             <div class="grid md:grid-cols-2 gap-12 items-center">
                 <div>
                     <h1 class="text-5xl md:text-6xl font-bold text-gray-900 dark:text-white mb-6">
@@ -82,7 +82,7 @@
                     </div>
                 </div> --}}
             </div>
-        </section>
+        </section> -->
 
 
         <!-- Pendaftaran Data Section -->
