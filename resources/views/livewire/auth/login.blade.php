@@ -107,7 +107,7 @@
                             <label for="password" class="block text-sm font-semibold text-gray-700">Kata Sandi</label>
                             @if (Route::has('password.request'))
                                 <a href="{{ route('password.request') }}" wire:navigate class="text-sm font-semibold text-primary hover:text-emerald-700 transition-colors">
-                                    Lupa sandi?
+                                    -
                                 </a>
                             @endif
                         </div>
@@ -147,12 +147,12 @@
                         </div>
                     </div>
                     
-                    <div class="mt-8 text-center text-sm">
+                    <!-- <div class="mt-8 text-center text-sm">
                         <span class="text-gray-500 font-medium">Belum memiliki akun?</span>
                         <a href="{{ route('register') }}" wire:navigate class="font-bold text-primary hover:text-emerald-700 transition-colors ml-1">
                             Daftar Sekarang
                         </a>
-                    </div>
+                    </div> -->
                 @endif
             </div>
             
