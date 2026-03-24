@@ -51,17 +51,17 @@ class MtsputrasTable extends Component
     {
         if ($this->deleteId) {
             $mtsputra = Mtsputra::find($this->deleteId);
-            
+
             if ($mtsputra) {
                 // Delete associated files
                 if ($mtsputra->fotokk) Storage::disk('public')->delete($mtsputra->fotokk);
                 if ($mtsputra->fotoakta) Storage::disk('public')->delete($mtsputra->fotoakta);
                 if ($mtsputra->fototransfer) Storage::disk('public')->delete($mtsputra->fototransfer);
-                
+
                 $mtsputra->delete();
                 $this->dispatch('success', 'Data siswa berhasil dihapus.');
             }
-            
+
             $this->dispatch('modal-close', ...['name' => 'delete-confirm']);
             $this->deleteId = null;
             $this->deleteStudentName = '';

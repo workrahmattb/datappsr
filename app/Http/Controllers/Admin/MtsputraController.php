@@ -225,39 +225,101 @@ class MtsputraController extends Controller
     public function export(\Illuminate\Http\Request $request)
     {
         $filename = 'data-mtsputra-' . now()->format('Ymd-His') . '.xlsx';
-        
+
         $query = Mtsputra::query();
-        
+
         if ($request->has('tahun_ajaran') && $request->tahun_ajaran) {
             $query->where('tahun_ajaran', $request->tahun_ajaran);
         }
-        
+
         return \Spatie\SimpleExcel\SimpleExcelWriter::streamDownload($filename)
             ->addHeader([
-                'No', 'Nama', 'NISN', 'NIS', 'NIK', 'Tahun Ajaran',
-                'Tempat Lahir', 'Tanggal Lahir', 'Anak Ke', 'Jml Saudara', 'No KK',
-                'Nama Ayah', 'No HP Ayah', 'Nama Ibu', 'No HP Ibu',
-                'Alamat', 'Dibuat Pada'
+                'ID', 'Nama', 'NISN', 'NIS', 'NIK', 'KK', 'Nama KK', 'TK', 'PAUD', 'Hobi', 'Cita-cita',
+                'Anak Ke', 'Jumlah Saudara', 'Tahun Ajaran', 'Tanggal Masuk', 'KKS', 'PKH', 'KIP',
+                'Jenjang Sebelumnya', 'Status Sekolah Sebelumnya', 'Nama Sekolah Sebelumnya',
+                'NPSN Sekolah Sebelumnya', 'Alamat Sekolah Sebelumnya', 'Kecamatan Sekolah Sebelumnya',
+                'Kabupaten Sekolah Sebelumnya', 'Provinsi Sekolah Sebelumnya',
+                'NIK Ayah', 'Nama Ayah', 'Tempat Lahir Ayah', 'Tanggal Lahir Ayah', 'Status Ayah',
+                'No HP Ayah', 'Pendidikan Ayah', 'Pekerjaan Ayah', 'Penghasilan Ayah',
+                'NIK Ibu', 'Nama Ibu', 'Tempat Lahir Ibu', 'Tanggal Lahir Ibu', 'Status Ibu',
+                'No HP Ibu', 'Pendidikan Ibu', 'Pekerjaan Ibu', 'Penghasilan Ibu',
+                'Status Milik Rumah', 'Alamat', 'RT', 'RW', 'Desa', 'Kecamatan', 'Kabupaten', 'Provinsi', 'Kode Pos',
+                'NIK Wali', 'Nama Wali', 'Tempat Lahir Wali', 'Tanggal Lahir Wali', 'Status Wali', 'No HP Wali',
+                'Pendidikan Wali', 'Pekerjaan Wali', 'Penghasilan Wali',
+                'Foto KK', 'Foto Akta', 'Foto Transfer',
+                'Tempat Lahir', 'Tanggal Lahir', 'Created At', 'Updated At'
             ])
-            ->addRows($query->latest()->get()->map(function($p, $index) {
+            ->addRows($query->latest()->get()->map(function($s) {
                 return [
-                    'No' => $index + 1,
-                    'Nama' => $p->nama,
-                    'NISN' => $p->nisn,
-                    'NIS' => $p->nis,
-                    'NIK' => $p->nik,
-                    'Tahun Ajaran' => $p->tahun_ajaran,
-                    'Tempat Lahir' => $p->tempat_lahir,
-                    'Tanggal Lahir' => $p->tanggal_lahir ? \Carbon\Carbon::parse($p->tanggal_lahir)->format('Y-m-d') : '-',
-                    'Anak Ke' => $p->anak_ke,
-                    'Jml Saudara' => $p->jumlah_saudara,
-                    'No KK' => $p->kk,
-                    'Nama Ayah' => $p->nama_ayah,
-                    'No HP Ayah' => $p->no_hp_ayah,
-                    'Nama Ibu' => $p->nama_ibu,
-                    'No HP Ibu' => $p->no_hp_ibu,
-                    'Alamat' => $p->alamat_rumah_tinggal ?? ($p->desa . ' ' . $p->kecamatan),
-                    'Dibuat Pada' => $p->created_at->format('Y-m-d H:i')
+                    'id' => $s->id,
+                    'nama' => $s->nama,
+                    'nisn' => $s->nisn,
+                    'nis' => $s->nis,
+                    'nik' => $s->nik,
+                    'kk' => $s->kk,
+                    'nama_kk' => $s->nama_kk,
+                    'tk' => $s->tk,
+                    'paud' => $s->paud,
+                    'hobi' => $s->hobi,
+                    'cita_cita' => $s->cita_cita,
+                    'anak_ke' => $s->anak_ke,
+                    'jumlah_saudara' => $s->jumlah_saudara,
+                    'tahun_ajaran' => $s->tahun_ajaran,
+                    'tgl_masuk' => $s->tgl_masuk,
+                    'kks' => $s->kks,
+                    'pkh' => $s->pkh,
+                    'kip' => $s->kip,
+                    'jenjang_pendidikan_sebelumnya' => $s->jenjang_pendidikan_sebelumnya,
+                    'status_sekolah_sebelumnya' => $s->status_sekolah_sebelumnya,
+                    'nama_sekolah_sebelumnya' => $s->nama_sekolah_sebelumnya,
+                    'npsn_sekolah_sebelumnya' => $s->npsn_sekolah_sebelumnya,
+                    'alamat_sekolah_sebelumnya' => $s->alamat_sekolah_sebelumnya,
+                    'kecamatan_sekolah_sebelumnya' => $s->kecamatan_sekolah_sebelumnya,
+                    'kabupaten_sekolah_sebelumnya' => $s->kabupaten_sekolah_sebelumnya,
+                    'provinsi_sekolah_sebelumnya' => $s->provinsi_sekolah_sebelumnya,
+                    'nik_ayah' => $s->nik_ayah,
+                    'nama_ayah' => $s->nama_ayah,
+                    'tempat_lahir_ayah' => $s->tempat_lahir_ayah,
+                    'tanggal_lahir_ayah' => $s->tanggal_lahir_ayah,
+                    'status_ayah' => $s->status_ayah,
+                    'no_hp_ayah' => $s->no_hp_ayah,
+                    'pendidikan_ayah' => $s->pendidikan_ayah,
+                    'pekerjaan_ayah' => $s->pekerjaan_ayah,
+                    'penghasilan_ayah' => $s->penghasilan_ayah,
+                    'nik_ibu' => $s->nik_ibu,
+                    'nama_ibu' => $s->nama_ibu,
+                    'tempat_lahir_ibu' => $s->tempat_lahir_ibu,
+                    'tanggal_lahir_ibu' => $s->tanggal_lahir_ibu,
+                    'status_ibu' => $s->status_ibu,
+                    'no_hp_ibu' => $s->no_hp_ibu,
+                    'pendidikan_ibu' => $s->pendidikan_ibu,
+                    'pekerjaan_ibu' => $s->pekerjaan_ibu,
+                    'penghasilan_ibu' => $s->penghasilan_ibu,
+                    'status_milik' => $s->status_milik,
+                    'alamat_rumah_tinggal' => $s->alamat_rumah_tinggal,
+                    'rt' => $s->rt,
+                    'rw' => $s->rw,
+                    'desa' => $s->desa,
+                    'kecamatan' => $s->kecamatan,
+                    'kabupaten' => $s->kabupaten,
+                    'provinsi' => $s->provinsi,
+                    'kode_pos' => $s->kode_pos,
+                    'nik_wali' => $s->nik_wali,
+                    'nama_wali' => $s->nama_wali,
+                    'tempat_lahir_wali' => $s->tempat_lahir_wali,
+                    'tanggal_lahir_wali' => $s->tanggal_lahir_wali,
+                    'status_wali' => $s->status_wali,
+                    'no_hp_wali' => $s->no_hp_wali,
+                    'pendidikan_wali' => $s->pendidikan_wali,
+                    'pekerjaan_wali' => $s->pekerjaan_wali,
+                    'penghasilan_wali' => $s->penghasilan_wali,
+                    'fotokk' => $s->fotokk,
+                    'fotoakta' => $s->fotoakta,
+                    'fototransfer' => $s->fototransfer,
+                    'tempat_lahir' => $s->tempat_lahir,
+                    'tanggal_lahir' => $s->tanggal_lahir,
+                    'created_at' => $s->created_at->format('Y-m-d H:i'),
+                    'updated_at' => $s->updated_at->format('Y-m-d H:i'),
                 ];
             }))
             ->toBrowser();
