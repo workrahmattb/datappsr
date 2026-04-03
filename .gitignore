@@ -1,12 +1,13 @@
 # Laravel core
 /.phpunit.cache
 /node_modules
-/public/build
+# /public/build
 /public/hot
 /public/storage
 /storage/*.key
 /storage/pail
 /vendor
+/.claude
 .env
 .env.backup
 .env.production

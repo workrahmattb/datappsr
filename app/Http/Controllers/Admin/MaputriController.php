@@ -38,7 +38,7 @@ class MaputriController extends Controller
             'nama' => 'required|string|max:255',
             'tempat_lahir' => 'required|string|max:255',
             'tanggal_lahir' => 'required|date',
-            'nik' => 'nullable|string|max:20',
+            'nik' => 'nullable|string|size:16',
             'kk' => 'nullable|string|max:20',
             'nama_kk' => 'nullable|string|max:255',
             'nisn' => 'nullable|string|max:20',
@@ -97,14 +97,18 @@ class MaputriController extends Controller
             'fototransfer' => 'nullable|image|max:2048',
         ]);
 
+        // Handle file uploads
         if ($request->hasFile('fotokk')) {
-            $validated['fotokk'] = $request->file('fotokk')->store('documents/maputri', 'public');
+            $ext = $request->file('fotokk')->getClientOriginalExtension();
+            $validated['fotokk'] = $request->file('fotokk')->storeAs('documents/maputri', 'kk_' . $validated['nama'] . '.' . $ext, 'public');
         }
         if ($request->hasFile('fotoakta')) {
-            $validated['fotoakta'] = $request->file('fotoakta')->store('documents/maputri', 'public');
+            $ext = $request->file('fotoakta')->getClientOriginalExtension();
+            $validated['fotoakta'] = $request->file('fotoakta')->storeAs('documents/maputri', 'akta_' . $validated['nama'] . '.' . $ext, 'public');
         }
         if ($request->hasFile('fototransfer')) {
-            $validated['fototransfer'] = $request->file('fototransfer')->store('documents/maputri', 'public');
+            $ext = $request->file('fototransfer')->getClientOriginalExtension();
+            $validated['fototransfer'] = $request->file('fototransfer')->storeAs('documents/maputri', 'tf_' . $validated['nama'] . '.' . $ext, 'public');
         }
 
         Maputri::create($validated);
@@ -129,7 +133,7 @@ class MaputriController extends Controller
             'nama' => 'required|string|max:255',
             'tempat_lahir' => 'required|string|max:255',
             'tanggal_lahir' => 'required|date',
-            'nik' => 'nullable|string|max:20',
+            'nik' => 'nullable|string|size:16',
             'kk' => 'nullable|string|max:20',
             'nama_kk' => 'nullable|string|max:255',
             'nisn' => 'nullable|string|max:20',
@@ -190,15 +194,18 @@ class MaputriController extends Controller
 
         if ($request->hasFile('fotokk')) {
             if ($maputri->fotokk) Storage::disk('public')->delete($maputri->fotokk);
-            $validated['fotokk'] = $request->file('fotokk')->store('documents/maputri', 'public');
+            $ext = $request->file('fotokk')->getClientOriginalExtension();
+            $validated['fotokk'] = $request->file('fotokk')->storeAs('documents/maputri', 'kk_' . $validated['nama'] . '.' . $ext, 'public');
         }
         if ($request->hasFile('fotoakta')) {
             if ($maputri->fotoakta) Storage::disk('public')->delete($maputri->fotoakta);
-            $validated['fotoakta'] = $request->file('fotoakta')->store('documents/maputri', 'public');
+            $ext = $request->file('fotoakta')->getClientOriginalExtension();
+            $validated['fotoakta'] = $request->file('fotoakta')->storeAs('documents/maputri', 'akta_' . $validated['nama'] . '.' . $ext, 'public');
         }
         if ($request->hasFile('fototransfer')) {
             if ($maputri->fototransfer) Storage::disk('public')->delete($maputri->fototransfer);
-            $validated['fototransfer'] = $request->file('fototransfer')->store('documents/maputri', 'public');
+            $ext = $request->file('fototransfer')->getClientOriginalExtension();
+            $validated['fototransfer'] = $request->file('fototransfer')->storeAs('documents/maputri', 'tf_' . $validated['nama'] . '.' . $ext, 'public');
         }
 
         $maputri->update($validated);
