@@ -4,14 +4,22 @@
         <div class="flex-1">
             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Ketik Nama Calon
                 Santri</label>
-            <input type="text" wire:model.live="search" placeholder="Cari nama santri..."
+            <input type="text" wire:model.live="search" placeholder="Cari nama siswa..."
                 class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
         </div>
-
-
     </div>
 
-    <!-- Table Desktop View -->
+    <!-- Initial State - Show message to search -->
+    @if(!$hasSearched || strlen($search) === 0)
+        <div class="text-center py-12 bg-gray-50 dark:bg-gray-700/50 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600">
+            <svg class="w-12 h-12 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+            </svg>
+            <p class="text-gray-500 dark:text-gray-400 text-lg font-medium">Ketik nama siswa untuk mencari</p>
+            <p class="text-gray-400 dark:text-gray-500 text-sm mt-1">Data akan muncul setelah Anda mengetik di kolom pencarian</p>
+        </div>
+    @else
+        <!-- Table Desktop View -->
     <div class="hidden md:block overflow-x-auto border border-gray-300 rounded-lg dark:border-gray-600">
         <table class="w-full text-sm">
             <thead class="bg-gray-100 dark:bg-gray-700 border-b border-gray-300 dark:border-gray-600">
@@ -156,4 +164,5 @@
             </div>
         @endif
     </div>
+    @endif
 </div>

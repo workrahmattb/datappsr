@@ -1,23 +1,45 @@
-# Laravel core
-/.phpunit.cache
-/node_modules
-# /public/build
-/public/hot
-/public/storage
-/storage/*.key
-/storage/pail
+# Laravel & PHP
 /vendor
-/.claude
+/.phpunit.cache
+/.phpunit.result.cache
+/phpunit.xml
+/phpunit.xml.bkp
+/auth.json
+/phpactor.json
+/Homestead.json
+/Homestead.yaml
+
+# Environment
 .env
 .env.backup
 .env.production
-.phpactor.json
-.phpunit.result.cache
-Homestead.json
-Homestead.yaml
-npm-debug.log
-yarn-error.log
-/auth.json
+.env.*
+!.env.example
+
+# Node / Frontend
+/node_modules
+/npm-debug.log
+/yarn-error.log
+# /public/build
+/public/hot
+
+# Laravel Storage & Cache
+/public/storage
+/storage/*.key
+/storage/pail
+/storage/logs/*
+/storage/framework/cache/*
+/storage/framework/sessions/*
+/storage/framework/views/*
+/bootstrap/cache/*
+!bootstrap/cache/.gitignore
+
+# Database
+/database/migrations/*.sql
+/database/migrations/*.sqlite
+/database/*.sqlite
+/database/*.sqlite-journal
+/.sqlite
 
 # IDE
 /.fleet
@@ -25,45 +47,7 @@ yarn-error.log
 /.nova
 /.vscode
 /.zed
-
-# Laravel & PHP
-/.DS_Store
-/Thumbs.db
-/storage/*.key
-/storage/logs/*
-/storage/framework/cache/*
-/storage/framework/sessions/*
-/storage/framework/views/*
-/bootstrap/cache/*
-!bootstrap/cache/.gitignore
-/homestead.yaml
-/phpunit.xml
-/.env
-/.env.*
-!/.env.example
-/composer.lock
-!/composer.json
-/package-lock.json
-!/package.json
-
-# Database
-/database/*.sqlite
-/database/*.sqlite-journal
-/.sqlite
-
-# Testing
-/.phpunit.result.cache
-/phpunit.xml
-/coverage
-/.phpunit.cache
-
-# Frontend
-/node_modules
-/npm-debug.log
-/yarn-error.log
-/public/hot
-/public/mix-manifest.json
-/public/storage
+/.claude
 
 # System
 .DS_Store
