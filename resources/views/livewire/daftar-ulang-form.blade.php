@@ -254,11 +254,11 @@
 
                     <div class="rounded-xl shadow-lg border-2 border-gray-200 bg-gradient-to-r from-green-50 to-emerald-50 p-4 sm:p-6">
                         <div class="flex flex-col-reverse sm:flex-row gap-3">
-                            <a href="{{ route('daftar-ulang.table') }}" class="flex-1 bg-gray-600 hover:bg-gray-700 text-white font-semibold py-3 sm:py-4 px-4 sm:px-6 rounded-lg transition text-center flex items-center justify-center gap-2 active:bg-gray-800">
+                            <a href="/" class="flex-1 bg-gray-600 hover:bg-gray-700 text-white font-semibold py-3 sm:py-4 px-4 sm:px-6 rounded-lg transition text-center flex items-center justify-center gap-2 active:bg-gray-800">
                                 <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
                                 </svg>
-                                <span>Batal</span>
+                                <span>Beranda</span>
                             </a>
                             <button type="submit" class="flex-1 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-semibold py-3 sm:py-4 px-4 sm:px-6 rounded-lg transition flex items-center justify-center gap-2 active:from-green-700 active:to-emerald-700">
                                 <span wire:loading.remove class="flex items-center justify-center gap-2">
@@ -421,14 +421,17 @@
                             <div>
                                 <label class="block text-sm font-semibold text-gray-800 mb-2">Pendidikan Ayah <span class="text-red-500">*</span></label>
                                 <select wire:model="pendidikan_ayah" required class="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-green-500 focus:outline-none">
-                                    <option value="">Pilih</option>
-                                    <option value="SD">SD</option>
-                                    <option value="SMP">SMP</option>
-                                    <option value="SMA">SMA</option>
+                                    <option value="">Pilih Pendidikan</option>
+                                    <option value="SD/Sederajat">SD/Sederajat</option>
+                                    <option value="SMP/Sederajat">SMP/Sederajat</option>
+                                    <option value="SMA/Sederajat">SMA/Sederajat</option>
+                                    <option value="D1">D1</option>
+                                    <option value="D2">D2</option>
                                     <option value="D3">D3</option>
-                                    <option value="S1">S1</option>
+                                    <option value="D4/S1">D4/S1</option>
                                     <option value="S2">S2</option>
                                     <option value="S3">S3</option>
+                                    <option value="Tidak Bersekolah">Tidak Bersekolah</option>
                                 </select>
                                 @error('pendidikan_ayah') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
                             </div>
@@ -436,13 +439,24 @@
                             <div>
                                 <label class="block text-sm font-semibold text-gray-800 mb-2">Pekerjaan Ayah <span class="text-red-500">*</span></label>
                                 <select wire:model.live="pekerjaan_ayah" required class="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-green-500 focus:outline-none">
-                                    <option value="">Pilih</option>
+                                    <option value="">Pilih Pekerjaan</option>
                                     <option value="Tidak Bekerja">Tidak Bekerja</option>
+                                    <option value="Pensiunan">Pensiunan</option>
                                     <option value="PNS">PNS</option>
+                                    <option value="TNI/Polisi">TNI/Polisi</option>
+                                    <option value="Guru/Dosen">Guru/Dosen</option>
+                                    <option value="Pegawai Swasta">Pegawai Swasta</option>
                                     <option value="Wiraswasta">Wiraswasta</option>
+                                    <option value="Pengacara/Jaksa/Hakim/Notaris">Pengacara/Jaksa/Hakim/Notaris</option>
+                                    <option value="Seniman/Pelukis/Artis/Sejenis">Seniman/Pelukis/Artis/Sejenis</option>
+                                    <option value="Dokter/Bidan/Perawat">Dokter/Bidan/Perawat</option>
+                                    <option value="Pilot/Pramugara">Pilot/Pramugara</option>
                                     <option value="Pedagang">Pedagang</option>
-                                    <option value="Petani">Petani</option>
-                                    <option value="Buruh">Buruh</option>
+                                    <option value="Petani/Peternak">Petani/Peternak</option>
+                                    <option value="Nelayan">Nelayan</option>
+                                    <option value="Buruh (Tani/Pabrik/Bangunan)">Buruh (Tani/Pabrik/Bangunan)</option>
+                                    <option value="Sopir/Masinis/Kondektur">Sopir/Masinis/Kondektur</option>
+                                    <option value="Politikus">Politikus</option>
                                     <option value="Lainnya">Lainnya</option>
                                 </select>
                                 @error('pekerjaan_ayah') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
@@ -451,12 +465,18 @@
                             <div>
                                 <label class="block text-sm font-semibold text-gray-800 mb-2">Penghasilan Ayah <span class="text-red-500">*</span></label>
                                 <select wire:model="penghasilan_ayah" required class="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-green-500 focus:outline-none">
-                                    <option value="">Pilih</option>
+                                    <option value="">Pilih Penghasilan</option>
                                     <option value="Tidak Ada">Tidak Ada</option>
-                                    <option value="< 1 Juta">< 1 Juta</option>
-                                    <option value="1-3 Juta">1-3 Juta</option>
-                                    <option value="3-5 Juta">3-5 Juta</option>
-                                    <option value="> 5 Juta">> 5 Juta</option>
+                                    <option value="Dibawah 800.000">Dibawah 800.000</option>
+                                    <option value="800.001 - 1.200.000">800.001 - 1.200.000</option>
+                                    <option value="1.200.001 - 1.800.000">1.200.001 - 1.800.000</option>
+                                    <option value="1.800.001 - 2.500.000">1.800.001 - 2.500.000</option>
+                                    <option value="2.500.001 - 3.500.000">2.500.001 - 3.500.000</option>
+                                    <option value="3.500.001 - 4.800.000">3.500.001 - 4.800.000</option>
+                                    <option value="4.800.001 - 6.500.000">4.800.001 - 6.500.000</option>
+                                    <option value="6.500.001 - 10.000.000">6.500.001 - 10.000.000</option>
+                                    <option value="10.000.001 - 20.000.000">10.000.001 - 20.000.000</option>
+                                    <option value="Diatas 20.000.001">Diatas 20.000.001</option>
                                 </select>
                                 @error('penghasilan_ayah') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
                             </div>
@@ -497,14 +517,17 @@
                             <div>
                                 <label class="block text-sm font-semibold text-gray-800 mb-2">Pendidikan Ibu <span class="text-red-500">*</span></label>
                                 <select wire:model="pendidikan_ibu" required class="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-green-500 focus:outline-none">
-                                    <option value="">Pilih</option>
-                                    <option value="SD">SD</option>
-                                    <option value="SMP">SMP</option>
-                                    <option value="SMA">SMA</option>
+                                    <option value="">Pilih Pendidikan</option>
+                                    <option value="SD/Sederajat">SD/Sederajat</option>
+                                    <option value="SMP/Sederajat">SMP/Sederajat</option>
+                                    <option value="SMA/Sederajat">SMA/Sederajat</option>
+                                    <option value="D1">D1</option>
+                                    <option value="D2">D2</option>
                                     <option value="D3">D3</option>
-                                    <option value="S1">S1</option>
+                                    <option value="D4/S1">D4/S1</option>
                                     <option value="S2">S2</option>
                                     <option value="S3">S3</option>
+                                    <option value="Tidak Bersekolah">Tidak Bersekolah</option>
                                 </select>
                                 @error('pendidikan_ibu') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
                             </div>
@@ -512,11 +535,24 @@
                             <div>
                                 <label class="block text-sm font-semibold text-gray-800 mb-2">Pekerjaan Ibu <span class="text-red-500">*</span></label>
                                 <select wire:model.live="pekerjaan_ibu" required class="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-green-500 focus:outline-none">
-                                    <option value="">Pilih</option>
+                                    <option value="">Pilih Pekerjaan</option>
                                     <option value="Tidak Bekerja">Tidak Bekerja</option>
+                                    <option value="Pensiunan">Pensiunan</option>
                                     <option value="PNS">PNS</option>
+                                    <option value="TNI/Polisi">TNI/Polisi</option>
+                                    <option value="Guru/Dosen">Guru/Dosen</option>
+                                    <option value="Pegawai Swasta">Pegawai Swasta</option>
                                     <option value="Wiraswasta">Wiraswasta</option>
-                                    <option value="Ibu Rumah Tangga">Ibu Rumah Tangga</option>
+                                    <option value="Pengacara/Jaksa/Hakim/Notaris">Pengacara/Jaksa/Hakim/Notaris</option>
+                                    <option value="Seniman/Pelukis/Artis/Sejenis">Seniman/Pelukis/Artis/Sejenis</option>
+                                    <option value="Dokter/Bidan/Perawat">Dokter/Bidan/Perawat</option>
+                                    <option value="Pilot/Pramugara">Pilot/Pramugara</option>
+                                    <option value="Pedagang">Pedagang</option>
+                                    <option value="Petani/Peternak">Petani/Peternak</option>
+                                    <option value="Nelayan">Nelayan</option>
+                                    <option value="Buruh (Tani/Pabrik/Bangunan)">Buruh (Tani/Pabrik/Bangunan)</option>
+                                    <option value="Sopir/Masinis/Kondektur">Sopir/Masinis/Kondektur</option>
+                                    <option value="Politikus">Politikus</option>
                                     <option value="Lainnya">Lainnya</option>
                                 </select>
                                 @error('pekerjaan_ibu') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
@@ -525,12 +561,18 @@
                             <div>
                                 <label class="block text-sm font-semibold text-gray-800 mb-2">Penghasilan Ibu <span class="text-red-500">*</span></label>
                                 <select wire:model="penghasilan_ibu" required class="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-green-500 focus:outline-none">
-                                    <option value="">Pilih</option>
+                                    <option value="">Pilih Penghasilan</option>
                                     <option value="Tidak Ada">Tidak Ada</option>
-                                    <option value="< 1 Juta">< 1 Juta</option>
-                                    <option value="1-3 Juta">1-3 Juta</option>
-                                    <option value="3-5 Juta">3-5 Juta</option>
-                                    <option value="> 5 Juta">> 5 Juta</option>
+                                    <option value="Dibawah 800.000">Dibawah 800.000</option>
+                                    <option value="800.001 - 1.200.000">800.001 - 1.200.000</option>
+                                    <option value="1.200.001 - 1.800.000">1.200.001 - 1.800.000</option>
+                                    <option value="1.800.001 - 2.500.000">1.800.001 - 2.500.000</option>
+                                    <option value="2.500.001 - 3.500.000">2.500.001 - 3.500.000</option>
+                                    <option value="3.500.001 - 4.800.000">3.500.001 - 4.800.000</option>
+                                    <option value="4.800.001 - 6.500.000">4.800.001 - 6.500.000</option>
+                                    <option value="6.500.001 - 10.000.000">6.500.001 - 10.000.000</option>
+                                    <option value="10.000.001 - 20.000.000">10.000.001 - 20.000.000</option>
+                                    <option value="Diatas 20.000.001">Diatas 20.000.001</option>
                                 </select>
                                 @error('penghasilan_ibu') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
                             </div>
@@ -623,12 +665,12 @@
                     {{-- SUBMIT --}}
                     <div class="rounded-xl shadow-lg border-2 border-gray-200 bg-gradient-to-r from-green-50 to-emerald-50 p-4 sm:p-6">
                         <div class="flex flex-col-reverse sm:flex-row gap-3">
-                            <button type="button" wire:click="$set('currentStep', 1)" class="flex-1 bg-gray-600 hover:bg-gray-700 text-white font-semibold py-3 sm:py-4 px-4 sm:px-6 rounded-lg transition flex items-center justify-center gap-2 active:bg-gray-800">
+                            <a href="/" class="flex-1 bg-gray-600 hover:bg-gray-700 text-white font-semibold py-3 sm:py-4 px-4 sm:px-6 rounded-lg transition flex items-center justify-center gap-2 active:bg-gray-800">
                                 <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 17l-5-5m0 0l5-5m-5 5h12"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
                                 </svg>
-                                <span>Kembali ke Step 1</span>
-                            </button>
+                                <span>Beranda</span>
+                            </a>
                             <button type="submit" class="flex-1 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-semibold py-3 sm:py-4 px-4 sm:px-6 rounded-lg transition flex items-center justify-center gap-2 active:from-green-700 active:to-emerald-700">
                                 <span wire:loading.remove class="flex items-center justify-center gap-2">
                                     <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
