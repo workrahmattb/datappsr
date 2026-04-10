@@ -83,6 +83,9 @@ class Pendaftaran extends Model
         'fotokk',
         'fotoakta',
         'fototransfer',
+        'bukti_transfer_uang_masuk',
+        'status_bayar_uang_masuk',
+        'keterangan_bayar',
         // Legacy fields
         'asal_sekolah',
         'alamat',
