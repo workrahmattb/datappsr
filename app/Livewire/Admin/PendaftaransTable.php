@@ -20,6 +20,7 @@ class PendaftaransTable extends Component
     public ?string $tahunAjaran = null;
     #[Validate('in:pending,completed')]
     public string $status = '';
+    public ?string $jenjang = null;
     public $deleteId = null;
     public string $deleteItemName = '';
 
@@ -27,6 +28,7 @@ class PendaftaransTable extends Component
         'search' => ['except' => ''],
         'tahunAjaran' => ['except' => null],
         'status' => ['except' => ''],
+        'jenjang' => ['except' => null],
     ];
 
     public function updatingSearch(): void
@@ -40,6 +42,11 @@ class PendaftaransTable extends Component
     }
 
     public function updatingStatus(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatingJenjang(): void
     {
         $this->resetPage();
     }
@@ -87,6 +94,10 @@ class PendaftaransTable extends Component
         $query = Pendaftaran::latest();
         if (!auth()->user()->hasRole('admin') && auth()->user()->jenjang) {
             $query->where('jenjang_pendidikan', auth()->user()->jenjang);
+        }
+
+        if ($this->jenjang) {
+            $query->where('jenjang_pendidikan', $this->jenjang);
         }
 
         SimpleExcelWriter::streamDownload($filename)
@@ -205,6 +216,10 @@ class PendaftaransTable extends Component
 
         if ($this->status) {
             $query->where('status_pendaftaran', $this->status);
+        }
+
+        if ($this->jenjang) {
+            $query->where('jenjang_pendidikan', $this->jenjang);
         }
 
         return view('livewire.admin.pendaftarans-table', [

@@ -48,8 +48,15 @@
                 <option value="pending">Pending</option>
                 <option value="completed">Completed</option>
             </select>
-            @if($search || $tahunAjaran || $status)
-                <button wire:click="$set('search', ''); $set('tahunAjaran', null); $set('status', '')" class="bg-white border border-zinc-200 hover:bg-zinc-50 text-zinc-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm">
+            <select wire:model.live="jenjang" class="bg-zinc-50/50 border border-zinc-200 rounded-lg text-sm px-3 py-2 focus:outline-none focus:ring-2 focus:ring-zinc-900 focus:border-transparent transition-colors min-w-[140px]">
+                <option value="">Semua Jenjang</option>
+                <option value="MTs Putri">MTs Putri</option>
+                <option value="MTs Putra">MTs Putra</option>
+                <option value="MA Putri">MA Putri</option>
+                <option value="MA Putra">MA Putra</option>
+            </select>
+            @if($search || $tahunAjaran || $status || $jenjang)
+                <button wire:click="$set('search', ''); $set('tahunAjaran', null); $set('status', ''); $set('jenjang', null)" class="bg-white border border-zinc-200 hover:bg-zinc-50 text-zinc-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm">
                     Reset Filter
                 </button>
             @endif
@@ -108,7 +115,7 @@
                             </span>
                         </td>
                         <td class="px-6 py-4">
-                            <div class="text-sm text-zinc-900 font-medium">{{ $pendaftaran->no_hp_ibu ?? $pendaftaran->no_hp_ayah ?? 'Tidak ada data' }}</div>
+                            <div class="text-sm text-zinc-900 font-medium">{{ $pendaftaran->no_hp ?? '-' }}</div>
                         </td>
                         <td class="px-6 py-4 text-right">
                             <div class="flex items-center justify-end gap-2">
