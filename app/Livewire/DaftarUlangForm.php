@@ -22,6 +22,7 @@ class DaftarUlangForm extends Component
 
     // Step 1: Bukti Transfer
     public $fototransfer;
+    public $fototransferPath = null;
 
     // Form data (Step 2)
     public $nama, $tempat_lahir, $tanggal_lahir, $nik, $kk, $nama_kk;
@@ -112,8 +113,25 @@ class DaftarUlangForm extends Component
     public function submitStep1()
     {
         $this->validate($this->rulesStep1());
-        $this->currentStep = 2;
-        session()->flash('success', 'Bukti transfer berhasil diupload. Silakan lengkapi data pendaftaran.');
+        
+        try {
+            // Simpan file bukti transfer ke storage
+            $sanitizedNama = preg_replace('/[^A-Za-z0-9\-]/', '_', $this->nama);
+            $sanitizedNama = preg_replace('/_+/', '_', $sanitizedNama);
+            $sanitizedNama = trim($sanitizedNama, '_');
+            $timestamp = now()->format('YmdHis');
+
+            $this->fototransferPath = $this->fototransfer->storeAs(
+                'dokumen-siswa/transfer',
+                "TRANSFER_{$this->nisn}_{$sanitizedNama}_{$timestamp}.{$this->fototransfer->getClientOriginalExtension()}",
+                'public'
+            );
+
+            $this->currentStep = 2;
+            session()->flash('success', 'Bukti transfer berhasil diupload. Silakan lengkapi data pendaftaran.');
+        } catch (\Exception $e) {
+            session()->flash('error', 'Gagal mengupload bukti transfer: ' . $e->getMessage());
+        }
     }
 
     public function updatedPekerjaanAyah($value)
@@ -141,13 +159,6 @@ class DaftarUlangForm extends Component
             $sanitizedNama = preg_replace('/_+/', '_', $sanitizedNama);
             $sanitizedNama = trim($sanitizedNama, '_');
             $timestamp = now()->format('YmdHis');
-
-            // Upload bukti transfer
-            $fototransferPath = $this->fototransfer->storeAs(
-                'dokumen-siswa/transfer',
-                "TRANSFER_{$this->nisn}_{$sanitizedNama}_{$timestamp}.{$this->fototransfer->getClientOriginalExtension()}",
-                'public'
-            );
 
             // Upload KK
             $fotokkPath = $this->fotokk->storeAs(
@@ -202,7 +213,7 @@ class DaftarUlangForm extends Component
                 'rw' => $this->rw,
                 'fotokk' => $fotokkPath,
                 'fotoakta' => $fotoaktaPath,
-                'fototransfer' => $fototransferPath,
+                'fototransfer' => $this->fototransferPath,
             ];
 
             $pendaftaran = Pendaftaran::findOrFail($this->pendaftaranId);
