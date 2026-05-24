@@ -39,6 +39,7 @@
             </div>
             
             <nav class="mt-4 px-3 space-y-1">
+                @if(auth()->user()->hasRole('admin'))
                 <a href="{{ route('admin.dashboard') }}" wire:navigate
                    class="flex items-center px-4 py-3 rounded-lg {{ request()->routeIs('admin.dashboard') ? 'bg-white/20 shadow-lg' : 'hover:bg-white/10' }} transition-all duration-200 group">
                     <svg class="w-5 h-5 mr-3 {{ request()->routeIs('admin.dashboard') ? 'text-white' : 'text-emerald-200 group-hover:text-white' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -46,6 +47,7 @@
                     </svg>
                     <span class="font-medium">Dashboard</span>
                 </a>
+                @endif
 
                 <div class="pt-4 pb-2">
                     <p class="px-4 text-xs font-semibold text-emerald-200 uppercase tracking-wider">Data Siswa</p>
@@ -91,6 +93,7 @@
                 </a>
                 @endif
 
+                @if(auth()->user()->hasRole('admin'))
                 <div class="pt-4 pb-2 border-t border-emerald-500">
                     <p class="px-4 text-xs font-semibold text-emerald-200 uppercase tracking-wider">Pendaftaran</p>
                 </div>
@@ -102,6 +105,7 @@
                     </svg>
                     <span class="font-medium">Data Pendaftaran</span>
                 </a>
+                @endif
             </nav>
 
             <div class="absolute bottom-0 w-72 p-4 border-t border-emerald-500 bg-emerald-800/30">
@@ -144,11 +148,13 @@
                     </div>
                     
                     <div class="flex items-center space-x-4">
+                        @if(auth()->user()->hasRole('admin'))
                         <a href="{{ route('admin.dashboard') }}" wire:navigate class="text-sm text-gray-600 hover:text-emerald-600 transition">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
                             </svg>
                         </a>
+                        @endif
                         <div class="h-6 w-px bg-gray-300"></div>
                         <span class="text-sm font-medium text-gray-700">{{ auth()->user()->name }}</span>
                     </div>
@@ -158,7 +164,9 @@
             <!-- Mobile Menu -->
             <div id="mobile-menu" class="hidden md:hidden bg-emerald-700 text-white">
                 <nav class="p-4 space-y-2">
+                    @if(auth()->user()->hasRole('admin'))
                     <a href="{{ route('admin.dashboard') }}" wire:navigate class="block py-2 px-4 hover:bg-white/10 rounded-lg">Dashboard</a>
+                    @endif
                     @if(auth()->user()->hasRole('admin') || auth()->user()->hasRole('mtsputra'))
                     <a href="{{ route('admin.mtsputras.index') }}" wire:navigate class="block py-2 px-4 hover:bg-white/10 rounded-lg">MTs Putra</a>
                     @endif
@@ -171,7 +179,9 @@
                     @if(auth()->user()->hasRole('admin') || auth()->user()->hasRole('maputri'))
                     <a href="{{ route('admin.maputris.index') }}" wire:navigate class="block py-2 px-4 hover:bg-white/10 rounded-lg">MA Putri</a>
                     @endif
+                    @if(auth()->user()->hasRole('admin'))
                     <a href="{{ route('admin.pendaftarans.index') }}" wire:navigate class="block py-2 px-4 hover:bg-white/10 rounded-lg">Pendaftaran</a>
+                    @endif
                     <form method="POST" action="{{ route('logout') }}" class="pt-2 border-t border-emerald-500">
                         @csrf
                         <button type="submit" class="block w-full text-left py-2 px-4 hover:bg-white/10 rounded-lg">Logout</button>

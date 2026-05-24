@@ -129,7 +129,7 @@
                             <div>
                                 <p class="text-amber-900 dark:text-amber-300 font-semibold mb-1">Informasi Selanjutnya</p>
                                 <p class="text-amber-800 dark:text-amber-200 text-sm">
-                                    Data Anda telah tersimpan. Silakan tunggu informasi selanjutnya dari pihak sekolah mengenai jadwal tes dan pengumuman.
+                                    Data Alhamdulillah sudah tersimpan dan mohon tunggu informasi selanjutnya oleh Pihak Pondok Pesantren Syafa'aturrasul
                                 </p>
                             </div>
                         </div>
@@ -216,44 +216,6 @@
             @if($currentStep == 1)
                 <form wire:submit.prevent="submitStep1" class="px-6 sm:px-8 py-8 relative">
                     
-                    {{-- Loading Overlay (muncul saat submit step 1 diproses) --}}
-                    <div wire:loading wire:target="submitStep1" class="absolute inset-0 z-50 flex items-center justify-center bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm rounded-xl">
-                        <div class="text-center transform transition-all duration-300">
-                            {{-- Animated Upload Icon --}}
-                            <div class="relative mx-auto mb-6 w-20 h-20">
-                                {{-- Outer ring --}}
-                                <div class="absolute inset-0 rounded-full border-4 border-blue-200 dark:border-blue-800"></div>
-                                {{-- Animated spinner ring --}}
-                                <div class="absolute inset-0 rounded-full border-4 border-transparent border-t-blue-600 dark:border-t-blue-400 animate-spin"></div>
-                                {{-- Upload icon --}}
-                                <div class="absolute inset-0 flex items-center justify-center">
-                                    <svg class="w-8 h-8 text-blue-600 dark:text-blue-400 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
-                                    </svg>
-                                </div>
-                            </div>
-
-                            {{-- Status Text --}}
-                            <h3 class="text-xl font-bold text-gray-800 dark:text-gray-200 mb-2">Mengupload Berkas...</h3>
-                            <p class="text-sm text-gray-600 dark:text-gray-400 mb-6 max-w-xs mx-auto">
-                                Mohon tunggu sebentar, sistem sedang memproses dan menyimpan bukti transfer Anda.
-                            </p>
-
-                            {{-- Progress Bar --}}
-                            <div class="w-64 mx-auto bg-gray-200 dark:bg-gray-700 rounded-full h-2.5 overflow-hidden">
-                                <div class="h-full bg-gradient-to-r from-blue-500 to-blue-600 dark:from-blue-400 dark:to-blue-500 rounded-full animate-pulse" style="width: 60%"></div>
-                            </div>
-
-                            {{-- Animated Dots --}}
-                            <div class="flex justify-center gap-1.5 mt-4">
-                                <span class="w-2 h-2 bg-blue-600 dark:bg-blue-400 rounded-full animate-bounce" style="animation-delay: 0ms"></span>
-                                <span class="w-2 h-2 bg-blue-600 dark:bg-blue-400 rounded-full animate-bounce" style="animation-delay: 150ms"></span>
-                                <span class="w-2 h-2 bg-blue-600 dark:bg-blue-400 rounded-full animate-bounce" style="animation-delay: 300ms"></span>
-                                <span class="w-2 h-2 bg-blue-600 dark:bg-blue-400 rounded-full animate-bounce" style="animation-delay: 450ms"></span>
-                            </div>
-                        </div>
-                    </div>
-
                     <div class="mb-8 rounded-xl shadow-lg border-2 border-blue-100 dark:border-gray-700 bg-white dark:bg-gray-800 overflow-hidden">
                         <div class="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-700 px-6 py-4 border-b-2 border-blue-200 dark:border-gray-600">
                             <h2 class="text-xl font-bold text-blue-800 dark:text-blue-400 flex items-center gap-2">
@@ -270,15 +232,65 @@
                                 </p>
                             </div>
 
-                            <div>
+                            <div x-data="{ uploading: false, progress: 0, uploaded: false }"
+                                 x-on:livewire-upload-start.window="uploading = true; progress = 0; uploaded = false"
+                                 x-on:livewire-upload-progress.window="progress = $event.detail.progress"
+                                 x-on:livewire-upload-finish.window="uploading = false; uploaded = true"
+                                 x-on:livewire-upload-error.window="uploading = false; uploaded = false">
                                 <label class="block text-sm font-semibold text-gray-800 dark:text-gray-200 mb-2">
                                     Bukti Transfer <span class="text-red-500 dark:text-red-400">*</span>
                                 </label>
                                 <input type="file" wire:model="fototransfer" accept=".pdf,.jpg,.jpeg,.png" class="block w-full text-sm file:bg-blue-500 file:border-0 file:text-white file:px-4 file:py-2 file:rounded-md file:cursor-pointer file:font-semibold dark:text-gray-300">
-                                <p class="text-xs text-gray-600 dark:text-gray-400 mt-2">PDF, JPG, PNG (Max. 5MB)</p>
+                                <p class="text-xs text-gray-600 dark:text-gray-400 mt-2">PDF, JPG, PNG (Max. 2MB)</p>
                                 @error('fototransfer') <p class="text-red-500 dark:text-red-400 text-sm mt-1">{{ $message }}</p> @enderror
-                                @if ($fototransfer)
-                                    <div class="mt-3 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+
+                                {{-- Progress Bar (real-time dari Livewire upload events) --}}
+                                <div x-show="uploading" x-cloak class="mt-4 bg-white dark:bg-gray-800 rounded-lg border border-blue-200 dark:border-blue-800 p-4 shadow-sm">
+                                    <div class="flex items-center gap-3 mb-3">
+                                        <svg class="animate-spin h-5 w-5 text-blue-600 dark:text-blue-400" fill="none" viewBox="0 0 24 24">
+                                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                        </svg>
+                                        <div>
+                                            <p class="text-sm font-semibold text-blue-800 dark:text-blue-300">Mengupload Berkas...</p>
+                                            <p class="text-xs text-blue-600 dark:text-blue-400" x-text="progress + '%'"></p>
+                                        </div>
+                                    </div>
+                                    <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3 overflow-hidden">
+                                        <div class="h-full bg-gradient-to-r from-blue-500 to-blue-600 dark:from-blue-400 dark:to-blue-500 rounded-full transition-all duration-300 ease-out"
+                                             :style="'width: ' + progress + '%'"></div>
+                                    </div>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">Mohon tunggu, jangan tutup halaman ini...</p>
+                                </div>
+
+                                {{-- Success Indicator (setelah upload ke temp selesai) --}}
+                                <div x-show="uploaded" x-cloak class="mt-4 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border-2 border-green-300 dark:border-green-700 rounded-xl p-5 shadow-sm">
+                                    <div class="flex items-center gap-4">
+                                        <div class="flex-shrink-0 w-12 h-12 rounded-full bg-green-100 dark:bg-green-800/50 flex items-center justify-center">
+                                            <svg class="w-7 h-7 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
+                                            </svg>
+                                        </div>
+                                        <div class="flex-1">
+                                            <p class="text-base font-bold text-green-800 dark:text-green-300">✓ File Berhasil Diupload!</p>
+                                            <p class="text-sm text-green-600 dark:text-green-400 mt-0.5">
+                                                @if ($fototransfer)
+                                                    {{ $fototransfer->getClientOriginalName() }} — Siap diproses
+                                                @endif
+                                            </p>
+                                        </div>
+                                        <div class="flex-shrink-0">
+                                            <svg class="w-6 h-6 text-green-400 dark:text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {{-- Nama file preview (fallback) --}}
+                                @if ($fototransfer && !$errors->has('fototransfer'))
+                                    <div class="mt-3 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg"
+                                         x-show="!uploading && !uploaded">
                                         <p class="text-sm text-blue-700 dark:text-blue-300 flex items-center gap-2">
                                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
@@ -299,20 +311,35 @@
                                 </svg>
                                 <span>Beranda</span>
                             </a>
-                            <button type="submit" class="flex-1 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-semibold py-3 sm:py-4 px-4 sm:px-6 rounded-lg transition flex items-center justify-center gap-2 active:from-green-700 active:to-emerald-700 dark:active:from-green-800 dark:active:to-emerald-800">
+                            <button type="submit" wire:loading.attr="disabled" 
+                                    class="flex-1 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-semibold py-3 sm:py-4 px-4 sm:px-6 rounded-lg transition-all duration-300 flex items-center justify-center gap-2 active:from-green-700 active:to-emerald-700 dark:active:from-green-800 dark:active:to-emerald-800 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:from-green-600 disabled:hover:to-emerald-600 relative overflow-hidden group">
+                                {{-- Default state --}}
                                 <span wire:loading.remove wire:target="submitStep1" class="flex items-center justify-center gap-2">
                                     <span>Lanjutkan ke Form Data</span>
-                                    <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <svg class="w-5 h-5 flex-shrink-0 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
                                     </svg>
                                 </span>
-                                <span wire:loading wire:target="submitStep1" class="flex items-center gap-2">
-                                    <svg class="animate-spin h-5 w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24">
-                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                {{-- Loading state di dalam tombol --}}
+                                <span wire:loading wire:target="submitStep1" class="flex items-center justify-center gap-3 w-full">
+                                    {{-- Animated spinner --}}
+                                    <svg class="animate-spin h-5 w-5 flex-shrink-0 text-white" fill="none" viewBox="0 0 24 24">
+                                        <circle class="opacity-30" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-100" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                     </svg>
-                                    <span>Memproses...</span>
+                                    {{-- Pulsing text --}}
+                                    <span class="animate-pulse font-semibold">Menyimpan...</span>
+                                    {{-- Bouncing dots --}}
+                                    <span class="flex items-center gap-1">
+                                        <span class="w-1.5 h-1.5 bg-white rounded-full animate-bounce" style="animation-delay: 0ms"></span>
+                                        <span class="w-1.5 h-1.5 bg-white rounded-full animate-bounce" style="animation-delay: 150ms"></span>
+                                        <span class="w-1.5 h-1.5 bg-white rounded-full animate-bounce" style="animation-delay: 300ms"></span>
+                                    </span>
                                 </span>
+                                {{-- Progress bar animasi di bottom tombol --}}
+                                <span wire:loading wire:target="submitStep1" 
+                                      class="absolute bottom-0 left-0 h-1 bg-gradient-to-r from-green-300 via-white to-green-300 animate-pulse rounded-full"
+                                      style="width: 65%"></span>
                             </button>
                         </div>
                     </div>
@@ -354,15 +381,22 @@
                             </div>
 
                             <div>
-                                <label class="block text-sm font-semibold text-gray-800 dark:text-gray-200 mb-2">NIK <span class="text-red-500 dark:text-red-400">*</span></label>
+                                <label class="block text-sm font-semibold text-gray-800 dark:text-gray-200 mb-2">NIK (Nomor Induk Keluarga) <span class="text-red-500 dark:text-red-400">*</span></label>
                                 <input type="text" wire:model="nik" maxlength="16" required class="w-full px-4 py-3 rounded-lg border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:border-green-500 dark:focus:border-green-400 focus:outline-none">
                                 @error('nik') <p class="text-red-500 dark:text-red-400 text-sm mt-1">{{ $message }}</p> @enderror
                             </div>
 
                             <div>
-                                <label class="block text-sm font-semibold text-gray-800 dark:text-gray-200 mb-2">NISN <span class="text-red-500 dark:text-red-400">*</span></label>
+                                <label class="block text-sm font-semibold text-gray-800 dark:text-gray-200 mb-2">NISN (Nomor Induk Siswa Nasional) <span class="text-red-500 dark:text-red-400">*</span></label>
                                 <input type="text" wire:model="nisn" maxlength="10" required class="w-full px-4 py-3 rounded-lg border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:border-green-500 dark:focus:border-green-400 focus:outline-none">
                                 @error('nisn') <p class="text-red-500 dark:text-red-400 text-sm mt-1">{{ $message }}</p> @enderror
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-800 dark:text-gray-200 mb-2">Nomor Kartu Keluarga (KK)</label>
+                                <input type="text" wire:model="kk" maxlength="16" class="w-full px-4 py-3 rounded-lg border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:border-green-500 dark:focus:border-green-400 focus:outline-none">
+                                <p class="text-xs text-gray-600 dark:text-gray-400 mt-2">16 digit nomor KK (jika ada)</p>
+                                @error('kk') <p class="text-red-500 dark:text-red-400 text-sm mt-1">{{ $message }}</p> @enderror
                             </div>
 
                             <div>
@@ -399,7 +433,7 @@
                             </div>
 
                             <div>
-                                <label class="block text-sm font-semibold text-gray-800 dark:text-gray-200 mb-2">NPSN <span class="text-red-500 dark:text-red-400">*</span></label>
+                                <label class="block text-sm font-semibold text-gray-800 dark:text-gray-200 mb-2">NPSN (Nomor Pokok Sekolah Nasional) <span class="text-red-500 dark:text-red-400">*</span></label>
                                 <input type="text" wire:model="npsn_sekolah_sebelumnya" required class="w-full px-4 py-3 rounded-lg border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:border-green-500 dark:focus:border-green-400 focus:outline-none">
                                 @error('npsn_sekolah_sebelumnya') <p class="text-red-500 dark:text-red-400 text-sm mt-1">{{ $message }}</p> @enderror
                             </div>
@@ -434,7 +468,7 @@
                             </div>
 
                             <div>
-                                <label class="block text-sm font-semibold text-gray-800 dark:text-gray-200 mb-2">NIK Ayah <span class="text-red-500 dark:text-red-400">*</span></label>
+                                <label class="block text-sm font-semibold text-gray-800 dark:text-gray-200 mb-2">NIK Ayah (Nomor Induk Keluarga) <span class="text-red-500 dark:text-red-400">*</span></label>
                                 <input type="text" wire:model="nik_ayah" maxlength="16" required class="w-full px-4 py-3 rounded-lg border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:border-green-500 dark:focus:border-green-400 focus:outline-none">
                                 @error('nik_ayah') <p class="text-red-500 dark:text-red-400 text-sm mt-1">{{ $message }}</p> @enderror
                             </div>
@@ -530,7 +564,7 @@
                             </div>
 
                             <div>
-                                <label class="block text-sm font-semibold text-gray-800 dark:text-gray-200 mb-2">NIK Ibu <span class="text-red-500 dark:text-red-400">*</span></label>
+                                <label class="block text-sm font-semibold text-gray-800 dark:text-gray-200 mb-2">NIK Ibu (Nomor Induk Keluarga) <span class="text-red-500 dark:text-red-400">*</span></label>
                                 <input type="text" wire:model="nik_ibu" maxlength="16" required class="w-full px-4 py-3 rounded-lg border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:border-green-500 dark:focus:border-green-400 focus:outline-none">
                                 @error('nik_ibu') <p class="text-red-500 dark:text-red-400 text-sm mt-1">{{ $message }}</p> @enderror
                             </div>
@@ -671,17 +705,100 @@
                         </div>
                         <div class="p-6">
                         
-                        <div class="space-y-6">
+                        <div x-data="{ kkUpload: { uploading: false, progress: 0, uploaded: false }, aktaUpload: { uploading: false, progress: 0, uploaded: false } }"
+                             x-on:livewire-upload-start.window="let m = $event.detail?.model || $event.target.getAttribute?.('wire:model'); if (m === 'fotokk') { kkUpload.uploading = true; kkUpload.progress = 0; kkUpload.uploaded = false } else if (m === 'fotoakta') { aktaUpload.uploading = true; aktaUpload.progress = 0; aktaUpload.uploaded = false }"
+                             x-on:livewire-upload-progress.window="let m = $event.detail?.model || $event.target.getAttribute?.('wire:model'); if (m === 'fotokk') kkUpload.progress = $event.detail.progress; else if (m === 'fotoakta') aktaUpload.progress = $event.detail.progress"
+                             x-on:livewire-upload-finish.window="let m = $event.detail?.model || $event.target.getAttribute?.('wire:model'); if (m === 'fotokk') { kkUpload.uploading = false; kkUpload.uploaded = true } else if (m === 'fotoakta') { aktaUpload.uploading = false; aktaUpload.uploaded = true }"
+                             x-on:livewire-upload-error.window="let m = $event.detail?.model || $event.target.getAttribute?.('wire:model'); if (m === 'fotokk') { kkUpload.uploading = false; kkUpload.uploaded = false } else if (m === 'fotoakta') { aktaUpload.uploading = false; aktaUpload.uploaded = false }">
+                            <div class="space-y-6">
                             {{-- KK --}}
                             <div>
                                 <label class="block text-sm font-semibold text-gray-800 dark:text-gray-200 mb-2">
                                     Foto Kartu Keluarga (KK) <span class="text-red-500 dark:text-red-400">*</span>
                                 </label>
-                                <input type="file" wire:model="fotokk" accept=".pdf,.jpg,.jpeg,.png" class="block w-full text-sm file:bg-green-500 file:border-0 file:text-white file:px-4 file:py-2 file:rounded-md file:cursor-pointer file:font-semibold dark:text-gray-300">
-                                <p class="text-xs text-gray-600 dark:text-gray-400 mt-2">PDF, JPG, PNG (Max. 5MB)</p>
+                                <input type="file" wire:model.live="fotokk" accept=".pdf,.jpg,.jpeg,.png" class="block w-full text-sm file:bg-green-500 file:border-0 file:text-white file:px-4 file:py-2 file:rounded-md file:cursor-pointer file:font-semibold dark:text-gray-300">
+                                <p class="text-xs text-gray-600 dark:text-gray-400 mt-2">PDF, JPG, PNG (Max. 2MB)</p>
                                 @error('fotokk') <p class="text-red-500 dark:text-red-400 text-sm mt-1">{{ $message }}</p> @enderror
+
+                                {{-- Progress Bar KK --}}
+                                <div x-show="kkUpload.uploading" x-cloak class="mt-4 bg-white dark:bg-gray-800 rounded-lg border border-teal-200 dark:border-teal-800 p-4 shadow-sm">
+                                    <div class="flex items-center gap-3 mb-3">
+                                        <svg class="animate-spin h-5 w-5 text-teal-600 dark:text-teal-400" fill="none" viewBox="0 0 24 24">
+                                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                        </svg>
+                                        <div>
+                                            <p class="text-sm font-semibold text-teal-800 dark:text-teal-300">Mengupload KK...</p>
+                                            <p class="text-xs text-teal-600 dark:text-teal-400" x-text="kkUpload.progress + '%'"></p>
+                                        </div>
+                                    </div>
+                                    <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3 overflow-hidden">
+                                        <div class="h-full bg-gradient-to-r from-teal-500 to-teal-600 dark:from-teal-400 dark:to-teal-500 rounded-full transition-all duration-300 ease-out"
+                                             :style="'width: ' + kkUpload.progress + '%'"></div>
+                                    </div>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">Mohon tunggu, jangan tutup halaman ini...</p>
+                                </div>
+
+                                {{-- Success Indicator KK --}}
+                                <div x-show="kkUpload.uploaded" x-cloak class="mt-4 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border-2 border-green-300 dark:border-green-700 rounded-xl p-5 shadow-sm">
+                                    <div class="flex items-center gap-4">
+                                        <div class="flex-shrink-0 w-12 h-12 rounded-full bg-green-100 dark:bg-green-800/50 flex items-center justify-center">
+                                            <svg class="w-7 h-7 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
+                                            </svg>
+                                        </div>
+                                        <div class="flex-1">
+                                            <p class="text-base font-bold text-green-800 dark:text-green-300">✓ KK Berhasil Diupload!</p>
+                                            <p class="text-sm text-green-600 dark:text-green-400 mt-0.5">
+                                                @if ($fotokk)
+                                                    {{ $fotokk->getClientOriginalName() }} — Siap diproses
+                                                @endif
+                                            </p>
+                                        </div>
+                                        <div class="flex-shrink-0">
+                                            <svg class="w-6 h-6 text-green-400 dark:text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {{-- Preview Gambar KK (otomatis muncul setelah wire:model.live selesai upload) --}}
                                 @if ($fotokk)
-                                    <p class="text-sm text-green-700 dark:text-green-400 mt-2">File: {{ $fotokk->getClientOriginalName() }}</p>
+                                    <div class="mt-3 animate-fadeIn">
+                                        @if (in_array($fotokk->getClientOriginalExtension(), ['jpg', 'jpeg', 'png']))
+                                            <div class="rounded-lg border-2 border-teal-200 dark:border-teal-800 overflow-hidden bg-white dark:bg-gray-800 shadow-sm">
+                                                <div class="px-3 py-2 bg-teal-50 dark:bg-gray-700 border-b border-teal-200 dark:border-teal-800 flex items-center gap-2">
+                                                    <svg class="w-4 h-4 text-teal-600 dark:text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                                    </svg>
+                                                    <span class="text-xs font-semibold text-teal-700 dark:text-teal-300">Preview KK</span>
+                                                </div>
+                                                <img src="{{ $fotokk->temporaryUrl() }}" alt="Preview Kartu Keluarga" class="w-full h-auto max-h-80 object-contain p-2">
+                                            </div>
+                                        @else
+                                            <div class="rounded-lg border-2 border-teal-200 dark:border-teal-800 p-6 text-center bg-teal-50 dark:bg-teal-900/20">
+                                                <svg class="w-12 h-12 mx-auto text-teal-400 dark:text-teal-500 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                                                </svg>
+                                                <p class="text-sm text-gray-600 dark:text-gray-400">File PDF — Preview tidak tersedia</p>
+                                                <p class="text-xs text-gray-500 dark:text-gray-500 mt-1">{{ $fotokk->getClientOriginalName() }}</p>
+                                            </div>
+                                        @endif
+                                    </div>
+                                @endif
+
+                                {{-- Nama file preview KK (fallback) --}}
+                                @if ($fotokk && !$errors->has('fotokk'))
+                                    <div class="mt-3 p-3 bg-teal-50 dark:bg-teal-900/20 border border-teal-200 dark:border-teal-800 rounded-lg"
+                                         x-show="!kkUpload.uploading && !kkUpload.uploaded">
+                                        <p class="text-sm text-teal-700 dark:text-teal-300 flex items-center gap-2">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                            </svg>
+                                            {{ $fotokk->getClientOriginalName() }}
+                                        </p>
+                                    </div>
                                 @endif
                             </div>
 
@@ -690,11 +807,89 @@
                                 <label class="block text-sm font-semibold text-gray-800 dark:text-gray-200 mb-2">
                                     Foto Akta Kelahiran <span class="text-red-500 dark:text-red-400">*</span>
                                 </label>
-                                <input type="file" wire:model="fotoakta" accept=".pdf,.jpg,.jpeg,.png" class="block w-full text-sm file:bg-green-500 file:border-0 file:text-white file:px-4 file:py-2 file:rounded-md file:cursor-pointer file:font-semibold dark:text-gray-300">
-                                <p class="text-xs text-gray-600 dark:text-gray-400 mt-2">PDF, JPG, PNG (Max. 5MB)</p>
+                                <input type="file" wire:model.live="fotoakta" accept=".pdf,.jpg,.jpeg,.png" class="block w-full text-sm file:bg-green-500 file:border-0 file:text-white file:px-4 file:py-2 file:rounded-md file:cursor-pointer file:font-semibold dark:text-gray-300">
+                                <p class="text-xs text-gray-600 dark:text-gray-400 mt-2">PDF, JPG, PNG (Max. 2MB)</p>
                                 @error('fotoakta') <p class="text-red-500 dark:text-red-400 text-sm mt-1">{{ $message }}</p> @enderror
+
+                                {{-- Progress Bar Akta --}}
+                                <div x-show="aktaUpload.uploading" x-cloak class="mt-4 bg-white dark:bg-gray-800 rounded-lg border border-purple-200 dark:border-purple-800 p-4 shadow-sm">
+                                    <div class="flex items-center gap-3 mb-3">
+                                        <svg class="animate-spin h-5 w-5 text-purple-600 dark:text-purple-400" fill="none" viewBox="0 0 24 24">
+                                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                        </svg>
+                                        <div>
+                                            <p class="text-sm font-semibold text-purple-800 dark:text-purple-300">Mengupload Akta...</p>
+                                            <p class="text-xs text-purple-600 dark:text-purple-400" x-text="aktaUpload.progress + '%'"></p>
+                                        </div>
+                                    </div>
+                                    <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3 overflow-hidden">
+                                        <div class="h-full bg-gradient-to-r from-purple-500 to-purple-600 dark:from-purple-400 dark:to-purple-500 rounded-full transition-all duration-300 ease-out"
+                                             :style="'width: ' + aktaUpload.progress + '%'"></div>
+                                    </div>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">Mohon tunggu, jangan tutup halaman ini...</p>
+                                </div>
+
+                                {{-- Success Indicator Akta --}}
+                                <div x-show="aktaUpload.uploaded" x-cloak class="mt-4 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border-2 border-green-300 dark:border-green-700 rounded-xl p-5 shadow-sm">
+                                    <div class="flex items-center gap-4">
+                                        <div class="flex-shrink-0 w-12 h-12 rounded-full bg-green-100 dark:bg-green-800/50 flex items-center justify-center">
+                                            <svg class="w-7 h-7 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
+                                            </svg>
+                                        </div>
+                                        <div class="flex-1">
+                                            <p class="text-base font-bold text-green-800 dark:text-green-300">✓ Akta Berhasil Diupload!</p>
+                                            <p class="text-sm text-green-600 dark:text-green-400 mt-0.5">
+                                                @if ($fotoakta)
+                                                    {{ $fotoakta->getClientOriginalName() }} — Siap diproses
+                                                @endif
+                                            </p>
+                                        </div>
+                                        <div class="flex-shrink-0">
+                                            <svg class="w-6 h-6 text-green-400 dark:text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {{-- Preview Gambar Akta (otomatis muncul setelah wire:model.live selesai upload) --}}
                                 @if ($fotoakta)
-                                    <p class="text-sm text-green-700 dark:text-green-400 mt-2">File: {{ $fotoakta->getClientOriginalName() }}</p>
+                                    <div class="mt-3 animate-fadeIn">
+                                        @if (in_array($fotoakta->getClientOriginalExtension(), ['jpg', 'jpeg', 'png']))
+                                            <div class="rounded-lg border-2 border-purple-200 dark:border-purple-800 overflow-hidden bg-white dark:bg-gray-800 shadow-sm">
+                                                <div class="px-3 py-2 bg-purple-50 dark:bg-gray-700 border-b border-purple-200 dark:border-purple-800 flex items-center gap-2">
+                                                    <svg class="w-4 h-4 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                                    </svg>
+                                                    <span class="text-xs font-semibold text-purple-700 dark:text-purple-300">Preview Akta</span>
+                                                </div>
+                                                <img src="{{ $fotoakta->temporaryUrl() }}" alt="Preview Akta Kelahiran" class="w-full h-auto max-h-80 object-contain p-2">
+                                            </div>
+                                        @else
+                                            <div class="rounded-lg border-2 border-purple-200 dark:border-purple-800 p-6 text-center bg-purple-50 dark:bg-purple-900/20">
+                                                <svg class="w-12 h-12 mx-auto text-purple-400 dark:text-purple-500 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                                                </svg>
+                                                <p class="text-sm text-gray-600 dark:text-gray-400">File PDF — Preview tidak tersedia</p>
+                                                <p class="text-xs text-gray-500 dark:text-gray-500 mt-1">{{ $fotoakta->getClientOriginalName() }}</p>
+                                            </div>
+                                        @endif
+                                    </div>
+                                @endif
+
+                                {{-- Nama file preview Akta (fallback) --}}
+                                @if ($fotoakta && !$errors->has('fotoakta'))
+                                    <div class="mt-3 p-3 bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800 rounded-lg"
+                                         x-show="!aktaUpload.uploading && !aktaUpload.uploaded">
+                                        <p class="text-sm text-purple-700 dark:text-purple-300 flex items-center gap-2">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                            </svg>
+                                            {{ $fotoakta->getClientOriginalName() }}
+                                        </p>
+                                    </div>
                                 @endif
                             </div>
                         </div>
@@ -710,20 +905,35 @@
                                 </svg>
                                 <span>Beranda</span>
                             </a>
-                            <button type="submit" class="flex-1 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-semibold py-3 sm:py-4 px-4 sm:px-6 rounded-lg transition flex items-center justify-center gap-2 active:from-green-700 active:to-emerald-700 dark:active:from-green-800 dark:active:to-emerald-800">
-                                <span wire:loading.remove class="flex items-center justify-center gap-2">
-                                    <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <button type="submit" wire:loading.attr="disabled" 
+                                    class="flex-1 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-semibold py-3 sm:py-4 px-4 sm:px-6 rounded-lg transition-all duration-300 flex items-center justify-center gap-2 active:from-green-700 active:to-emerald-700 dark:active:from-green-800 dark:active:to-emerald-800 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:from-green-600 disabled:hover:to-emerald-600 relative overflow-hidden group">
+                                {{-- Default state --}}
+                                <span wire:loading.remove wire:target="submit" class="flex items-center justify-center gap-2">
+                                    <svg class="w-5 h-5 flex-shrink-0 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                                     </svg>
                                     <span>Simpan Data</span>
                                 </span>
-                                <span wire:loading class="flex items-center gap-2">
-                                    <svg class="animate-spin h-5 w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24">
-                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                {{-- Loading state di dalam tombol --}}
+                                <span wire:loading wire:target="submit" class="flex items-center justify-center gap-3 w-full">
+                                    {{-- Animated spinner --}}
+                                    <svg class="animate-spin h-5 w-5 flex-shrink-0 text-white" fill="none" viewBox="0 0 24 24">
+                                        <circle class="opacity-30" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-100" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                     </svg>
-                                    <span>Menyimpan...</span>
+                                    {{-- Pulsing text --}}
+                                    <span class="animate-pulse font-semibold">Menyimpan...</span>
+                                    {{-- Bouncing dots --}}
+                                    <span class="flex items-center gap-1">
+                                        <span class="w-1.5 h-1.5 bg-white rounded-full animate-bounce" style="animation-delay: 0ms"></span>
+                                        <span class="w-1.5 h-1.5 bg-white rounded-full animate-bounce" style="animation-delay: 150ms"></span>
+                                        <span class="w-1.5 h-1.5 bg-white rounded-full animate-bounce" style="animation-delay: 300ms"></span>
+                                    </span>
                                 </span>
+                                {{-- Progress bar animasi di bottom tombol --}}
+                                <span wire:loading wire:target="submit" 
+                                      class="absolute bottom-0 left-0 h-1 bg-gradient-to-r from-green-300 via-white to-green-300 animate-pulse rounded-full"
+                                      style="width: 65%"></span>
                             </button>
                         </div>
                     </div>

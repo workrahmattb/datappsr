@@ -65,7 +65,7 @@ class DaftarUlangForm extends Component
     public function rulesStep1()
     {
         return [
-            'fototransfer' => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120',
+            'fototransfer' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
         ];
     }
 
@@ -105,8 +105,8 @@ class DaftarUlangForm extends Component
             'kecamatan' => 'required|string|max:100',
             'kabupaten' => 'required|string|max:100',
             'provinsi' => 'required|string|max:100',
-            'fotokk' => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120',
-            'fotoakta' => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120',
+            'fotokk' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
+            'fotoakta' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
         ];
     }
 

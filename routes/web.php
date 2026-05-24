@@ -37,7 +37,7 @@ Route::get('/beranda', function () {
 
 // Admin Routes (Butuh Login)
 Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(function () {
-    Route::get('/', \App\Livewire\Admin\Dashboard::class)->name('dashboard');
+    Route::get('/', \App\Livewire\Admin\Dashboard::class)->name('dashboard')->middleware(['\App\Http\Middleware\CheckRole::class,admin']);
     
     // Mtsputra
     Route::middleware(['\App\Http\Middleware\CheckRole::class,mtsputra'])->group(function () {
@@ -88,12 +88,14 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
     });
 
     // Pendaftaran
-    Route::get('pendaftarans', \App\Livewire\Admin\PendaftaransTable::class)->name('pendaftarans.index');
-    Route::get('pendaftarans/create', [\App\Http\Controllers\Admin\PendaftaranController::class, 'create'])->name('pendaftarans.create');
-    Route::post('pendaftarans', [\App\Http\Controllers\Admin\PendaftaranController::class, 'store'])->name('pendaftarans.store');
-    Route::get('pendaftarans/{pendaftaran}', [\App\Http\Controllers\Admin\PendaftaranController::class, 'show'])->name('pendaftarans.show');
-    Route::get('pendaftarans/{pendaftaran}/edit', [\App\Http\Controllers\Admin\PendaftaranController::class, 'edit'])->name('pendaftarans.edit');
-    Route::put('pendaftarans/{pendaftaran}', [\App\Http\Controllers\Admin\PendaftaranController::class, 'update'])->name('pendaftarans.update');
-    Route::delete('pendaftarans/{pendaftaran}', [\App\Http\Controllers\Admin\PendaftaranController::class, 'destroy'])->name('pendaftarans.destroy');
-    Route::get('pendaftarans-export', [\App\Http\Controllers\Admin\PendaftaranController::class, 'export'])->name('pendaftarans.export');
+    Route::middleware(['\App\Http\Middleware\CheckRole::class,admin'])->group(function () {
+        Route::get('pendaftarans', \App\Livewire\Admin\PendaftaransTable::class)->name('pendaftarans.index');
+        Route::get('pendaftarans/create', [\App\Http\Controllers\Admin\PendaftaranController::class, 'create'])->name('pendaftarans.create');
+        Route::post('pendaftarans', [\App\Http\Controllers\Admin\PendaftaranController::class, 'store'])->name('pendaftarans.store');
+        Route::get('pendaftarans/{pendaftaran}', [\App\Http\Controllers\Admin\PendaftaranController::class, 'show'])->name('pendaftarans.show');
+        Route::get('pendaftarans/{pendaftaran}/edit', [\App\Http\Controllers\Admin\PendaftaranController::class, 'edit'])->name('pendaftarans.edit');
+        Route::put('pendaftarans/{pendaftaran}', [\App\Http\Controllers\Admin\PendaftaranController::class, 'update'])->name('pendaftarans.update');
+        Route::delete('pendaftarans/{pendaftaran}', [\App\Http\Controllers\Admin\PendaftaranController::class, 'destroy'])->name('pendaftarans.destroy');
+        Route::get('pendaftarans-export', [\App\Http\Controllers\Admin\PendaftaranController::class, 'export'])->name('pendaftarans.export');
+    });
 });
