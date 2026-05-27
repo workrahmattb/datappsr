@@ -194,6 +194,27 @@ class PendaftaransTable extends Component
             ->toBrowser();
     }
 
+    public static function waUrl($p): string
+    {
+        $ttl = $p->tempat_lahir . ', ' . ($p->tanggal_lahir ? \Carbon\Carbon::parse($p->tanggal_lahir)->locale('id')->isoFormat('D MMMM Y') : '-');
+        $asalSekolah = $p->nama_sekolah_sebelumnya ?? $p->asal_sekolah ?? '-';
+        $kontak = $p->no_hp ?? $p->no_hp_ayah ?? $p->no_hp_ibu ?? '-';
+        $alamatLengkap = $p->alamat ?? (collect([$p->desa, $p->kecamatan, $p->kabupaten, $p->provinsi])->filter()->implode(', ') ?: '-');
+
+        return 'https://wa.me/6285259875754?text=' . rawurlencode(
+            "*Data Pendaftaran Siswa Baru*\n" .
+            "\n" .
+            "Nama: " . $p->nama . "\n" .
+            "Tempat/Tgl Lahir: " . $ttl . "\n" .
+            "Jenjang: " . $p->jenjang_pendidikan . "\n" .
+            "Nama Ayah: " . ($p->nama_ayah ?? '-') . "\n" .
+            "Nama Ibu: " . ($p->nama_ibu ?? '-') . "\n" .
+            "Asal Sekolah: " . $asalSekolah . "\n" .
+            "No. Kontak: " . $kontak . "\n" .
+            "Alamat: " . $alamatLengkap
+        );
+    }
+
     public function render()
     {
         $query = Pendaftaran::latest();
