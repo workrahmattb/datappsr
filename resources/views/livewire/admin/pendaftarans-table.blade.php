@@ -71,7 +71,7 @@
                     <tr>
                         <th class="px-6 py-4 text-left text-xs font-bold text-zinc-500 uppercase tracking-wider">Pendaftar</th>
                         <th class="px-6 py-4 text-left text-xs font-bold text-zinc-500 uppercase tracking-wider">Jenjang</th>
-                        <th class="px-6 py-4 text-left text-xs font-bold text-zinc-500 uppercase tracking-wider">Tanggal</th>
+                        <th class="px-6 py-4 text-left text-xs font-bold text-zinc-500 uppercase tracking-wider">Tgl. Daftar</th>
                         <th class="px-6 py-4 text-left text-xs font-bold text-zinc-500 uppercase tracking-wider">Status</th>
                         <th class="px-6 py-4 text-left text-xs font-bold text-zinc-500 uppercase tracking-wider">Kontak</th>
                         <th class="px-6 py-4 text-right text-xs font-bold text-zinc-500 uppercase tracking-wider">Aksi</th>
@@ -97,7 +97,9 @@
                             </span>
                         </td>
                         <td class="px-6 py-4">
-                            <div class="text-sm text-zinc-900 font-medium">{{ $pendaftaran->created_at->format('d/m/Y') }}</div>
+                            @php($wib = $pendaftaran->created_at->setTimezone('Asia/Jakarta'))
+                            <div class="text-sm text-zinc-900 font-medium">{{ $wib->locale('id')->isoFormat('D MMMM Y') }}</div>
+                            <div class="text-xs text-zinc-400 font-medium mt-0.5">{{ $wib->format('H:i') }} WIB</div>
                         </td>
                         <td class="px-6 py-4">
                             <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold border
