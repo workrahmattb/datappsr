@@ -142,6 +142,7 @@ class PendaftaranController extends Controller
     {
         $validated = $request->validate([
             'jenjang_pendidikan' => 'required|in:MTs Putri,MTs Putra,MA Putri,MA Putra',
+            'status_pendaftaran' => 'nullable|string|max:50',
             'nama' => 'required|string|max:255',
             'tempat_lahir' => 'required|string|max:255',
             'tanggal_lahir' => 'required|date',
@@ -152,9 +153,12 @@ class PendaftaranController extends Controller
             'nis' => 'nullable|string|max:20',
             'anak_ke' => 'nullable|string|max:10',
             'tahun_ajaran' => 'nullable|string|max:20',
-
+            'hobi' => 'nullable|string|max:255',
+            'cita_cita' => 'nullable|string|max:255',
             'jumlah_saudara' => 'nullable|string|max:10',
             'tgl_masuk' => 'nullable|date',
+            'tk' => 'nullable|string|max:10',
+            'paud' => 'nullable|string|max:10',
             'kks' => 'nullable|string|max:50',
             'pkh' => 'nullable|string|max:50',
             'kip' => 'nullable|string|max:50',
@@ -185,6 +189,8 @@ class PendaftaranController extends Controller
             'pekerjaan_ibu' => 'nullable|string|max:100',
             'penghasilan_ibu' => 'nullable|string|max:100',
             'status_milik' => 'nullable|string|max:100',
+            'alamat' => 'nullable|string|max:500',
+            'alamat_rumah_tinggal' => 'nullable|string|max:500',
             'rt' => 'nullable|string|max:10',
             'rw' => 'nullable|string|max:10',
             'desa' => 'nullable|string|max:255',
@@ -200,10 +206,15 @@ class PendaftaranController extends Controller
             'pendidikan_wali' => 'nullable|string|max:100',
             'pekerjaan_wali' => 'nullable|string|max:100',
             'penghasilan_wali' => 'nullable|string|max:100',
+            'asal_sekolah' => 'nullable|string|max:255',
+            'no_hp' => 'nullable|string|max:20',
             'fotokk' => 'nullable|image|max:2048',
             'fotoakta' => 'nullable|image|max:2048',
             'fototransfer' => 'nullable|image|max:2048',
             'bayar_uang_masuk' => 'nullable|numeric',
+            'status_bayar_uang_masuk' => 'nullable|string|max:50',
+            'keterangan_bayar' => 'nullable|string|max:255',
+            'bukti_transfer_uang_masuk' => 'nullable|image|max:2048',
         ]);
 
         if ($request->hasFile('fotokk')) {
@@ -218,6 +229,10 @@ class PendaftaranController extends Controller
             if ($pendaftaran->fototransfer) Storage::disk('public')->delete($pendaftaran->fototransfer);
             $validated['fototransfer'] = $request->file('fototransfer')->store('documents/pendaftaran', 'public');
         }
+        if ($request->hasFile('bukti_transfer_uang_masuk')) {
+            if ($pendaftaran->bukti_transfer_uang_masuk) Storage::disk('public')->delete($pendaftaran->bukti_transfer_uang_masuk);
+            $validated['bukti_transfer_uang_masuk'] = $request->file('bukti_transfer_uang_masuk')->store('documents/pendaftaran', 'public');
+        }
 
         $pendaftaran->update($validated);
 
@@ -230,6 +245,7 @@ class PendaftaranController extends Controller
         if ($pendaftaran->fotokk) Storage::disk('public')->delete($pendaftaran->fotokk);
         if ($pendaftaran->fotoakta) Storage::disk('public')->delete($pendaftaran->fotoakta);
         if ($pendaftaran->fototransfer) Storage::disk('public')->delete($pendaftaran->fototransfer);
+        if ($pendaftaran->bukti_transfer_uang_masuk) Storage::disk('public')->delete($pendaftaran->bukti_transfer_uang_masuk);
 
         $pendaftaran->delete();
 

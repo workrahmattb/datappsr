@@ -86,6 +86,9 @@
                 <div class="sm:col-span-3">
                     <x-detail-item label="Status Tempat Tinggal" :value="$student->status_milik" />
                 </div>
+                <div class="sm:col-span-3">
+                    <x-detail-item label="Alamat Lengkap (Pendaftaran)" :value="$student->alamat" />
+                </div>
                 <div class="sm:col-span-2">
                     <x-detail-item label="Alamat Rumah Tinggal Detail" :value="$student->alamat_rumah_tinggal" />
                 </div>
