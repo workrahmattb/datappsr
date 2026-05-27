@@ -71,6 +71,7 @@
                     <tr>
                         <th class="px-6 py-4 text-left text-xs font-bold text-zinc-500 uppercase tracking-wider">Pendaftar</th>
                         <th class="px-6 py-4 text-left text-xs font-bold text-zinc-500 uppercase tracking-wider">Jenjang</th>
+                        <th class="px-6 py-4 text-left text-xs font-bold text-zinc-500 uppercase tracking-wider">Asal Sekolah</th>
                         <th class="px-6 py-4 text-left text-xs font-bold text-zinc-500 uppercase tracking-wider">Tgl. Daftar</th>
                         <th class="px-6 py-4 text-left text-xs font-bold text-zinc-500 uppercase tracking-wider">Status</th>
                         <th class="px-6 py-4 text-left text-xs font-bold text-zinc-500 uppercase tracking-wider">Kontak</th>
@@ -95,6 +96,9 @@
                             <span class="inline-flex items-center px-2.5 py-1 rounded-md bg-zinc-100 border border-zinc-200 text-zinc-800 text-xs font-semibold">
                                 {{ strtoupper($pendaftaran->jenjang_pendidikan) }}
                             </span>
+                        </td>
+                        <td class="px-6 py-4">
+                            <div class="text-sm text-zinc-900 font-medium">{{ $pendaftaran->nama_sekolah_sebelumnya ?? $pendaftaran->asal_sekolah ?? '-' }}</div>
                         </td>
                         <td class="px-6 py-4">
                             @php($wib = $pendaftaran->created_at->setTimezone('Asia/Jakarta'))
@@ -148,7 +152,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="6" class="px-6 py-12 text-center">
+                        <td colspan="7" class="px-6 py-12 text-center">
                             <div class="flex flex-col items-center justify-center">
                                 <div class="w-16 h-16 bg-zinc-50 rounded-full flex items-center justify-center border border-zinc-100 mb-4">
                                     <svg class="h-8 w-8 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
