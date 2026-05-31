@@ -738,6 +738,155 @@ Semua route di bawah membutuhkan login (`auth`) dan verifikasi email (`verified`
 
 ---
 
+---
+
+# Changelog — Sesi 28 Mei 2026 — Perbaikan Tabel, Form Edit Lengkap & Fitur WhatsApp
+
+> **Tanggal:** 28 Mei 2026
+> **Fokus:** Tampilan tabel pendaftaran, edit form lengkap semua jenjang, fitur WhatsApp, perbaikan alamat di view/show
+
+---
+
+## 1. Format Tanggal & Jam WIB di Tabel Pendaftaran Admin
+
+**File:** `resources/views/livewire/admin/pendaftarans-table.blade.php`
+
+**Perubahan:**
+- Kolom "Tanggal" → "Tgl. Daftar"
+- Format: `27 Mei 2026` (locale Indonesia) + `14:30 WIB`
+- Timezone: `Asia/Jakarta`
+- Menghindari double `setTimezone()` dengan menyimpan ke variable `$wib` di `@php` block
+
+```blade
+@php
+    $wib = $pendaftaran->created_at->setTimezone('Asia/Jakarta');
+@endphp
+<div class="text-sm text-zinc-900 font-medium">{{ $wib->locale('id')->isoFormat('D MMMM Y') }}</div>
+<div class="text-xs text-zinc-400 font-medium mt-0.5">{{ $wib->format('H:i') }} WIB</div>
+```
+
+---
+
+## 2. Edit Form Lengkap untuk Semua Jenjang Siswa
+
+**File (4 file):**
+- `resources/views/admin/mtsputras/edit.blade.php`
+- `resources/views/admin/mtsputris/edit.blade.php`
+- `resources/views/admin/maputras/edit.blade.php`
+- `resources/views/admin/maputris/edit.blade.php`
+
+**Perubahan:** Form minimal → form **lengkap** (sama dengan create form):
+
+| Section | Field |
+|---------|-------|
+| Data Pribadi | nama, NIK, tempat/tgl lahir, NISN, NIS, KK, kepala keluarga, anak ke-, jumlah saudara, tahun ajaran, tgl masuk, KKS, PKH, KIP |
+| Sekolah Sebelumnya | jenjang, status, nama sekolah, NPSN, alamat, kecamatan, kabupaten, provinsi |
+| Data Ayah + Ibu | lengkap dengan dropdown pendidikan, pekerjaan, penghasilan + JS auto-set |
+| Alamat | status milik + alamat rumah (khusus MA: `alamat_rumah_tinggal`) + RT/RW, desa, kec, kab, prov, kode pos |
+| Data Wali | NIK, nama, tempat/tgl lahir, no HP, pendidikan, pekerjaan, penghasilan |
+| Dokumen | upload KK, Akta, Transfer (dengan info file existing) |
+
+Semua data terisi otomatis dari database via `old('field', $siswa->field)`.
+
+---
+
+## 3. Tombol WhatsApp di Tabel Pendaftaran Admin
+
+**File:** `resources/views/livewire/admin/pendaftarans-table.blade.php`, `app/Livewire/Admin/PendaftaransTable.php`
+
+**Perubahan:**
+- Tombol WA hijau di kolom **Aksi** → `wa.me/6285259875754`
+- Pesan otomatis berisi:
+  - Nama, Tempat/Tgl Lahir, Jenjang, Nama Ayah, Nama Ibu
+  - Asal Sekolah (`nama_sekolah_sebelumnya` → `asal_sekolah`)
+  - No. Kontak (`no_hp` → `no_hp_ayah` → `no_hp_ibu`)
+  - Alamat (dari `alamat` atau gabungan desa/kec/kab/prov yang difilter)
+
+**Bug fix — `Undefined variable`:**
+- **Akar masalah:** Variable dari `@php` block di Livewire Blade compiler tidak bisa diakses di luar block karena masalah scoping kompilasi
+- **Solusi:** Memindahkan logic ke **static method** `waUrl($p)` di class `PendaftaransTable` dan memanggil langsung via `{{ PendaftaransTable::waUrl($pendaftaran) }}` di atribut `href`
+- Alamat menggunakan `collect()->filter()->implode(', ')` agar tidak ada koma berlebih
+
+---
+
+## 4. Kolom Asal Sekolah di Tabel Pendaftaran Admin
+
+**File:** `resources/views/livewire/admin/pendaftarans-table.blade.php`
+
+**Perubahan:**
+- Menambahkan kolom **"Asal Sekolah"** di antara kolom Jenjang dan Tgl. Daftar
+- Menampilkan `nama_sekolah_sebelumnya` → `asal_sekolah` → `-`
+- Update `colspan` baris kosong dari 6 → 7
+
+---
+
+## 5. Perbaikan Alamat di View Detail Pendaftaran (Show)
+
+**File:** `resources/views/admin/pendaftarans/show.blade.php`
+
+**Masalah:** Field `alamat` (diisi di form pendaftaran awal — textarea alamat lengkap) tidak ditampilkan di halaman detail/show. Yang tampil hanya `alamat_rumah_tinggal` (field berbeda yang hanya terisi saat daftar ulang).
+
+**Solusi:** Menambahkan baris **"Alamat Lengkap (Pendaftaran)"** (`$student->alamat`) di atas "Alamat Rumah Tinggal Detail":
+
+```blade
+<div class="sm:col-span-3">
+    <x-detail-item label="Alamat Lengkap (Pendaftaran)" :value="$student->alamat" />
+</div>
+<div class="sm:col-span-2">
+    <x-detail-item label="Alamat Rumah Tinggal Detail" :value="$student->alamat_rumah_tinggal" />
+</div>
+```
+
+---
+
+## 6. Form Edit Pendaftaran Lengkap (Admin)
+
+### Controller (`app/Http/Controllers/Admin/PendaftaranController.php`)
+
+**Validasi update method — field yang ditambahkan:**
+- `status_pendaftaran`, `hobi`, `cita_cita`, `tk`, `paud`
+- `alamat`, `alamat_rumah_tinggal`, `asal_sekolah`, `no_hp`
+- `status_bayar_uang_masuk`, `keterangan_bayar`, `bukti_transfer_uang_masuk`
+
+**Tambahan:**
+- Handler upload `bukti_transfer_uang_masuk`
+- Cleanup file `bukti_transfer_uang_masuk` di method `destroy`
+
+### View (`resources/views/admin/pendaftarans/edit.blade.php`)
+
+Rewrite total dari form minimal → form lengkap dengan **10 section**:
+
+| Section | Grid | Field Utama |
+|---------|------|-------------|
+| **Data Pendaftaran** | 2 col | status, jenjang, nama, TTL, NIK, NISN, NIS, tahun ajaran, no_hp |
+| **Data Pribadi Tambahan** | 2 col | KK, nama_kk, anak_ke, jumlah_saudara, hobi, cita_cita, tgl_masuk, tk, paud |
+| **Alamat & Tempat Tinggal** | 3 col | alamat, alamat_rumah_tinggal, status_milik, RT/RW, desa, kec, kab, prov, kode_pos |
+| **Bantuan Sosial** | 2 col | KKS, PKH, KIP |
+| **Pendidikan Sebelumnya** | 2 col | asal_sekolah, jenjang, status, nama, NPSN, alamat, kec, kab, prov sekolah |
+| **Data Ayah** | 2 col | nama, NIK, TTL, status, no_hp, pendidikan, pekerjaan, penghasilan |
+| **Data Ibu** | 2 col | nama, NIK, TTL, status, no_hp, pendidikan, pekerjaan, penghasilan |
+| **Data Wali** | 3 col | nama, NIK, TTL, no_hp, pendidikan, pekerjaan, penghasilan |
+| **Keuangan** | 3 col | bayar_uang_masuk, status_bayar, keterangan, upload bukti |
+| **Dokumen** | 3 col | upload KK, Akta, Transfer (dengan preview gambar) |
+
+---
+
+## Ringkasan File yang Dimodifikasi (Sesi Ini)
+
+| File | Perubahan |
+|------|-----------|
+| `resources/views/livewire/admin/pendaftarans-table.blade.php` | Format tgl WIB, tombol WhatsApp, kolom Asal Sekolah |
+| `app/Livewire/Admin/PendaftaransTable.php` | Tambah static method `waUrl()` |
+| `resources/views/admin/mtsputras/edit.blade.php` | Form edit lengkap |
+| `resources/views/admin/mtsputris/edit.blade.php` | Form edit lengkap |
+| `resources/views/admin/maputras/edit.blade.php` | Form edit lengkap (plus alamat_rumah_tinggal) |
+| `resources/views/admin/maputris/edit.blade.php` | Form edit lengkap (plus alamat_rumah_tinggal) |
+| `resources/views/admin/pendaftarans/show.blade.php` | Tambah field alamat |
+| `resources/views/admin/pendaftarans/edit.blade.php` | Form edit lengkap 10 section |
+| `app/Http/Controllers/Admin/PendaftaranController.php` | Validasi field baru, upload handler, cleanup destroy |
+
+---
+
 ## Diagram Navigasi
 
 ```

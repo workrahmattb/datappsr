@@ -7,11 +7,20 @@
                 <p class="text-sm text-zinc-500 mt-1 font-medium">Kelola data pendaftaran siswa baru secara menyeluruh</p>
             </div>
             <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto mt-4 sm:mt-0">
-                <button wire:click="export" class="bg-white border border-zinc-200 text-zinc-700 hover:bg-zinc-50 hover:text-zinc-900 px-5 py-2.5 rounded-lg flex items-center justify-center shadow-sm hover:shadow transition-all duration-200 font-semibold text-sm">
-                    <svg class="w-4 h-4 mr-2 text-zinc-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                    </svg>
-                    Export Excel
+                <button wire:click="export" wire:loading.attr="disabled" class="bg-white border border-zinc-200 text-zinc-700 hover:bg-zinc-50 hover:text-zinc-900 px-5 py-2.5 rounded-lg flex items-center justify-center shadow-sm hover:shadow transition-all duration-200 font-semibold text-sm disabled:opacity-50 disabled:cursor-not-allowed">
+                    <span wire:loading.remove wire:target="export" class="flex items-center gap-2">
+                        <svg class="w-4 h-4 text-zinc-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                        </svg>
+                        Export Excel
+                    </span>
+                    <span wire:loading wire:target="export" class="flex items-center gap-2">
+                        <svg class="animate-spin h-4 w-4 text-zinc-500" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        Mengexport...
+                    </span>
                 </button>
                 <a wire:navigate href="{{ route('admin.pendaftarans.create') }}" class="bg-zinc-900 hover:bg-zinc-800 text-white px-5 py-2.5 rounded-lg flex items-center justify-center shadow-sm hover:shadow transition-all duration-200 font-semibold text-sm">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -55,6 +64,12 @@
                 <option value="MA Putri">MA Putri</option>
                 <option value="MA Putra">MA Putra</option>
             </select>
+            <select wire:model.live="perPage" class="bg-zinc-50/50 border border-zinc-200 rounded-lg text-sm px-3 py-2 focus:outline-none focus:ring-2 focus:ring-zinc-900 focus:border-transparent transition-colors min-w-[120px]">
+                <option value="15">15 per halaman</option>
+                <option value="25">25 per halaman</option>
+                <option value="50">50 per halaman</option>
+                <option value="100">100 per halaman</option>
+            </select>
             @if($search || $tahunAjaran || $status || $jenjang)
                 <button wire:click="$set('search', ''); $set('tahunAjaran', null); $set('status', ''); $set('jenjang', null)" class="bg-white border border-zinc-200 hover:bg-zinc-50 text-zinc-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm">
                     Reset Filter
@@ -69,11 +84,29 @@
             <table class="min-w-full divide-y divide-zinc-200/80">
                 <thead class="bg-zinc-50/80">
                     <tr>
-                        <th class="px-6 py-4 text-left text-xs font-bold text-zinc-500 uppercase tracking-wider">Pendaftar</th>
+                        <th class="px-6 py-4 text-left text-xs font-bold text-zinc-500 uppercase tracking-wider">
+                            <button wire:click="sortBy('nama')" class="flex items-center gap-1.5 hover:text-zinc-800 transition-colors group">
+                                Pendaftar
+                                @if($sortField === 'nama')
+                                    <svg class="w-3.5 h-3.5 text-zinc-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        @if($sortDirection === 'asc')
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 15l7-7 7 7"/>
+                                        @else
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/>
+                                        @endif
+                                    </svg>
+                                @else
+                                    <svg class="w-3.5 h-3.5 text-zinc-300 group-hover:text-zinc-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"/>
+                                    </svg>
+                                @endif
+                            </button>
+                        </th>
                         <th class="px-6 py-4 text-left text-xs font-bold text-zinc-500 uppercase tracking-wider">Jenjang</th>
                         <th class="px-6 py-4 text-left text-xs font-bold text-zinc-500 uppercase tracking-wider">Asal Sekolah</th>
                         <th class="px-6 py-4 text-left text-xs font-bold text-zinc-500 uppercase tracking-wider">Tgl. Daftar</th>
                         <th class="px-6 py-4 text-left text-xs font-bold text-zinc-500 uppercase tracking-wider">Status</th>
+                        <th class="px-6 py-4 text-left text-xs font-bold text-zinc-500 uppercase tracking-wider">Uang Masuk</th>
                         <th class="px-6 py-4 text-left text-xs font-bold text-zinc-500 uppercase tracking-wider">Kontak</th>
                         <th class="px-6 py-4 text-right text-xs font-bold text-zinc-500 uppercase tracking-wider">Aksi</th>
                     </tr>
@@ -124,6 +157,40 @@
                                 {{ ucfirst($pendaftaran->status_pendaftaran) }}
                             </span>
                         </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            @if($editingBayar === $pendaftaran->id)
+                                <div x-data="{ nilai: '{{ $pendaftaran->bayar_uang_masuk ?? '' }}' }" class="flex items-center gap-1">
+                                    <span class="text-sm text-zinc-500 font-medium">Rp</span>
+                                    <input
+                                        type="number"
+                                        step="0.01"
+                                        min="0"
+                                        x-model="nilai"
+                                        x-on:keydown.enter="$wire.saveBayar('{{ $pendaftaran->id }}', nilai)"
+                                        x-on:keydown.escape="$wire.cancelBayar()"
+                                        x-on:blur="$wire.saveBayar('{{ $pendaftaran->id }}', nilai)"
+                                        class="w-28 px-2 py-1 text-sm border border-zinc-300 rounded-md focus:outline-none focus:ring-2 focus:ring-zinc-900 focus:border-transparent"
+                                        autofocus
+                                        placeholder="0"
+                                    >
+                                </div>
+                            @else
+                                <button
+                                    wire:click="editBayar('{{ $pendaftaran->id }}')"
+                                    class="group/uang inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-sm font-semibold transition-all duration-150 border border-transparent hover:border-zinc-200 hover:bg-zinc-50 focus:outline-none focus:ring-2 focus:ring-zinc-300"
+                                    title="Klik untuk edit"
+                                >
+                                    @if($pendaftaran->bayar_uang_masuk)
+                                        <span class="text-zinc-900">Rp {{ number_format($pendaftaran->bayar_uang_masuk, 0, ',', '.') }}</span>
+                                    @else
+                                        <span class="text-zinc-400 italic">-</span>
+                                    @endif
+                                    <svg class="w-3.5 h-3.5 text-zinc-300 group-hover/uang:text-zinc-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                                    </svg>
+                                </button>
+                            @endif
+                        </td>
                         <td class="px-6 py-4">
                             <div class="text-sm text-zinc-900 font-medium">{{ $pendaftaran->no_hp ?? '-' }}</div>
                         </td>
@@ -152,7 +219,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="7" class="px-6 py-12 text-center">
+                        <td colspan="8" class="px-6 py-12 text-center">
                             <div class="flex flex-col items-center justify-center">
                                 <div class="w-16 h-16 bg-zinc-50 rounded-full flex items-center justify-center border border-zinc-100 mb-4">
                                     <svg class="h-8 w-8 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -226,6 +293,15 @@
             const name = deleteBtn.dataset.name;
             $wire.call('confirmDelete', id, name);
         }
+    });
+
+    Livewire.on('download-excel', (event) => {
+        const a = document.createElement('a');
+        a.href = event.url;
+        a.download = '';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
     });
 </script>
 @endscript

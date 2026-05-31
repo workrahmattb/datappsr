@@ -21,14 +21,22 @@ class PendaftaransTable extends Component
     #[Validate('in:pending,completed')]
     public string $status = '';
     public ?string $jenjang = null;
+    public string $sortField = 'created_at';
+    public string $sortDirection = 'desc';
+    public int $perPage = 15;
     public $deleteId = null;
     public string $deleteItemName = '';
+    public $editingBayar = null;
+    public string $bayarValue = '';
 
     protected $queryString = [
         'search' => ['except' => ''],
         'tahunAjaran' => ['except' => null],
         'status' => ['except' => ''],
         'jenjang' => ['except' => null],
+        'sortField' => ['except' => 'created_at'],
+        'sortDirection' => ['except' => 'desc'],
+        'perPage' => ['except' => 15],
     ];
 
     public function updatingSearch(): void
@@ -51,11 +59,71 @@ class PendaftaransTable extends Component
         $this->resetPage();
     }
 
+    public function updatingPerPage(): void
+    {
+        $this->resetPage();
+    }
+
+    public function sortBy($field): void
+    {
+        if ($this->sortField === $field) {
+            $this->sortDirection = $this->sortDirection === 'asc' ? 'desc' : 'asc';
+        } else {
+            $this->sortField = $field;
+            $this->sortDirection = 'asc';
+        }
+
+        $this->resetPage();
+    }
+
     public function confirmDelete($id, $name): void
     {
         $this->deleteId = $id;
         $this->deleteItemName = $name;
         $this->dispatch('modal-show', ...['name' => 'delete-confirm']);
+    }
+
+    public function editBayar($id): void
+    {
+        $pendaftaran = Pendaftaran::find($id);
+        if ($pendaftaran) {
+            $this->editingBayar = (int) $id;
+            $this->bayarValue = $pendaftaran->bayar_uang_masuk ?? '';
+        }
+    }
+
+    public function saveBayar($id, $nilai = null): void
+    {
+        // Nilai dari Alpine (x-on:keydown.enter / x-on:blur) lebih diutamakan
+        if ($nilai !== null) {
+            $this->bayarValue = (string) $nilai;
+        }
+
+        $this->validate([
+            'bayarValue' => 'nullable|numeric|min:0',
+        ]);
+
+        $pendaftaran = Pendaftaran::find($id);
+        if (!$pendaftaran) {
+            $this->dispatch('error', 'Data pendaftaran tidak ditemukan.');
+            $this->editingBayar = null;
+            $this->bayarValue = '';
+            return;
+        }
+
+        $pendaftaran->update([
+            'bayar_uang_masuk' => $this->bayarValue !== '' && $this->bayarValue !== null ? $this->bayarValue : null,
+        ]);
+
+        $this->dispatch('success', 'Pembayaran uang masuk berhasil diperbarui.');
+        $this->editingBayar = null;
+        $this->bayarValue = '';
+    }
+
+    public function cancelBayar(): void
+    {
+        $this->editingBayar = null;
+        $this->bayarValue = '';
     }
 
     public function closeModal(): void
@@ -89,134 +157,6 @@ class PendaftaransTable extends Component
 
     public function export(): void
     {
-        $filename = 'pendaftarans-' . now()->format('Y-m-d-His') . '.xlsx';
-
-        $query = Pendaftaran::latest();
-        if (!auth()->user()->hasRole('admin') && auth()->user()->jenjang) {
-            $query->where('jenjang_pendidikan', auth()->user()->jenjang);
-        }
-
-        if ($this->jenjang) {
-            $query->where('jenjang_pendidikan', $this->jenjang);
-        }
-
-        SimpleExcelWriter::streamDownload($filename)
-            ->addHeader([
-                'ID', 'Nama', 'NISN', 'NIK', 'KK', 'Nama KK', 'Jenjang Pendidikan', 'Status Pendaftaran',
-                'Tempat Lahir', 'Tanggal Lahir', 'Anak Ke', 'Jumlah Saudara', 'Tahun Ajaran', 'Tanggal Masuk',
-                'KKS', 'PKH', 'KIP', 'Jenjang Sebelumnya', 'Status Sekolah Sebelumnya', 'Nama Sekolah Sebelumnya',
-                'NPSN Sekolah Sebelumnya', 'Alamat Sekolah Sebelumnya', 'Kecamatan Sekolah Sebelumnya',
-                'Kabupaten Sekolah Sebelumnya', 'Provinsi Sekolah Sebelumnya',
-                'NIK Ayah', 'Nama Ayah', 'Tempat Lahir Ayah', 'Tanggal Lahir Ayah', 'Status Ayah',
-                'No HP Ayah', 'Pendidikan Ayah', 'Pekerjaan Ayah', 'Penghasilan Ayah',
-                'NIK Ibu', 'Nama Ibu', 'Tempat Lahir Ibu', 'Tanggal Lahir Ibu', 'Status Ibu',
-                'No HP Ibu', 'Pendidikan Ibu', 'Pekerjaan Ibu', 'Penghasilan Ibu',
-                'Status Milik Rumah', 'RT', 'RW', 'Desa', 'Kecamatan', 'Kabupaten', 'Provinsi', 'Kode Pos',
-                'NIK Wali', 'Nama Wali', 'Tempat Lahir Wali', 'Tanggal Lahir Wali', 'No HP Wali',
-                'Pendidikan Wali', 'Pekerjaan Wali', 'Penghasilan Wali',
-                'Foto KK', 'Foto Akta', 'Foto Transfer', 'Bukti Transfer',
-                'Asal Sekolah', 'Alamat', 'No HP', 'Bayar Uang Masuk',
-                'Created At', 'Updated At'
-            ])
-            ->addRows($query->get()->map(function($p) {
-                return [
-                    'id' => $p->id,
-                    'nama' => $p->nama,
-                    'nisn' => $p->nisn,
-                    'nik' => $p->nik,
-                    'kk' => $p->kk,
-                    'nama_kk' => $p->nama_kk,
-                    'jenjang_pendidikan' => $p->jenjang_pendidikan,
-                    'status_pendaftaran' => $p->status_pendaftaran,
-                    'tempat_lahir' => $p->tempat_lahir,
-                    'tanggal_lahir' => $p->tanggal_lahir ? \Carbon\Carbon::parse($p->tanggal_lahir)->format('Y-m-d') : '',
-                    'anak_ke' => $p->anak_ke,
-                    'jumlah_saudara' => $p->jumlah_saudara,
-                    'tahun_ajaran' => $p->tahun_ajaran,
-                    'tgl_masuk' => $p->tgl_masuk ? \Carbon\Carbon::parse($p->tgl_masuk)->format('Y-m-d') : '',
-                    'kks' => $p->kks,
-                    'pkh' => $p->pkh,
-                    'kip' => $p->kip,
-                    'jenjang_pendidikan_sebelumnya' => $p->jenjang_pendidikan_sebelumnya,
-                    'status_sekolah_sebelumnya' => $p->status_sekolah_sebelumnya,
-                    'nama_sekolah_sebelumnya' => $p->nama_sekolah_sebelumnya,
-                    'npsn_sekolah_sebelumnya' => $p->npsn_sekolah_sebelumnya,
-                    'alamat_sekolah_sebelumnya' => $p->alamat_sekolah_sebelumnya,
-                    'kecamatan_sekolah_sebelumnya' => $p->kecamatan_sekolah_sebelumnya,
-                    'kabupaten_sekolah_sebelumnya' => $p->kabupaten_sekolah_sebelumnya,
-                    'provinsi_sekolah_sebelumnya' => $p->provinsi_sekolah_sebelumnya,
-                    'nik_ayah' => $p->nik_ayah,
-                    'nama_ayah' => $p->nama_ayah,
-                    'tempat_lahir_ayah' => $p->tempat_lahir_ayah,
-                    'tanggal_lahir_ayah' => $p->tanggal_lahir_ayah ? \Carbon\Carbon::parse($p->tanggal_lahir_ayah)->format('Y-m-d') : '',
-                    'status_ayah' => $p->status_ayah,
-                    'no_hp_ayah' => $p->no_hp_ayah,
-                    'pendidikan_ayah' => $p->pendidikan_ayah,
-                    'pekerjaan_ayah' => $p->pekerjaan_ayah,
-                    'penghasilan_ayah' => $p->penghasilan_ayah,
-                    'nik_ibu' => $p->nik_ibu,
-                    'nama_ibu' => $p->nama_ibu,
-                    'tempat_lahir_ibu' => $p->tempat_lahir_ibu,
-                    'tanggal_lahir_ibu' => $p->tanggal_lahir_ibu ? \Carbon\Carbon::parse($p->tanggal_lahir_ibu)->format('Y-m-d') : '',
-                    'status_ibu' => $p->status_ibu,
-                    'no_hp_ibu' => $p->no_hp_ibu,
-                    'pendidikan_ibu' => $p->pendidikan_ibu,
-                    'pekerjaan_ibu' => $p->pekerjaan_ibu,
-                    'penghasilan_ibu' => $p->penghasilan_ibu,
-                    'status_milik' => $p->status_milik,
-                    'rt' => $p->rt,
-                    'rw' => $p->rw,
-                    'desa' => $p->desa,
-                    'kecamatan' => $p->kecamatan,
-                    'kabupaten' => $p->kabupaten,
-                    'provinsi' => $p->provinsi,
-                    'kode_pos' => $p->kode_pos,
-                    'nik_wali' => $p->nik_wali,
-                    'nama_wali' => $p->nama_wali,
-                    'tempat_lahir_wali' => $p->tempat_lahir_wali,
-                    'tanggal_lahir_wali' => $p->tanggal_lahir_wali ? \Carbon\Carbon::parse($p->tanggal_lahir_wali)->format('Y-m-d') : '',
-                    'no_hp_wali' => $p->no_hp_wali,
-                    'pendidikan_wali' => $p->pendidikan_wali,
-                    'pekerjaan_wali' => $p->pekerjaan_wali,
-                    'penghasilan_wali' => $p->penghasilan_wali,
-                    'fotokk' => $p->fotokk,
-                    'fotoakta' => $p->fotoakta,
-                    'fototransfer' => $p->fototransfer,
-                    'buktitransfer' => $p->buktitransfer,
-                    'asal_sekolah' => $p->asal_sekolah,
-                    'alamat' => $p->alamat,
-                    'no_hp' => $p->no_hp,
-                    'bayar_uang_masuk' => $p->bayar_uang_masuk,
-                    'created_at' => $p->created_at->format('Y-m-d H:i'),
-                    'updated_at' => $p->updated_at->format('Y-m-d H:i'),
-                ];
-            }))
-            ->toBrowser();
-    }
-
-    public static function waUrl($p): string
-    {
-        $ttl = $p->tempat_lahir . ', ' . ($p->tanggal_lahir ? \Carbon\Carbon::parse($p->tanggal_lahir)->locale('id')->isoFormat('D MMMM Y') : '-');
-        $asalSekolah = $p->nama_sekolah_sebelumnya ?? $p->asal_sekolah ?? '-';
-        $kontak = $p->no_hp ?? $p->no_hp_ayah ?? $p->no_hp_ibu ?? '-';
-        $alamatLengkap = $p->alamat ?? (collect([$p->desa, $p->kecamatan, $p->kabupaten, $p->provinsi])->filter()->implode(', ') ?: '-');
-
-        return 'https://wa.me/6285259875754?text=' . rawurlencode(
-            "*Data Pendaftaran Siswa Baru*\n" .
-            "\n" .
-            "Nama: " . $p->nama . "\n" .
-            "Tempat/Tgl Lahir: " . $ttl . "\n" .
-            "Jenjang: " . $p->jenjang_pendidikan . "\n" .
-            "Nama Ayah: " . ($p->nama_ayah ?? '-') . "\n" .
-            "Nama Ibu: " . ($p->nama_ibu ?? '-') . "\n" .
-            "Asal Sekolah: " . $asalSekolah . "\n" .
-            "No. Kontak: " . $kontak . "\n" .
-            "Alamat: " . $alamatLengkap
-        );
-    }
-
-    public function render()
-    {
         $query = Pendaftaran::latest();
 
         if (!auth()->user()->hasRole('admin') && auth()->user()->jenjang) {
@@ -243,8 +183,99 @@ class PendaftaransTable extends Component
             $query->where('jenjang_pendidikan', $this->jenjang);
         }
 
+        $filename = 'pendaftarans-' . now()->format('Y-m-d-His') . '.xlsx';
+        $tempPath = 'temp/' . $filename;
+
+        // Ensure temp directory exists & cleanup old files (>= 1 jam)
+        Storage::disk('public')->makeDirectory('temp');
+        collect(Storage::disk('public')->files('temp'))
+            ->each(fn($f) => Storage::disk('public')->lastModified($f) < now()->subHour()->timestamp
+                ? Storage::disk('public')->delete($f)
+                : null
+            );
+
+        SimpleExcelWriter::create(Storage::disk('public')->path($tempPath))
+            ->addHeader([
+                'Nama', 'Tempat Lahir', 'Tanggal Lahir', 'Jenjang', 'Asal Sekolah', 'Tanggal Pendaftaran',
+                'Status', 'Uang Masuk', 'Kontak', 'Nama Ayah', 'Nama Ibu', 'Alamat'
+            ])
+            ->addRows($query->get()->map(function($p) {
+                $wib = $p->created_at->setTimezone('Asia/Jakarta');
+                return [
+                    'nama' => $p->nama ?? '-',
+                    'tempat_lahir' => $p->tempat_lahir ?? '-',
+                    'tanggal_lahir' => $p->tanggal_lahir ? \Carbon\Carbon::parse($p->tanggal_lahir)->locale('id')->isoFormat('D MMMM Y') : '-',
+                    'jenjang' => $p->jenjang_pendidikan ?? '-',
+                    'asal_sekolah' => $p->nama_sekolah_sebelumnya ?? $p->asal_sekolah ?? '-',
+                    'tanggal_pendaftaran' => $wib->locale('id')->isoFormat('D MMMM Y') . ' ' . $wib->format('H:i') . ' WIB',
+                    'status' => ucfirst($p->status_pendaftaran ?? '-'),
+                    'uang_masuk' => $p->bayar_uang_masuk ? number_format($p->bayar_uang_masuk, 0, ',', '.') : '-',
+                    'kontak' => $p->no_hp ?? '-',
+                    'nama_ayah' => $p->nama_ayah ?? '-',
+                    'nama_ibu' => $p->nama_ibu ?? '-',
+                    'alamat' => $p->alamat ?? (collect([$p->desa, $p->kecamatan, $p->kabupaten, $p->provinsi])->filter()->implode(', ') ?: '-'),
+                ];
+            }));
+
+        $this->dispatch('download-excel', url: Storage::disk('public')->url($tempPath));
+    }
+
+    public static function waUrl($p): string
+    {
+        $ttl = $p->tempat_lahir . ', ' . ($p->tanggal_lahir ? \Carbon\Carbon::parse($p->tanggal_lahir)->locale('id')->isoFormat('D MMMM Y') : '-');
+        $asalSekolah = $p->nama_sekolah_sebelumnya ?? $p->asal_sekolah ?? '-';
+        $kontak = $p->no_hp ?? $p->no_hp_ayah ?? $p->no_hp_ibu ?? '-';
+        $alamatLengkap = $p->alamat ?? (collect([$p->desa, $p->kecamatan, $p->kabupaten, $p->provinsi])->filter()->implode(', ') ?: '-');
+
+        return 'https://wa.me/6285259875754?text=' . rawurlencode(
+            "*Data Pendaftaran Siswa Baru*\n" .
+            "\n" .
+            "Nama: " . $p->nama . "\n" .
+            "Tempat/Tgl Lahir: " . $ttl . "\n" .
+            "Jenjang: " . $p->jenjang_pendidikan . "\n" .
+            "Nama Ayah: " . ($p->nama_ayah ?? '-') . "\n" .
+            "Nama Ibu: " . ($p->nama_ibu ?? '-') . "\n" .
+            "Asal Sekolah: " . $asalSekolah . "\n" .
+            "No. Kontak: " . $kontak . "\n" .
+            "Alamat: " . $alamatLengkap
+        );
+    }
+
+    public function render()
+    {
+        $query = Pendaftaran::query();
+
+        if (!auth()->user()->hasRole('admin') && auth()->user()->jenjang) {
+            $query->where('jenjang_pendidikan', auth()->user()->jenjang);
+        }
+
+        if ($this->search) {
+            $query->where(function($q) {
+                $q->where('nama', 'like', "%{$this->search}%")
+                  ->orWhere('nisn', 'like', "%{$this->search}%")
+                  ->orWhere('nik', 'like', "%{$this->search}%");
+            });
+        }
+
+        if ($this->tahunAjaran) {
+            $query->where('tahun_ajaran', $this->tahunAjaran);
+        }
+
+        if ($this->status) {
+            $query->where('status_pendaftaran', $this->status);
+        }
+
+        if ($this->jenjang) {
+            $query->where('jenjang_pendidikan', $this->jenjang);
+        }
+
+        $query->orderBy($this->sortField, $this->sortDirection);
+
+        // PerPage: pilihan 15, 25, 50, 100 — validasi
+        $perPage = in_array($this->perPage, [15, 25, 50, 100]) ? $this->perPage : 15;
+
         return view('livewire.admin.pendaftarans-table', [
-            'pendaftarans' => $query->paginate(15),
+            'pendaftarans' => $query->paginate($perPage),
             'tahunAjarans' => Pendaftaran::whereNotNull('tahun_ajaran')->pluck('tahun_ajaran')->unique(),
         ]);
     }
