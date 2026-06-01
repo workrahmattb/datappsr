@@ -105,6 +105,14 @@
                     </svg>
                     <span class="font-medium">Data Pendaftaran</span>
                 </a>
+
+                <a href="{{ route('uangmasuk.index') }}" wire:navigate target="_blank"
+                   class="flex items-center px-4 py-3 rounded-lg transition-all duration-200 group hover:bg-white/10">
+                    <svg class="w-5 h-5 mr-3 {{ request()->routeIs('admin.uangmasuk.*') ? 'text-white' : 'text-emerald-200 group-hover:text-white' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
+                    </svg>
+                    <span class="font-medium">Uang Masuk</span>
+                </a>
                 @endif
             </nav>
 
@@ -181,6 +189,7 @@
                     @endif
                     @if(auth()->user()->hasRole('admin'))
                     <a href="{{ route('admin.pendaftarans.index') }}" wire:navigate class="block py-2 px-4 hover:bg-white/10 rounded-lg">Pendaftaran</a>
+                    <a href="{{ route('uangmasuk.index') }}" target="_blank" class="block py-2 px-4 hover:bg-white/10 rounded-lg">Uang Masuk</a>
                     @endif
                     <form method="POST" action="{{ route('logout') }}" class="pt-2 border-t border-emerald-500">
                         @csrf

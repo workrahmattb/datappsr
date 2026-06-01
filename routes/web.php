@@ -98,4 +98,8 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
         Route::delete('pendaftarans/{pendaftaran}', [\App\Http\Controllers\Admin\PendaftaranController::class, 'destroy'])->name('pendaftarans.destroy');
         Route::get('pendaftarans-export', [\App\Http\Controllers\Admin\PendaftaranController::class, 'export'])->name('pendaftarans.export');
     });
+
 });
+
+// Uang Masuk (Public)
+Route::get('/uangmasuk', \App\Livewire\UangMasukTable::class)->name('uangmasuk.index');
