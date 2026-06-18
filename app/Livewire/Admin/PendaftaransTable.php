@@ -196,13 +196,14 @@ class PendaftaransTable extends Component
 
         SimpleExcelWriter::create(Storage::disk('public')->path($tempPath))
             ->addHeader([
-                'Nama', 'Tempat Lahir', 'Tanggal Lahir', 'Jenjang', 'Asal Sekolah', 'Tanggal Pendaftaran',
+                'Nama', 'NISN', 'Tempat Lahir', 'Tanggal Lahir', 'Jenjang', 'Asal Sekolah', 'Tanggal Pendaftaran',
                 'Status', 'Uang Masuk', 'Kontak', 'Nama Ayah', 'Nama Ibu', 'Alamat'
             ])
             ->addRows($query->get()->map(function($p) {
                 $wib = $p->created_at->setTimezone('Asia/Jakarta');
                 return [
                     'nama' => $p->nama ?? '-',
+                    'nisn' => $p->nisn ?? '-',
                     'tempat_lahir' => $p->tempat_lahir ?? '-',
                     'tanggal_lahir' => $p->tanggal_lahir ? \Carbon\Carbon::parse($p->tanggal_lahir)->locale('id')->isoFormat('D MMMM Y') : '-',
                     'jenjang' => $p->jenjang_pendidikan ?? '-',
