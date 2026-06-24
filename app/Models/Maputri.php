@@ -76,6 +76,7 @@ class Maputri extends Model
         'fotokk',
         'fotoakta',
         'fototransfer',
+        'foto',
 
     ];
 

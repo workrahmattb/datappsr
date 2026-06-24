@@ -95,6 +95,7 @@ class MaputriController extends Controller
             'fotokk' => 'nullable|image|max:2048',
             'fotoakta' => 'nullable|image|max:2048',
             'fototransfer' => 'nullable|image|max:2048',
+            'foto' => 'nullable|image|max:2048',
         ]);
 
         // Handle file uploads
@@ -109,6 +110,10 @@ class MaputriController extends Controller
         if ($request->hasFile('fototransfer')) {
             $ext = $request->file('fototransfer')->getClientOriginalExtension();
             $validated['fototransfer'] = $request->file('fototransfer')->storeAs('documents/maputri', 'tf_' . $validated['nama'] . '.' . $ext, 'public');
+        }
+        if ($request->hasFile('foto')) {
+            $ext = $request->file('foto')->getClientOriginalExtension();
+            $validated['foto'] = $request->file('foto')->storeAs('documents/maputri', 'foto_' . $validated['nama'] . '.' . $ext, 'public');
         }
 
         Maputri::create($validated);
@@ -190,6 +195,7 @@ class MaputriController extends Controller
             'fotokk' => 'nullable|image|max:2048',
             'fotoakta' => 'nullable|image|max:2048',
             'fototransfer' => 'nullable|image|max:2048',
+            'foto' => 'nullable|image|max:2048',
         ]);
 
         if ($request->hasFile('fotokk')) {
@@ -207,6 +213,11 @@ class MaputriController extends Controller
             $ext = $request->file('fototransfer')->getClientOriginalExtension();
             $validated['fototransfer'] = $request->file('fototransfer')->storeAs('documents/maputri', 'tf_' . $validated['nama'] . '.' . $ext, 'public');
         }
+        if ($request->hasFile('foto')) {
+            if ($maputri->foto) Storage::disk('public')->delete($maputri->foto);
+            $ext = $request->file('foto')->getClientOriginalExtension();
+            $validated['foto'] = $request->file('foto')->storeAs('documents/maputri', 'foto_' . $validated['nama'] . '.' . $ext, 'public');
+        }
 
         $maputri->update($validated);
 
@@ -219,6 +230,7 @@ class MaputriController extends Controller
         if ($maputri->fotokk) Storage::disk('public')->delete($maputri->fotokk);
         if ($maputri->fotoakta) Storage::disk('public')->delete($maputri->fotoakta);
         if ($maputri->fototransfer) Storage::disk('public')->delete($maputri->fototransfer);
+        if ($maputri->foto) Storage::disk('public')->delete($maputri->foto);
 
         $maputri->delete();
 

@@ -705,11 +705,11 @@
                         </div>
                         <div class="p-6">
                         
-                        <div x-data="{ kkUpload: { uploading: false, progress: 0, uploaded: false }, aktaUpload: { uploading: false, progress: 0, uploaded: false } }"
-                             x-on:livewire-upload-start.window="let m = $event.detail?.model || $event.target.getAttribute?.('wire:model'); if (m === 'fotokk') { kkUpload.uploading = true; kkUpload.progress = 0; kkUpload.uploaded = false } else if (m === 'fotoakta') { aktaUpload.uploading = true; aktaUpload.progress = 0; aktaUpload.uploaded = false }"
-                             x-on:livewire-upload-progress.window="let m = $event.detail?.model || $event.target.getAttribute?.('wire:model'); if (m === 'fotokk') kkUpload.progress = $event.detail.progress; else if (m === 'fotoakta') aktaUpload.progress = $event.detail.progress"
-                             x-on:livewire-upload-finish.window="let m = $event.detail?.model || $event.target.getAttribute?.('wire:model'); if (m === 'fotokk') { kkUpload.uploading = false; kkUpload.uploaded = true } else if (m === 'fotoakta') { aktaUpload.uploading = false; aktaUpload.uploaded = true }"
-                             x-on:livewire-upload-error.window="let m = $event.detail?.model || $event.target.getAttribute?.('wire:model'); if (m === 'fotokk') { kkUpload.uploading = false; kkUpload.uploaded = false } else if (m === 'fotoakta') { aktaUpload.uploading = false; aktaUpload.uploaded = false }">
+                        <div x-data="{ kkUpload: { uploading: false, progress: 0, uploaded: false }, fotoUpload: { uploading: false, progress: 0, uploaded: false }, aktaUpload: { uploading: false, progress: 0, uploaded: false } }"
+                             x-on:livewire-upload-start.window="let m = $event.detail?.model || $event.target.getAttribute?.('wire:model'); if (m === 'fotokk') { kkUpload.uploading = true; kkUpload.progress = 0; kkUpload.uploaded = false } else if (m === 'foto') { fotoUpload.uploading = true; fotoUpload.progress = 0; fotoUpload.uploaded = false } else if (m === 'fotoakta') { aktaUpload.uploading = true; aktaUpload.progress = 0; aktaUpload.uploaded = false }"
+                             x-on:livewire-upload-progress.window="let m = $event.detail?.model || $event.target.getAttribute?.('wire:model'); if (m === 'fotokk') kkUpload.progress = $event.detail.progress; else if (m === 'foto') fotoUpload.progress = $event.detail.progress; else if (m === 'fotoakta') aktaUpload.progress = $event.detail.progress"
+                             x-on:livewire-upload-finish.window="let m = $event.detail?.model || $event.target.getAttribute?.('wire:model'); if (m === 'fotokk') { kkUpload.uploading = false; kkUpload.uploaded = true } else if (m === 'foto') { fotoUpload.uploading = false; fotoUpload.uploaded = true } else if (m === 'fotoakta') { aktaUpload.uploading = false; aktaUpload.uploaded = true }"
+                             x-on:livewire-upload-error.window="let m = $event.detail?.model || $event.target.getAttribute?.('wire:model'); if (m === 'fotokk') { kkUpload.uploading = false; kkUpload.uploaded = false } else if (m === 'foto') { fotoUpload.uploading = false; fotoUpload.uploaded = false } else if (m === 'fotoakta') { aktaUpload.uploading = false; aktaUpload.uploaded = false }">
                             <div class="space-y-6">
                             {{-- KK --}}
                             <div>
@@ -797,6 +797,89 @@
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                             </svg>
                                             {{ $fotokk->getClientOriginalName() }}
+                                        </p>
+                                    </div>
+                                @endif
+                            </div>
+
+                            {{-- Pas Photo --}}
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-800 dark:text-gray-200 mb-2">
+                                    Pas Photo Anak <span class="text-red-500 dark:text-red-400">*</span>
+                                </label>
+                                <input type="file" wire:model.live="foto" accept=".jpg,.jpeg,.png" class="block w-full text-sm file:bg-cyan-500 file:border-0 file:text-white file:px-4 file:py-2 file:rounded-md file:cursor-pointer file:font-semibold dark:text-gray-300">
+                                <p class="text-xs text-gray-600 dark:text-gray-400 mt-2">JPG, PNG (Max. 2MB)</p>
+                                @error('foto') <p class="text-red-500 dark:text-red-400 text-sm mt-1">{{ $message }}</p> @enderror
+
+                                {{-- Progress Bar Pas Photo --}}
+                                <div x-show="fotoUpload.uploading" x-cloak class="mt-4 bg-white dark:bg-gray-800 rounded-lg border border-cyan-200 dark:border-cyan-800 p-4 shadow-sm">
+                                    <div class="flex items-center gap-3 mb-3">
+                                        <svg class="animate-spin h-5 w-5 text-cyan-600 dark:text-cyan-400" fill="none" viewBox="0 0 24 24">
+                                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                        </svg>
+                                        <div>
+                                            <p class="text-sm font-semibold text-cyan-800 dark:text-cyan-300">Mengupload Pas Photo...</p>
+                                            <p class="text-xs text-cyan-600 dark:text-cyan-400" x-text="fotoUpload.progress + '%'"></p>
+                                        </div>
+                                    </div>
+                                    <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3 overflow-hidden">
+                                        <div class="h-full bg-gradient-to-r from-cyan-500 to-cyan-600 dark:from-cyan-400 dark:to-cyan-500 rounded-full transition-all duration-300 ease-out"
+                                             :style="'width: ' + fotoUpload.progress + '%'"></div>
+                                    </div>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">Mohon tunggu, jangan tutup halaman ini...</p>
+                                </div>
+
+                                {{-- Success Indicator Pas Photo --}}
+                                <div x-show="fotoUpload.uploaded" x-cloak class="mt-4 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border-2 border-green-300 dark:border-green-700 rounded-xl p-5 shadow-sm">
+                                    <div class="flex items-center gap-4">
+                                        <div class="flex-shrink-0 w-12 h-12 rounded-full bg-green-100 dark:bg-green-800/50 flex items-center justify-center">
+                                            <svg class="w-7 h-7 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
+                                            </svg>
+                                        </div>
+                                        <div class="flex-1">
+                                            <p class="text-base font-bold text-green-800 dark:text-green-300">✓ Pas Photo Berhasil Diupload!</p>
+                                            <p class="text-sm text-green-600 dark:text-green-400 mt-0.5">
+                                                @if ($foto)
+                                                    {{ $foto->getClientOriginalName() }} — Siap diproses
+                                                @endif
+                                            </p>
+                                        </div>
+                                        <div class="flex-shrink-0">
+                                            <svg class="w-6 h-6 text-green-400 dark:text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {{-- Preview Pas Photo --}}
+                                @if ($foto)
+                                    <div class="mt-3 animate-fadeIn">
+                                        <div class="rounded-lg border-2 border-cyan-200 dark:border-cyan-800 overflow-hidden bg-white dark:bg-gray-800 shadow-sm">
+                                            <div class="px-3 py-2 bg-cyan-50 dark:bg-gray-700 border-b border-cyan-200 dark:border-cyan-800 flex items-center gap-2">
+                                                <svg class="w-4 h-4 text-cyan-600 dark:text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                                </svg>
+                                                <span class="text-xs font-semibold text-cyan-700 dark:text-cyan-300">Preview Pas Photo</span>
+                                            </div>
+                                            <div class="flex justify-center p-4">
+                                                <img src="{{ $foto->temporaryUrl() }}" alt="Preview Pas Photo" class="w-32 h-32 rounded-full object-cover border-4 border-cyan-200">
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endif
+
+                                {{-- Nama file preview Pas Photo (fallback) --}}
+                                @if ($foto && !$errors->has('foto'))
+                                    <div class="mt-3 p-3 bg-cyan-50 dark:bg-cyan-900/20 border border-cyan-200 dark:border-cyan-800 rounded-lg"
+                                         x-show="!fotoUpload.uploading && !fotoUpload.uploaded">
+                                        <p class="text-sm text-cyan-700 dark:text-cyan-300 flex items-center gap-2">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                            </svg>
+                                            {{ $foto->getClientOriginalName() }}
                                         </p>
                                     </div>
                                 @endif

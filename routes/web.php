@@ -17,6 +17,9 @@ Route::get('/lagibelajar', HelloWorld::class);
 
 Route::get('/pendaftaran', PendaftaranForm::class)->name('pendaftaran');
 
+// Update Foto Routes (Public - No Auth Required)
+Route::get('/update-foto/{type}/{id}', \App\Livewire\UpdateFotoForm::class)->name('update-foto.form');
+
 // Daftar Ulang Routes (Public - No Auth Required)
 Route::get('/daftar-ulang', \App\Livewire\DaftarUlangTable::class)->name('daftar-ulang.table');
 Route::get('/daftar-ulang/{id}', \App\Livewire\DaftarUlangForm::class)->name('daftar-ulang.form');

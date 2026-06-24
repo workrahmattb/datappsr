@@ -906,3 +906,325 @@ Rewrite total dari form minimal → form lengkap dengan **10 section**:
   │
   └── [API] ── /api/pendaftaran, /api/mtsputri, /api/mtsputra, /api/maputri, /api/maputra
 ```
+
+---
+
+# Changelog — Sesi 23 Juni 2026 — Fitur Foto Profil Siswa & Pencarian Data
+
+> **Tanggal:** 23 Juni 2026
+> **Fokus:** Menambahkan fitur foto profil (pas photo) untuk semua jenjang siswa, halaman pencarian data siswa di beranda, dan form update foto mandiri
+
+---
+
+## 1. Migration — Tambah Kolom `foto` di Semua Tabel Siswa
+
+**File:** `database/migrations/2026_06_23_000001_add_foto_to_student_tables.php` (NEW)
+
+Menambahkan kolom `foto` (nullable string) setelah kolom `fototransfer` di 4 tabel:
+- `mtsputras`
+- `mtsputris`
+- `maputras`
+- `maputris`
+
+```php
+$table->string('foto')->nullable()->after('fototransfer');
+```
+
+---
+
+## 2. Models — Tambah `foto` ke $fillable
+
+**File (4 file):**
+- `app/Models/Maputra.php`
+- `app/Models/Maputri.php`
+- `app/Models/Mtsputra.php`
+- `app/Models/Mtsputri.php`
+
+**Perubahan:** Menambahkan `'foto'` ke array `$fillable`.
+
+---
+
+## 3. Controllers — Upload Foto Profil
+
+**File (4 file):**
+- `app/Http/Controllers/Admin/MaputraController.php`
+- `app/Http/Controllers/Admin/MaputriController.php`
+- `app/Http/Controllers/Admin/MtsputraController.php`
+- `app/Http/Controllers/Admin/MtsputriController.php`
+
+**Perubahan di method `store()`:**
+- Validasi: `'foto' => 'nullable|image|max:2048'`
+- Upload: `$validated['foto'] = $request->file('foto')->storeAs('documents/{jenjang}', 'foto_' . $validated['nama'] . '.' . $ext, 'public');`
+
+**Perubahan di method `update()`:**
+- Validasi: `'foto' => 'nullable|image|max:2048'`
+- Hapus foto lama jika ada: `if ($siswa->foto) Storage::disk('public')->delete($siswa->foto);`
+- Upload foto baru dengan nama `foto_{Nama}.{ext}`
+
+**Perubahan di method `destroy()`:**
+- Cleanup: `if ($siswa->foto) Storage::disk('public')->delete($siswa->foto);`
+
+**Path penyimpanan:**
+| Jenjang | Storage Path |
+|---------|-------------|
+| Mtsputra | `documents/mtsputra/foto_{Nama}.{ext}` |
+| Mtsputri | `documents/mtsputri/foto_{Nama}.{ext}` |
+| Maputra | `documents/maputra/foto_{Nama}.{ext}` |
+| Maputri | `documents/maputri/foto_{Nama}.{ext}` |
+
+---
+
+## 4. Admin Create Views — Input Foto Profil
+
+**File (4 file):**
+- `resources/views/admin/mtsputras/create.blade.php`
+- `resources/views/admin/mtsputris/create.blade.php`
+- `resources/views/admin/maputras/create.blade.php`
+- `resources/views/admin/maputris/create.blade.php`
+
+**Perubahan:**
+- Grid dokumen: `md:grid-cols-3` → `md:grid-cols-4`
+- Menambahkan input "Foto Profil" di awal section Dokumen:
+  ```blade
+  <div>
+      <label class="block text-sm font-medium text-gray-700">Foto Profil</label>
+      <input type="file" name="foto" accept="image/*" class="...">
+      @error('foto')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
+  </div>
+  ```
+
+---
+
+## 5. Admin Edit Views — Input Foto Profil + Info File Existing
+
+**File (4 file):**
+- `resources/views/admin/mtsputras/edit.blade.php`
+- `resources/views/admin/mtsputris/edit.blade.php`
+- `resources/views/admin/maputras/edit.blade.php`
+- `resources/views/admin/maputris/edit.blade.php`
+
+**Perubahan:**
+- Grid dokumen: `md:grid-cols-3` → `md:grid-cols-4`
+- Input "Foto Profil" dengan info file existing:
+  ```blade
+  @if($model->foto)<p class="text-xs text-gray-500 mt-1">File saat ini: {{ $model->foto }}</p>@endif
+  ```
+
+---
+
+## 6. Admin Show Views — Tampilkan Foto Profil
+
+**File (4 file):**
+- `resources/views/admin/mtsputras/show.blade.php`
+- `resources/views/admin/mtsputris/show.blade.php`
+- `resources/views/admin/maputras/show.blade.php`
+- `resources/views/admin/maputris/show.blade.php`
+
+**Perubahan di header card:**
+- Jika `$student->foto` ada → tampilkan gambar lingkaran:
+  ```blade
+  <div class="w-16 h-16 rounded-full overflow-hidden shrink-0 border-2 border-zinc-200 shadow-sm">
+      <img src="{{ Storage::url($student->foto) }}" class="w-full h-full object-cover" alt="Foto Profil">
+  </div>
+  ```
+- Jika tidak ada → fallback ke inisial nama (seperti sebelumnya)
+
+---
+
+## 7. DaftarUlangForm — Tambah Upload Pas Photo
+
+**File:** `app/Livewire/DaftarUlangForm.php`
+
+**Perubahan:**
+- Tambah property: `public $foto;`
+- Tambah validasi di `rulesStep2()`: `'foto' => 'required|image|mimes:jpg,jpeg,png|max:2048'`
+- Tambah custom messages:
+  ```php
+  'foto.required' => 'Pas photo anak wajib diunggah.',
+  'foto.image' => 'Pas photo harus berupa gambar.',
+  'foto.mimes' => 'Pas photo harus berformat JPG atau PNG.',
+  'foto.max' => 'Ukuran pas photo tidak boleh lebih dari 2 MB.',
+  ```
+- Method `submit()`: simpan foto ke `storage/app/public/foto/FOTO_{NISN}_{Nama}_{Timestamp}.{ext}`
+- Validasi menggunakan custom messages: `$this->validate($this->rulesStep2(), [], $this->messages())`
+
+---
+
+## 8. DaftarUlangForm Blade — UI Upload Pas Photo
+
+**File:** `resources/views/livewire/daftar-ulang-form.blade.php`
+
+**Perubahan:**
+- Tambah input file "Pas Photo" di section upload dokumen (KK & Akta)
+- Progress bar real-time dengan Alpine.js (`x-on:livewire-upload-*`)
+- Preview gambar setelah upload (`$foto->temporaryUrl()`)
+- Validasi format: JPG/PNG, max 2MB
+
+---
+
+## 9. Welcome Page — Ganti ke Pencarian Data Siswa
+
+**File:** `resources/views/welcome.blade.php`
+
+**Perubahan:**
+- Hapus Livewire component `registration-buttons`
+- Tambah section "Cari Data TA 2026/2027" dengan Livewire component `cari-siswa-table`
+- Section Hero, Data Siswa, dan Features di-comment (disable)
+- Hanya menyisakan Search section dan About section
+
+---
+
+## 10. Komponen Baru: CariSiswaTable
+
+**File:** `app/Livewire/CariSiswaTable.php` (NEW)
+
+**Deskripsi:** Livewire component dengan search real-time yang mencari data siswa dari 4 tabel:
+- `Mtsputra`, `Mtsputri`, `Maputra`, `Maputri` — filter by `tahun_ajaran` + search by `nama`, `nisn`, `nik`
+- `Pendaftaran` — status `pending`, filter by `tahun_ajaran` + search by `nama`, `nisn`, `nik`
+
+**View:** `resources/views/livewire/cari-siswa-table.blade.php` (NEW)
+
+**Fitur UI:**
+- Search bar dengan icon search + `wire:model.live.debounce.300ms`
+- **Desktop:** Tabel dengan kolom: Nama (dengan foto/avatar), NISN, Jenjang, TTL, Status Foto, Aksi
+- **Mobile:** Card view responsif dengan informasi lengkap
+- Status foto: "✓ Ada" (hijau), "⏳ Pending" (kuning), atau "-" (abu-abu)
+- Tombol aksi:
+  - Data pendaftaran pending → "Daftar Ulang" (amber, link ke `daftar-ulang.form`)
+  - Data siswa existing → "Update Foto" (green, link ke `update-foto.form`)
+- Empty state dengan icon saat belum mencari atau tidak ditemukan
+- Hitung jumlah data ditemukan
+- Dark mode support penuh
+
+---
+
+## 11. Komponen Baru: UpdateFotoForm
+
+**File:** `app/Livewire/UpdateFotoForm.php` (NEW)
+
+**Deskripsi:** Livewire component untuk update foto profil siswa secara mandiri dari halaman publik.
+
+**Alur:**
+1. **Input type + student ID** via route `{type}/{id}`
+2. Cari model class via `match($this->type)`
+3. Tampilkan current foto (jika ada) atau placeholder avatar
+4. Upload foto baru via `wire:model="foto"` dengan validasi: `image|mimes:jpg,jpeg,png|max:2048`
+5. Progress bar real-time dengan Alpine.js
+6. Preview foto baru dengan `temporaryUrl()`
+7. Simpan: hapus foto lama → upload ke `storage/app/public/foto/FOTO_{NISN}_{Nama}_{Timestamp}.{ext}` → update `foto` column
+8. **Success page:** card hijau dengan icon checkmark, preview foto final, nama & NISN, tombol "Kembali ke Beranda"
+
+**Layout:** Menggunakan `layouts.standalone` (full-page tanpa sidebar)
+
+**View:** `resources/views/livewire/update-foto-form.blade.php` (NEW)
+
+**Fitur UI:**
+- Gradient header hijau dengan nama siswa dalam card putih
+- Tampilkan current foto (lingkaran, border gray) atau placeholder icon user
+- Form upload dengan input file, progress bar, dan preview
+- Action buttons: "Kembali ke Beranda" + "Simpan Foto" (dengan loading state)
+- Success page dengan foto final (lingkaran, border green) + confetti-like icon
+- Tombol kembali ke beranda di success page
+- Dark mode support penuh
+
+---
+
+## 12. Routes — Tambah Route Update Foto
+
+**File:** `routes/web.php`
+
+**Perubahan:**
+- Tambah route ke UpdateFotoForm:
+  ```php
+  Route::get('/update-foto/{type}/{id}', \App\Livewire\UpdateFotoForm::class)
+      ->name('update-foto.form');
+  ```
+- Route ini public (tanpa middleware auth)
+
+---
+
+## Ringkasan File yang Dimodifikasi (Sesi Ini)
+
+| File | Status | Perubahan |
+|------|--------|-----------|
+| `database/migrations/2026_06_23_000001_add_foto_to_student_tables.php` | **NEW** | Migration tambah kolom foto |
+| `app/Livewire/CariSiswaTable.php` | **NEW** | Livewire component pencarian siswa |
+| `resources/views/livewire/cari-siswa-table.blade.php` | **NEW** | View tabel pencarian + mobile card |
+| `app/Livewire/UpdateFotoForm.php` | **NEW** | Livewire component update foto |
+| `resources/views/livewire/update-foto-form.blade.php` | **NEW** | View form update foto + success page |
+| `app/Models/Maputra.php` | Modified | Tambah `foto` ke $fillable |
+| `app/Models/Maputri.php` | Modified | Tambah `foto` ke $fillable |
+| `app/Models/Mtsputra.php` | Modified | Tambah `foto` ke $fillable |
+| `app/Models/Mtsputri.php` | Modified | Tambah `foto` ke $fillable |
+| `app/Http/Controllers/Admin/MaputraController.php` | Modified | Upload/update/delete foto di store, update, destroy |
+| `app/Http/Controllers/Admin/MaputriController.php` | Modified | Upload/update/delete foto di store, update, destroy |
+| `app/Http/Controllers/Admin/MtsputraController.php` | Modified | Upload/update/delete foto di store, update, destroy |
+| `app/Http/Controllers/Admin/MtsputriController.php` | Modified | Upload/update/delete foto di store, update, destroy |
+| `resources/views/admin/mtsputras/create.blade.php` | Modified | Tambah input Foto Profil |
+| `resources/views/admin/mtsputris/create.blade.php` | Modified | Tambah input Foto Profil |
+| `resources/views/admin/maputras/create.blade.php` | Modified | Tambah input Foto Profil |
+| `resources/views/admin/maputris/create.blade.php` | Modified | Tambah input Foto Profil |
+| `resources/views/admin/mtsputras/edit.blade.php` | Modified | Tambah input Foto Profil + info file |
+| `resources/views/admin/mtsputris/edit.blade.php` | Modified | Tambah input Foto Profil + info file |
+| `resources/views/admin/maputras/edit.blade.php` | Modified | Tambah input Foto Profil + info file |
+| `resources/views/admin/maputris/edit.blade.php` | Modified | Tambah input Foto Profil + info file |
+| `resources/views/admin/mtsputras/show.blade.php` | Modified | Tampilkan foto profil di header |
+| `resources/views/admin/mtsputris/show.blade.php` | Modified | Tampilkan foto profil di header |
+| `resources/views/admin/maputras/show.blade.php` | Modified | Tampilkan foto profil di header |
+| `resources/views/admin/maputris/show.blade.php` | Modified | Tampilkan foto profil di header |
+| `app/Livewire/DaftarUlangForm.php` | Modified | Tambah $foto, validasi, upload pas photo |
+| `resources/views/livewire/daftar-ulang-form.blade.php` | Modified | Tambah input pas photo + progress bar |
+| `resources/views/welcome.blade.php` | Modified | Ganti ke CariSiswaTable component |
+| `routes/web.php` | Modified | Tambah route update-foto.form |
+
+---
+
+## Struktur File Foto di Storage
+
+```
+storage/app/public/
+├── foto/
+│   └── FOTO_{NISN}_{Nama}_{Timestamp}.{ext}    (via DaftarUlangForm & UpdateFotoForm)
+└── documents/
+    ├── mtsputra/
+    │   └── foto_{Nama}.{ext}                    (via Admin Controller)
+    ├── mtsputri/
+    │   └── foto_{Nama}.{ext}
+    ├── maputra/
+    │   └── foto_{Nama}.{ext}
+    └── maputri/
+        └── foto_{Nama}.{ext}
+```
+
+---
+
+## Alur Update Foto Publik
+
+```
+[Home] → Cari Siswa (nama/NISN/NIK)
+    ↓
+Klik "Update Foto" (jika data sudah terdaftar di tabel siswa)
+    ↓
+Halaman UpdateFotoForm
+    ├── Lihat foto saat ini (atau placeholder)
+    ├── Pilih file gambar (JPG/PNG, max 2MB)
+    ├── Progress bar real-time
+    ├── Preview foto baru
+    └── Klik "Simpan Foto"
+    ↓
+Halaman Sukses
+    ├── Foto baru ditampilkan
+    ├── Nama & NISN
+    └── Tombol "Kembali ke Beranda"
+```
+
+---
+
+## Catatan
+
+- `CariSiswaTable` menggunakan `debounce.300ms` untuk menghindari terlalu banyak request saat mengetik
+- Pencarian dilakukan di 5 tabel sekaligus (4 tabel siswa + 1 tabel pendaftaran)
+- Data diurutkan berdasarkan nama secara ascending
+- Tahun ajaran hardcoded `2026/2027` (perlu diupdate jika tahun ajaran berubah)
+- Format foto: lingkaran (rounded-full) dengan border tipis
+- Fallback: inisial nama dalam lingkaran abu-abu jika tidak ada foto

@@ -13,9 +13,15 @@
     <!-- Header Card -->
     <div class="bg-white rounded-xl shadow-sm border border-zinc-200/80 p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div class="flex items-center gap-4">
-            <div class="w-16 h-16 bg-zinc-100 border border-zinc-200 rounded-full flex items-center justify-center text-zinc-700 font-bold text-2xl shrink-0">
-                {{ substr($student->nama, 0, 1) }}
-            </div>
+            @if($student->foto)
+                <div class="w-16 h-16 rounded-full overflow-hidden shrink-0 border-2 border-zinc-200 shadow-sm">
+                    <img src="{{ Storage::url($student->foto) }}" class="w-full h-full object-cover" alt="Foto Profil">
+                </div>
+            @else
+                <div class="w-16 h-16 bg-zinc-100 border border-zinc-200 rounded-full flex items-center justify-center text-zinc-700 font-bold text-2xl shrink-0">
+                    {{ substr($student->nama, 0, 1) }}
+                </div>
+            @endif
             <div>
                 <h1 class="text-2xl font-bold text-zinc-900 tracking-tight">{{ $student->nama }}</h1>
                 <p class="text-sm text-zinc-500 font-medium mt-1">NISN: {{ $student->nisn ?? '-' }} &bull; NIK: {{ $student->nik ?? '-' }}</p>

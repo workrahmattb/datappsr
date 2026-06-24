@@ -39,6 +39,7 @@ class DaftarUlangForm extends Component
     public $nik_wali, $nama_wali, $tempat_lahir_wali, $tanggal_lahir_wali;
     public $no_hp_wali, $pendidikan_wali, $pekerjaan_wali, $penghasilan_wali;
     public $fotokk, $fotoakta;
+    public $foto;
 
     public function mount($id)
     {
@@ -107,12 +108,113 @@ class DaftarUlangForm extends Component
             'provinsi' => 'required|string|max:100',
             'fotokk' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
             'fotoakta' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
+            'foto' => 'required|image|mimes:jpg,jpeg,png|max:2048',
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            // Step 1 - Upload Bukti Transfer
+            'fototransfer.required' => 'Bukti transfer wajib diunggah.',
+            'fototransfer.file' => 'Bukti transfer harus berupa file yang valid.',
+            'fototransfer.mimes' => 'Bukti transfer harus berformat PDF, JPG, JPEG, atau PNG.',
+            'fototransfer.max' => 'Ukuran bukti transfer tidak boleh lebih dari 2 MB.',
+
+            // Step 2 - Data Pribadi
+            'nama.required' => 'Nama lengkap wajib diisi.',
+            'nama.max' => 'Nama lengkap tidak boleh lebih dari 255 karakter.',
+            'tempat_lahir.required' => 'Tempat lahir wajib diisi.',
+            'tempat_lahir.max' => 'Tempat lahir tidak boleh lebih dari 255 karakter.',
+            'tanggal_lahir.required' => 'Tanggal lahir wajib diisi.',
+            'tanggal_lahir.date' => 'Tanggal lahir tidak valid.',
+            'nik.required' => 'NIK wajib diisi.',
+            'nik.min' => 'NIK harus terdiri dari 16 digit.',
+            'nik.max' => 'NIK harus terdiri dari 16 digit.',
+            'kk.min' => 'Nomor KK harus terdiri dari 16 digit.',
+            'kk.max' => 'Nomor KK harus terdiri dari 16 digit.',
+            'nama_kk.max' => 'Nama Kepala Keluarga tidak boleh lebih dari 255 karakter.',
+            'nisn.required' => 'NISN wajib diisi.',
+            'nisn.min' => 'NISN harus terdiri dari 10 digit.',
+            'nisn.max' => 'NISN harus terdiri dari 10 digit.',
+            'nis.max' => 'NIS tidak boleh lebih dari 50 karakter.',
+            'anak_ke.required' => 'Anak ke- wajib diisi.',
+            'anak_ke.integer' => 'Anak ke- harus berupa angka.',
+            'anak_ke.min' => 'Anak ke- minimal 1.',
+            'jumlah_saudara.required' => 'Jumlah saudara wajib diisi.',
+            'jumlah_saudara.integer' => 'Jumlah saudara harus berupa angka.',
+            'jumlah_saudara.min' => 'Jumlah saudara tidak boleh negatif.',
+
+            // Data Sekolah Sebelumnya
+            'nama_sekolah_sebelumnya.required' => 'Nama sekolah sebelumnya wajib diisi.',
+            'nama_sekolah_sebelumnya.max' => 'Nama sekolah tidak boleh lebih dari 255 karakter.',
+            'npsn_sekolah_sebelumnya.required' => 'NPSN sekolah wajib diisi.',
+            'npsn_sekolah_sebelumnya.max' => 'NPSN tidak boleh lebih dari 50 karakter.',
+            'alamat_sekolah_sebelumnya.required' => 'Alamat sekolah wajib diisi.',
+
+            // Data Ayah
+            'nama_ayah.required' => 'Nama ayah wajib diisi.',
+            'nama_ayah.max' => 'Nama ayah tidak boleh lebih dari 255 karakter.',
+            'nik_ayah.required' => 'NIK ayah wajib diisi.',
+            'nik_ayah.min' => 'NIK ayah harus terdiri dari 16 digit.',
+            'nik_ayah.max' => 'NIK ayah harus terdiri dari 16 digit.',
+            'tempat_lahir_ayah.required' => 'Tempat lahir ayah wajib diisi.',
+            'tempat_lahir_ayah.max' => 'Tempat lahir ayah tidak boleh lebih dari 255 karakter.',
+            'tanggal_lahir_ayah.required' => 'Tanggal lahir ayah wajib diisi.',
+            'tanggal_lahir_ayah.date' => 'Tanggal lahir ayah tidak valid.',
+            'no_hp_ayah.required' => 'Nomor HP ayah wajib diisi.',
+            'no_hp_ayah.max' => 'Nomor HP ayah tidak boleh lebih dari 15 karakter.',
+            'pendidikan_ayah.required' => 'Pendidikan ayah wajib dipilih.',
+            'pekerjaan_ayah.required' => 'Pekerjaan ayah wajib dipilih.',
+            'penghasilan_ayah.required' => 'Penghasilan ayah wajib dipilih.',
+
+            // Data Ibu
+            'nama_ibu.required' => 'Nama ibu wajib diisi.',
+            'nama_ibu.max' => 'Nama ibu tidak boleh lebih dari 255 karakter.',
+            'nik_ibu.required' => 'NIK ibu wajib diisi.',
+            'nik_ibu.min' => 'NIK ibu harus terdiri dari 16 digit.',
+            'nik_ibu.max' => 'NIK ibu harus terdiri dari 16 digit.',
+            'tempat_lahir_ibu.required' => 'Tempat lahir ibu wajib diisi.',
+            'tempat_lahir_ibu.max' => 'Tempat lahir ibu tidak boleh lebih dari 255 karakter.',
+            'tanggal_lahir_ibu.required' => 'Tanggal lahir ibu wajib diisi.',
+            'tanggal_lahir_ibu.date' => 'Tanggal lahir ibu tidak valid.',
+            'no_hp_ibu.required' => 'Nomor HP ibu wajib diisi.',
+            'no_hp_ibu.max' => 'Nomor HP ibu tidak boleh lebih dari 15 karakter.',
+            'pendidikan_ibu.required' => 'Pendidikan ibu wajib dipilih.',
+            'pekerjaan_ibu.required' => 'Pekerjaan ibu wajib dipilih.',
+            'penghasilan_ibu.required' => 'Penghasilan ibu wajib dipilih.',
+
+            // Alamat
+            'desa.required' => 'Desa/Kelurahan wajib diisi.',
+            'desa.max' => 'Desa/Kelurahan tidak boleh lebih dari 100 karakter.',
+            'kecamatan.required' => 'Kecamatan wajib diisi.',
+            'kecamatan.max' => 'Kecamatan tidak boleh lebih dari 100 karakter.',
+            'kabupaten.required' => 'Kabupaten/Kota wajib diisi.',
+            'kabupaten.max' => 'Kabupaten/Kota tidak boleh lebih dari 100 karakter.',
+            'provinsi.required' => 'Provinsi wajib diisi.',
+            'provinsi.max' => 'Provinsi tidak boleh lebih dari 100 karakter.',
+
+            // Upload Dokumen
+            'fotokk.required' => 'Foto Kartu Keluarga (KK) wajib diunggah.',
+            'fotokk.file' => 'KK harus berupa file yang valid.',
+            'fotokk.mimes' => 'KK harus berformat PDF, JPG, JPEG, atau PNG.',
+            'fotokk.max' => 'Ukuran file KK tidak boleh lebih dari 2 MB.',
+            'fotoakta.required' => 'Foto Akta Kelahiran wajib diunggah.',
+            'fotoakta.file' => 'Akta harus berupa file yang valid.',
+            'fotoakta.mimes' => 'Akta harus berformat PDF, JPG, JPEG, atau PNG.',
+            'fotoakta.max' => 'Ukuran file Akta tidak boleh lebih dari 2 MB.',
+
+            // Upload Pas Photo
+            'foto.required' => 'Pas photo anak wajib diunggah.',
+            'foto.image' => 'Pas photo harus berupa gambar.',
+            'foto.mimes' => 'Pas photo harus berformat JPG atau PNG.',
+            'foto.max' => 'Ukuran pas photo tidak boleh lebih dari 2 MB.',
         ];
     }
 
     public function submitStep1()
     {
-        $this->validate($this->rulesStep1());
+        $this->validate($this->rulesStep1(), [], $this->messages());
         
         try {
             // Simpan file bukti transfer ke storage
@@ -150,7 +252,7 @@ class DaftarUlangForm extends Component
 
     public function submit()
     {
-        $this->validate($this->rulesStep2());
+        $this->validate($this->rulesStep2(), [], $this->messages());
 
         try {
             DB::beginTransaction();
@@ -171,6 +273,13 @@ class DaftarUlangForm extends Component
             $fotoaktaPath = $this->fotoakta->storeAs(
                 'dokumen-siswa/akta',
                 "AKTA_{$this->nisn}_{$sanitizedNama}_{$timestamp}.{$this->fotoakta->getClientOriginalExtension()}",
+                'public'
+            );
+
+            // Upload Pas Photo
+            $fotoPath = $this->foto->storeAs(
+                'foto',
+                "FOTO_{$this->nisn}_{$sanitizedNama}_{$timestamp}.{$this->foto->getClientOriginalExtension()}",
                 'public'
             );
 
@@ -213,6 +322,7 @@ class DaftarUlangForm extends Component
                 'rw' => $this->rw,
                 'fotokk' => $fotokkPath,
                 'fotoakta' => $fotoaktaPath,
+                'foto' => $fotoPath,
                 'fototransfer' => $this->fototransferPath,
             ];
 

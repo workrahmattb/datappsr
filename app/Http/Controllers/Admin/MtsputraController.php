@@ -95,6 +95,7 @@ class MtsputraController extends Controller
             'fotokk' => 'nullable|image|max:2048',
             'fotoakta' => 'nullable|image|max:2048',
             'fototransfer' => 'nullable|image|max:2048',
+            'foto' => 'nullable|image|max:2048',
         ]);
 
         // Handle file uploads
@@ -109,6 +110,10 @@ class MtsputraController extends Controller
         if ($request->hasFile('fototransfer')) {
             $ext = $request->file('fototransfer')->getClientOriginalExtension();
             $validated['fototransfer'] = $request->file('fototransfer')->storeAs('documents/mtsputra', 'tf_' . $validated['nama'] . '.' . $ext, 'public');
+        }
+        if ($request->hasFile('foto')) {
+            $ext = $request->file('foto')->getClientOriginalExtension();
+            $validated['foto'] = $request->file('foto')->storeAs('documents/mtsputra', 'foto_' . $validated['nama'] . '.' . $ext, 'public');
         }
 
         Mtsputra::create($validated);
@@ -190,6 +195,7 @@ class MtsputraController extends Controller
             'fotokk' => 'nullable|image|max:2048',
             'fotoakta' => 'nullable|image|max:2048',
             'fototransfer' => 'nullable|image|max:2048',
+            'foto' => 'nullable|image|max:2048',
         ]);
 
         // Handle file uploads
@@ -205,6 +211,10 @@ class MtsputraController extends Controller
             if ($mtsputra->fototransfer) Storage::disk('public')->delete($mtsputra->fototransfer);
             $validated['fototransfer'] = $request->file('fototransfer')->store('documents/mtsputra', 'public');
         }
+        if ($request->hasFile('foto')) {
+            if ($mtsputra->foto) Storage::disk('public')->delete($mtsputra->foto);
+            $validated['foto'] = $request->file('foto')->store('documents/mtsputra', 'public');
+        }
 
         $mtsputra->update($validated);
 
@@ -218,6 +228,7 @@ class MtsputraController extends Controller
         if ($mtsputra->fotokk) Storage::disk('public')->delete($mtsputra->fotokk);
         if ($mtsputra->fotoakta) Storage::disk('public')->delete($mtsputra->fotoakta);
         if ($mtsputra->fototransfer) Storage::disk('public')->delete($mtsputra->fototransfer);
+        if ($mtsputra->foto) Storage::disk('public')->delete($mtsputra->foto);
 
         $mtsputra->delete();
 

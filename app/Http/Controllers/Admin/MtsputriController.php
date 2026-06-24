@@ -95,6 +95,7 @@ class MtsputriController extends Controller
             'fotokk' => 'nullable|image|max:2048',
             'fotoakta' => 'nullable|image|max:2048',
             'fototransfer' => 'nullable|image|max:2048',
+            'foto' => 'nullable|image|max:2048',
         ]);
 
         // Handle file uploads
@@ -109,6 +110,10 @@ class MtsputriController extends Controller
         if ($request->hasFile('fototransfer')) {
             $ext = $request->file('fototransfer')->getClientOriginalExtension();
             $validated['fototransfer'] = $request->file('fototransfer')->storeAs('documents/mtsputri', 'tf_' . $validated['nama'] . '.' . $ext, 'public');
+        }
+        if ($request->hasFile('foto')) {
+            $ext = $request->file('foto')->getClientOriginalExtension();
+            $validated['foto'] = $request->file('foto')->storeAs('documents/mtsputri', 'foto_' . $validated['nama'] . '.' . $ext, 'public');
         }
 
         Mtsputri::create($validated);
@@ -190,6 +195,7 @@ class MtsputriController extends Controller
             'fotokk' => 'nullable|image|max:2048',
             'fotoakta' => 'nullable|image|max:2048',
             'fototransfer' => 'nullable|image|max:2048',
+            'foto' => 'nullable|image|max:2048',
         ]);
 
         if ($request->hasFile('fotokk')) {
@@ -207,6 +213,11 @@ class MtsputriController extends Controller
             $ext = $request->file('fototransfer')->getClientOriginalExtension();
             $validated['fototransfer'] = $request->file('fototransfer')->storeAs('documents/mtsputri', 'tf_' . $validated['nama'] . '.' . $ext, 'public');
         }
+        if ($request->hasFile('foto')) {
+            if ($mtsputri->foto) Storage::disk('public')->delete($mtsputri->foto);
+            $ext = $request->file('foto')->getClientOriginalExtension();
+            $validated['foto'] = $request->file('foto')->storeAs('documents/mtsputri', 'foto_' . $validated['nama'] . '.' . $ext, 'public');
+        }
 
         $mtsputri->update($validated);
 
@@ -219,6 +230,7 @@ class MtsputriController extends Controller
         if ($mtsputri->fotokk) Storage::disk('public')->delete($mtsputri->fotokk);
         if ($mtsputri->fotoakta) Storage::disk('public')->delete($mtsputri->fotoakta);
         if ($mtsputri->fototransfer) Storage::disk('public')->delete($mtsputri->fototransfer);
+        if ($mtsputri->foto) Storage::disk('public')->delete($mtsputri->foto);
 
         $mtsputri->delete();
 

@@ -76,6 +76,7 @@ class Mtsputra extends Model
         'fotokk',
         'fotoakta',
         'fototransfer',
+        'foto',
 
     ];
 

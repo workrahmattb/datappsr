@@ -373,7 +373,13 @@
         {{-- Dokumen --}}
         <div class="border-t pt-6">
             <h3 class="text-lg font-semibold text-gray-900 mb-4">Dokumen</h3>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Foto Profil</label>
+                    <input type="file" name="foto" accept="image/*" class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                    @error('foto')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
+                    @if($maputri->foto)<p class="text-xs text-gray-500 mt-1">File saat ini: {{ $maputri->foto }}</p>@endif
+                </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700">Foto KK</label>
                     <input type="file" name="fotokk" accept="image/*" class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
