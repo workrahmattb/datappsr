@@ -24,6 +24,7 @@
         <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">
                 <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Foto</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nama</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">NISN</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Kelas</th>
@@ -34,6 +35,15 @@
             <tbody class="bg-white divide-y divide-gray-200">
                 @forelse($mtsputris as $mtsputri)
                 <tr class="hover:bg-gray-50">
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        @if($mtsputri->foto)
+                            <img src="{{ Storage::url($mtsputri->foto) }}" alt="Foto" class="w-10 h-10 rounded-full object-cover border border-gray-200">
+                        @else
+                            <div class="w-10 h-10 rounded-full bg-pink-100 flex items-center justify-center text-pink-600 font-bold text-sm border border-gray-200">
+                                {{ strtoupper(substr($mtsputri->nama, 0, 1)) }}
+                            </div>
+                        @endif
+                    </td>
                     <td class="px-6 py-4"><div class="text-sm font-medium text-gray-900">{{ $mtsputri->nama }}</div><div class="text-sm text-gray-500">{{ $mtsputri->nik }}</div></td>
                     <td class="px-6 py-4"><div class="text-sm text-gray-900">{{ $mtsputri->nisn ?? '-' }}</div></td>
                     <td class="px-6 py-4"><div class="text-sm text-gray-900">{{ $mtsputri->kelas?->nama ?? '-' }}</div></td>
@@ -47,7 +57,7 @@
                     </td>
                 </tr>
                 @empty
-                <tr><td colspan="5" class="px-6 py-8 text-center text-gray-500">Belum ada data siswi MTs Putri</td></tr>
+                <tr><td colspan="6" class="px-6 py-8 text-center text-gray-500">Belum ada data siswi MTs Putri</td></tr>
                 @endforelse
             </tbody>
         </table>

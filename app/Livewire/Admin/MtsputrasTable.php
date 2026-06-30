@@ -17,10 +17,12 @@ class MtsputrasTable extends Component
     public ?string $tahunAjaran = null;
     public $deleteId = null;
     public string $deleteStudentName = '';
+    public int $perPage = 15;
 
     protected $queryString = [
         'search' => ['except' => ''],
         'tahunAjaran' => ['except' => null],
+        'perPage' => ['except' => 15],
     ];
 
     public function updatingSearch(): void
@@ -29,6 +31,11 @@ class MtsputrasTable extends Component
     }
 
     public function updatingTahunAjaran(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatingPerPage(): void
     {
         $this->resetPage();
     }
@@ -84,8 +91,10 @@ class MtsputrasTable extends Component
             $query->where('tahun_ajaran', $this->tahunAjaran);
         }
 
+        $perPage = in_array($this->perPage, [15, 25, 50, 100]) ? $this->perPage : 15;
+
         return view('livewire.admin.mtsputras-table', [
-            'mtsputras' => $query->paginate(15),
+            'mtsputras' => $query->paginate($perPage),
             'tahunAjarans' => Mtsputra::whereNotNull('tahun_ajaran')->pluck('tahun_ajaran')->unique(),
         ]);
     }

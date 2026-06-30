@@ -17,10 +17,12 @@ class MaputrisTable extends Component
     public ?string $tahunAjaran = null;
     public $deleteId = null;
     public string $deleteStudentName = '';
+    public int $perPage = 15;
 
     protected $queryString = [
         'search' => ['except' => ''],
         'tahunAjaran' => ['except' => null],
+        'perPage' => ['except' => 15],
     ];
 
     public function updatingSearch(): void
@@ -29,6 +31,11 @@ class MaputrisTable extends Component
     }
 
     public function updatingTahunAjaran(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatingPerPage(): void
     {
         $this->resetPage();
     }
@@ -84,8 +91,10 @@ class MaputrisTable extends Component
             $query->where('tahun_ajaran', $this->tahunAjaran);
         }
 
+        $perPage = in_array($this->perPage, [15, 25, 50, 100]) ? $this->perPage : 15;
+
         return view('livewire.admin.maputris-table', [
-            'maputris' => $query->paginate(15),
+            'maputris' => $query->paginate($perPage),
             'tahunAjarans' => Maputri::whereNotNull('tahun_ajaran')->pluck('tahun_ajaran')->unique(),
         ]);
     }

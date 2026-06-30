@@ -1228,3 +1228,90 @@ Halaman Sukses
 - Tahun ajaran hardcoded `2026/2027` (perlu diupdate jika tahun ajaran berubah)
 - Format foto: lingkaran (rounded-full) dengan border tipis
 - Fallback: inisial nama dalam lingkaran abu-abu jika tidak ada foto
+
+---
+
+# Changelog — Sesi 30 Juni 2026 — Foto Profil di Tabel Admin & Filter Per Halaman
+
+> **Tanggal:** 30 Juni 2026
+> **Fokus:** Menampilkan foto profil siswa di tabel admin (avatar lingkaran + nomor urut), filter jumlah data per halaman (15/25/50/100)
+
+---
+
+## 1. Foto Profil & Nomor Urut di Tabel Admin Siswa
+
+**File (4 file view Livewire):**
+- `resources/views/livewire/admin/mtsputras-table.blade.php`
+- `resources/views/livewire/admin/mtsputris-table.blade.php`
+- `resources/views/livewire/admin/maputras-table.blade.php`
+- `resources/views/livewire/admin/maputris-table.blade.php`
+
+**Perubahan:** Avatar nomor urut (angka `1, 2, 3...`) diganti dengan:
+- **Nomor urut** (teks abu kecil di kiri)
+- **Foto siswa** (thumbnail lingkaran 36×36px, `rounded-full object-cover`) jika `$siswa->foto` terisi
+- **Inisial huruf pertama nama** (lingkaran warna) sebagai fallback jika tidak ada foto
+
+| Jenjang | Warna Fallback Inisial |
+|---------|----------------------|
+| MTs Putra | 🟢 **Emerald** (`bg-emerald-100 text-emerald-600`) |
+| MTs Putri | 🩷 **Pink** (`bg-pink-100 text-pink-600`) |
+| MA Putra | 🔵 **Blue** (`bg-blue-100 text-blue-600`) |
+| MA Putri | 🟣 **Purple** (`bg-purple-100 text-purple-600`) |
+
+**Layout per baris:**
+```
+[ 1 ] [Foto/Inisial]  Nama Siswa
+                       NIK
+```
+
+---
+
+## 2. Filter Jumlah Data Per Halaman (perPage)
+
+**File Backend (4 file):**
+- `app/Livewire/Admin/MtsputrasTable.php`
+- `app/Livewire/Admin/MtsputrisTable.php`
+- `app/Livewire/Admin/MaputrasTable.php`
+- `app/Livewire/Admin/MaputrisTable.php`
+
+**File Frontend (4 file):**
+- `resources/views/livewire/admin/mtsputras-table.blade.php`
+- `resources/views/livewire/admin/mtsputris-table.blade.php`
+- `resources/views/livewire/admin/maputras-table.blade.php`
+- `resources/views/livewire/admin/maputris-table.blade.php`
+
+**Perubahan Backend per komponen:**
+1. Tambah property: `public int $perPage = 15;`
+2. Tambah ke `$queryString`: `'perPage' => ['except' => 15]`
+3. Tambah method:
+   ```php
+   public function updatingPerPage(): void
+   {
+       $this->resetPage();
+   }
+   ```
+4. Validasi di `render()`:
+   ```php
+   $perPage = in_array($this->perPage, [15, 25, 50, 100]) ? $this->perPage : 15;
+   $query->paginate($perPage);
+   ```
+
+**Perubahan Frontend:**
+- Dropdown `<select wire:model.live="perPage">` setelah filter Tahun Ajaran
+- Opsi: **15**, **25**, **50**, **100** per halaman
+- Sama seperti yang sudah ada di `PendaftaransTable`
+
+---
+
+## Ringkasan File yang Dimodifikasi (Sesi Ini)
+
+| File | Perubahan |
+|------|-----------|
+| `app/Livewire/Admin/MtsputrasTable.php` | Tambah $perPage, queryString, updatingPerPage, validasi render |
+| `app/Livewire/Admin/MtsputrisTable.php` | Tambah $perPage, queryString, updatingPerPage, validasi render |
+| `app/Livewire/Admin/MaputrasTable.php` | Tambah $perPage, queryString, updatingPerPage, validasi render |
+| `app/Livewire/Admin/MaputrisTable.php` | Tambah $perPage, queryString, updatingPerPage, validasi render |
+| `resources/views/livewire/admin/mtsputras-table.blade.php` | Avatar nomor urut → foto + inisial; dropdown perPage |
+| `resources/views/livewire/admin/mtsputris-table.blade.php` | Avatar nomor urut → foto + inisial; dropdown perPage |
+| `resources/views/livewire/admin/maputras-table.blade.php` | Avatar nomor urut → foto + inisial; dropdown perPage |
+| `resources/views/livewire/admin/maputris-table.blade.php` | Avatar nomor urut → foto + inisial; dropdown perPage |

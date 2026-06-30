@@ -41,6 +41,12 @@
                     <option value="{{ $ta }}">{{ $ta }}</option>
                 @endforeach
             </select>
+            <select wire:model.live="perPage" class="bg-zinc-50/50 border border-zinc-200 rounded-lg text-sm px-3 py-2 focus:outline-none focus:ring-2 focus:ring-zinc-900 focus:border-transparent transition-colors min-w-[120px]">
+                <option value="15">15 per halaman</option>
+                <option value="25">25 per halaman</option>
+                <option value="50">50 per halaman</option>
+                <option value="100">100 per halaman</option>
+            </select>
             @if($search || $tahunAjaran)
                 <button wire:click="$set('search', ''); $set('tahunAjaran', null)" class="bg-white border border-zinc-200 hover:bg-zinc-50 text-zinc-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm">
                     Reset Filter
@@ -67,10 +73,15 @@
                     <tr class="hover:bg-zinc-50/50 transition-colors group">
                         <td class="px-6 py-4">
                             <div class="flex items-center">
-                                <div class="w-9 h-9 bg-zinc-100 border border-zinc-200 rounded-full flex items-center justify-center text-zinc-700 font-bold text-sm shrink-0">
-                                    {{ $mtsputris->firstItem() + $loop->index }}
-                                </div>
-                                <div class="ml-3">
+                                <span class="w-5 text-xs font-bold text-zinc-400 text-center shrink-0">{{ $mtsputris->firstItem() + $loop->index }}</span>
+                                @if($mtsputri->foto)
+                                    <img src="{{ Storage::url($mtsputri->foto) }}" alt="Foto {{ $mtsputri->nama }}" class="w-9 h-9 rounded-full object-cover border border-zinc-200 shrink-0 ml-1.5">
+                                @else
+                                    <div class="w-9 h-9 bg-pink-100 border border-zinc-200 rounded-full flex items-center justify-center text-pink-600 font-bold text-sm shrink-0 ml-1.5">
+                                        {{ strtoupper(substr($mtsputri->nama, 0, 1)) }}
+                                    </div>
+                                @endif
+                                <div class="ml-2.5">
                                     <div class="text-sm font-bold text-zinc-900">{{ $mtsputri->nama }}</div>
                                     <div class="text-xs text-zinc-500 mt-0.5 font-medium">{{ $mtsputri->nik }}</div>
                                 </div>
