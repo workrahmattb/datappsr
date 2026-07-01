@@ -979,6 +979,32 @@
                     </div>
                 </div>
 
+                    {{-- Error Summary Box — muncul di atas tombol Simpan Data jika ada validasi error --}}
+                    @if ($errors->any())
+                        <div class="mb-6 rounded-xl shadow-lg border-2 border-red-300 dark:border-red-700 bg-red-50 dark:bg-red-900/20 overflow-hidden">
+                            <div class="bg-gradient-to-r from-red-500 to-rose-600 px-5 py-3">
+                                <div class="flex items-center gap-2">
+                                    <svg class="w-5 h-5 text-white flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                    <h3 class="text-white font-bold text-sm">Mohon perbaiki error berikut sebelum menyimpan:</h3>
+                                </div>
+                            </div>
+                            <div class="p-4">
+                                <ul class="space-y-1.5">
+                                    @foreach ($errors->all() as $error)
+                                        <li class="flex items-start gap-2 text-sm text-red-700 dark:text-red-300">
+                                            <svg class="w-4 h-4 text-red-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+                                            </svg>
+                                            <span>{{ $error }}</span>
+                                        </li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        </div>
+                    @endif
+
                     {{-- SUBMIT --}}
                     <div class="rounded-xl shadow-lg border-2 border-gray-200 dark:border-gray-700 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-gray-800 dark:to-gray-700 p-4 sm:p-6">
                         <div class="flex flex-col-reverse sm:flex-row gap-3">

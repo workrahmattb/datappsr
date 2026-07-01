@@ -1315,3 +1315,71 @@ Halaman Sukses
 | `resources/views/livewire/admin/mtsputris-table.blade.php` | Avatar nomor urut → foto + inisial; dropdown perPage |
 | `resources/views/livewire/admin/maputras-table.blade.php` | Avatar nomor urut → foto + inisial; dropdown perPage |
 | `resources/views/livewire/admin/maputris-table.blade.php` | Avatar nomor urut → foto + inisial; dropdown perPage |
+
+---
+
+# Changelog — Sesi 1 Juli 2026 — Review Project & Error Summary Box Daftar Ulang
+
+> **Tanggal:** 1 Juli 2026
+> **Fokus:** Review menyeluruh project, menambahkan Error Summary Box di form daftar ulang Step 2, update MEMORY.md
+
+---
+
+## 1. Review Menyeluruh Project
+
+**File:** Seluruh codebase + `MEMORY.md`
+
+**Review mencakup:**
+- **Arsitektur & Teknologi Stack:** Laravel 12, Livewire 3, Alpine.js, Tailwind CSS 4, Fortify, Sanctum
+- **Role-Based Access Control (RBAC):** Middleware CheckRole + LoginResponse dengan 5 role
+- **Alur Pendaftaran 2 Step:** Upload bukti transfer → form lengkap + dokumen
+- **Multi-Jenjang:** 4 tabel identik (mtsputras, mtsputris, maputras, maputris)
+- **Fitur:** Cari Siswa, Update Foto Mandiri, WhatsApp Integration, Export Excel, Uang Masuk, dll.
+
+**Skor Review: 7/10**
+
+### 🔴 Rekomendasi Prioritas Tinggi
+1. API routes tidak memiliki proteksi auth — siapa saja bisa CRUD data
+2. Duplikasi code massif 4 jenjang → sarankan polymorphic
+3. Tahun ajaran masih hardcoded (`'2026/2027'`)
+4. XSS protection hanya di model Mtsputri, tidak di model lain
+
+### 🟡 Rekomendasi Menengah
+5. File storage path tidak konsisten (`documents/` vs `dokumen-siswa/` vs `foto/`)
+6. Validasi panjang di controller bisa dipindah ke Form Request
+7. Potensi N+1 query di CariSiswaTable (query 5 tabel terpisah)
+
+### 🟢 Catatan Ringan
+8. Footer masih "PPSR 2025" padahal project 2026
+9. Nama migration file tidak遵循 Laravel convention
+10. Tidak ada unit test untuk fitur-fitur penting
+
+---
+
+## 2. Error Summary Box di Tombol Simpan Data (Step 2 Daftar Ulang)
+
+**File:** `resources/views/livewire/daftar-ulang-form.blade.php`
+
+**Masalah:** Saat user mengklik "Simpan Data" di Step 2 form daftar ulang, error validasi hanya muncul **inline** di bawah masing-masing field. User harus scroll ke atas untuk melihat semua error.
+
+**Solusi:** Menambahkan **Error Summary Box** berwarna merah dengan gradient `from-red-500 to-rose-600` yang muncul di atas tombol "Simpan Data" jika ada validation errors:
+
+- Header: "Mohon perbaiki error berikut sebelum menyimpan:"
+- List semua error dengan icon X merah di setiap item
+- Hanya muncul jika `@if ($errors->any())`
+- Dark mode support penuh
+- Tidak mengubah satu baris pun dari kode yang sudah ada (insert di antara section Upload Dokumen dan SUBMIT)
+
+**Hasil pengecekan:**
+- ✅ Semua pesan error di method `messages()` di `app/Livewire/DaftarUlangForm.php` sudah dalam **Bahasa Indonesia**
+- ✅ Tidak ada perubahan pada alur/logic yang sudah ada
+- ✅ Syntax Blade/Livewire 3 benar dan sudah di-review
+
+---
+
+## Ringkasan File yang Dimodifikasi (Sesi Ini)
+
+| File | Perubahan |
+|------|-----------|
+| `resources/views/livewire/daftar-ulang-form.blade.php` | Tambah Error Summary Box di atas tombol Simpan Data (Step 2) — card merah dengan daftar semua validation error |
+| `MEMORY.md` | Ditambahkan changelog sesi ini |
