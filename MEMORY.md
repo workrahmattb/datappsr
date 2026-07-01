@@ -1383,3 +1383,172 @@ Halaman Sukses
 |------|-----------|
 | `resources/views/livewire/daftar-ulang-form.blade.php` | Tambah Error Summary Box di atas tombol Simpan Data (Step 2) — card merah dengan daftar semua validation error |
 | `MEMORY.md` | Ditambahkan changelog sesi ini |
+
+---
+
+# Changelog — Sesi 1 Juli 2026 — Halaman Galeri Foto Santri (/foto)
+
+> **Tanggal:** 1 Juli 2026 (lanjutan)
+> **Fokus:** Membuat halaman galeri foto santri publik dengan data dari 4 jenjang, menampilkan foto, nama, NISN, TTL, alamat, jenjang untuk TA 2026/2027
+
+---
+
+## 1. Livewire Component Baru: FotoTable
+
+**File:** `app/Livewire/FotoTable.php` (NEW)
+
+**Deskripsi:** Livewire component untuk menampilkan galeri foto seluruh santri dari 4 jenjang (public, tanpa auth).
+
+**Query logic:**
+- Mengumpulkan data dari 4 model: `Mtsputra`, `Mtsputri`, `Maputra`, `Maputri` — semuanya filter `tahun_ajaran = '2026/2027'`
+- Filter jenjang: skip model jika `$this->jenjang` diisi dan tidak sesuai
+- Search: filter by `nama` atau `nisn` (LIKE)
+- Dynamic attribute: `jenjang_label` (MTs Putra/MTs Putri/MA Putra/MA Putri) dan `alamat_lengkap` (prioritas `alamat_rumah_tinggal`, fallback gabungan desa/kec/kab/prov)
+- Sort by `nama` ascending
+- **Manual pagination** via `LengthAwarePaginator`
+
+**Properties:**
+- `$search` — search string (queryString, debounce 300ms)
+- `$jenjang` — filter jenjang (queryString)
+- `$tahunAjaran` — hardcoded '2026/2027'
+
+---
+
+## 2. View Baru: Galeri Foto Card Grid
+
+**File:** `resources/views/livewire/foto-table.blade.php` (NEW)
+
+**Layout & UI:**
+- Background gradient `from-sky-50 to-blue-50` / dark mode `from-gray-900 to-gray-800`
+- **Header** dengan gradient `from-sky-600 to-blue-600`: icon gallery, judul "Galeri Foto Santri", subtitle TA
+- **Filter bar**:
+  - Search input dengan icon + wire:model.live.debounce.300ms
+  - Dropdown filter jenjang (Semua/MTs Putra/MTs Putri/MA Putra/MA Putri)
+  - Tombol "Reset Filter" (muncul jika ada filter aktif)
+- **Stats bar**: jumlah santri ditemukan + legend "Ada Foto" (hijau) / "Belum Ada Foto" (abu-abu)
+- **Card Grid**: `grid-cols-1 sm:2 lg:3 xl:4` — gap 5
+
+**Per Card:**
+- **Photo Section** (h-56, gradient sky/blue):
+  - Jika `$student->foto` ada → gambar (object-contain) + border shadow + badge "Ada Foto" di kiri bawah + **tombol download** di kanan atas (opacity 0 → 1 on hover)
+  - Jika tidak ada → placeholder inisial nama (lingkaran putih besar) + badge "Belum Ada Foto"
+- **Info Section**:
+  - Nama (truncate) + badge jenjang (warna per jenjang: MTs Putra=emerald, MTs Putri=pink, MA Putra=blue, MA Putri=purple)
+  - NISN dengan icon kartu
+  - TTL (Tempat, Tanggal Lahir) dengan icon calendar
+  - Alamat (line-clamp-2) dengan icon location
+- **Hover**: shadow-lg → shadow-xl, opacity download button
+- **Dark mode** support penuh
+
+**Pagination:**
+- Links dari LengthAwarePaginator (default Laravel/Bootstrap) dibungkus card putih
+- Tidak ada dropdown perPage — hardcoded 15 data per halaman
+
+**Empty State:**
+- Icon gallery besar dalam lingkaran abu
+- Pesan berbeda: jika search → "Tidak ditemukan santri...", jika tidak → "Belum ada data santri untuk TA..."
+
+**Footer:**
+- Info tooltip tentang tombol download
+- Tombol "Kembali ke Beranda" (gray, shadow)
+
+---
+
+## 3. Route Baru: /foto
+
+**File:** `routes/web.php`
+
+**Perubahan:**
+- Tambah route:
+  ```php
+  Route::get('/foto', \App\Livewire\FotoTable::class)->name('foto.index');
+  ```
+- Route public (tanpa middleware auth)
+- Ditempatkan setelah route admin group, sebelum `/uangmasuk`
+
+---
+
+## 4. Fix Pagination — Hapus Dropdown Per Halaman
+
+**Perubahan dari hasil review user:**
+
+| File | Perubahan |
+|------|-----------|
+| `app/Livewire/FotoTable.php` | Hapus property `$perPage`, hapus dari `$queryString`, hapus `updatingPerPage()`, hardcode `$perPage = 15` di render |
+| `resources/views/livewire/foto-table.blade.php` | Hapus dropdown selector "per halaman" (tidak ada di versi awal) |
+
+---
+
+## Ringkasan File (Sesi Ini)
+
+| File | Status | Perubahan |
+|------|--------|-----------|
+| `app/Livewire/FotoTable.php` | **NEW** | Livewire component galeri foto — query 4 tabel, filter, search, manual pagination 15 |
+| `resources/views/livewire/foto-table.blade.php` | **NEW** | View card gallery grid — foto, download, info, badges, dark mode |
+| `routes/web.php` | Modified | Tambah route `GET /foto` → `FotoTable` (public) |
+
+---
+
+## Alur Halaman /foto
+
+```
+[/foto]
+    ├── Header gradient (judul + TA)
+    ├── Filter: Search (nama/NISN) + Jenjang dropdown
+    ├── Stats: Total santri + legend foto
+    ├── Card Grid (1-4 kolom responsif)
+    │   ├── Foto (thumbnail) + tombol download hover
+    │   ├── Badge Ada Foto / Belum Ada Foto
+    │   ├── Nama + Badge Jenjang (warna per jenjang)
+    │   ├── NISN, TTL, Alamat
+    │   └── Hover: shadow naik + download muncul
+    ├── Pagination (15/halaman, tanpa opsi ganti)
+    └── Tombol "Kembali ke Beranda"
+```
+
+---
+
+## Teknologi yang Digunakan
+
+- **Livewire 3** — `WithPagination`, `wire:model.live.debounce`, `$queryString`
+- **Tailwind CSS 4** — grid, gradient, dark mode, ring, shadow, animation, line-clamp
+- **Laravel** — `LengthAwarePaginator` manual, `Storage::url()`, `Carbon::parse()`
+
+---
+
+## Catatan
+
+- Tahun ajaran masih hardcoded `'2026/2027'` — perlu diupdate jika TA berganti
+- Manual pagination (`collect all → slice`) mungkin kurang optimal untuk data sangat besar (1000+), tapi untuk 1 TA masih sangat amatir
+- Warna badge jenjang konsisten dengan tabel admin: MTs Putra=emerald, MTs Putri=pink, MA Putra=blue, MA Putri=purple
+- File yang di-download via tombol download mengikuti ekstensi asli file (via Storage::url)
+
+---
+
+# Changelog — Sesi 2 Juli 2026 — Hilangkan Status "Pending" di Halaman /uangmasuk
+
+> **Tanggal:** 2 Juli 2026
+> **Fokus:** Menyembunyikan badge status "Pending" di tabel uang masuk, hanya menampilkan status lunas atau lainnya (rejected/uploaded/verified)
+
+---
+
+## Perubahan
+
+**File:** `resources/views/livewire/uang-masuk-table.blade.php`
+
+**Perubahan (1 baris kondisi):**
+- **Sebelum:** `@if($pendaftaran->status_bayar_uang_masuk)` — badge status tampil untuk semua status (pending, lunas, rejected, dll)
+- **Sesudah:** `@if($pendaftaran->status_bayar_uang_masuk && $pendaftaran->status_bayar_uang_masuk !== 'pending')` — badge status hanya tampil jika bukan 'pending'
+- Cabang `@elseif` untuk warna oranye (pending) juga dihapus karena tidak lagi diperlukan
+
+**Tidak ada file lain yang diubah.**
+
+---
+
+## Status Badge yang Tampil
+
+| Status | Tampil | Warna |
+|--------|--------|-------|
+| `pending` | ❌ **Disembunyikan** | — |
+| `lunas` | ✅ | 🟢 Hijau |
+| `rejected` / `uploaded` / `verified` | ✅ | 🔴 Merah |

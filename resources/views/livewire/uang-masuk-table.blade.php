@@ -128,13 +128,11 @@
                                     <span class="text-zinc-400 italic text-sm">-</span>
                                 @endif
                             </div>
-                            @if($pendaftaran->status_bayar_uang_masuk)
+                            @if($pendaftaran->status_bayar_uang_masuk && $pendaftaran->status_bayar_uang_masuk !== 'pending')
                                 <div class="mt-1">
                                     <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium
                                         @if($pendaftaran->status_bayar_uang_masuk === 'lunas')
                                             bg-green-50 text-green-700
-                                        @elseif($pendaftaran->status_bayar_uang_masuk === 'pending')
-                                            bg-orange-50 text-orange-700
                                         @else
                                             bg-red-50 text-red-700
                                         @endif
