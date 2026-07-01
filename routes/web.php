@@ -104,5 +104,8 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
 
 });
 
+// Foto Santri (Public)
+Route::get('/foto', \App\Livewire\FotoTable::class)->name('foto.index');
+
 // Uang Masuk (Public)
 Route::get('/uangmasuk', \App\Livewire\UangMasukTable::class)->name('uangmasuk.index');
