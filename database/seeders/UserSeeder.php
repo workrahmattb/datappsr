@@ -28,7 +28,7 @@ class UserSeeder extends Seeder
             ['email' => 'mtsputra@admin.com'],
             [
                 'name' => 'Admin MTs Putra',
-                'password' => \Hash::make('password'),
+                'password' => \Hash::make('123ppsr'),
                 'role' => 'mtsputra',
             ]
         );
@@ -38,7 +38,7 @@ class UserSeeder extends Seeder
             ['email' => 'mtsputri@admin.com'],
             [
                 'name' => 'Admin MTs Putri',
-                'password' => \Hash::make('password'),
+                'password' => \Hash::make('123ppsr'),
                 'role' => 'mtsputri',
             ]
         );
@@ -48,7 +48,7 @@ class UserSeeder extends Seeder
             ['email' => 'maputra@admin.com'],
             [
                 'name' => 'Admin MA Putra',
-                'password' => \Hash::make('password'),
+                'password' => \Hash::make('123ppsr'),
                 'role' => 'maputra',
             ]
         );
@@ -58,7 +58,7 @@ class UserSeeder extends Seeder
             ['email' => 'maputri@admin.com'],
             [
                 'name' => 'Admin MA Putri',
-                'password' => \Hash::make('password'),
+                'password' => \Hash::make('123ppsr'),
                 'role' => 'maputri',
             ]
         );
