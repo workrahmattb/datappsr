@@ -22,6 +22,13 @@ class DatabaseSeeder extends Seeder
             ['value' => '2026/2027']
         );
 
+        // Set default header image
+        Setting::firstOrCreate(
+            ['key' => 'header_image'],
+            ['value' => 'images/psb.webp']
+        );
+
         $this->command->info('✅ Setting tahun ajaran aktif berhasil dibuat: 2026/2027');
+        $this->command->info('✅ Setting header image berhasil dibuat: images/psb.webp');
     }
 }

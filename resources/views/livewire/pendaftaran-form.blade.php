@@ -120,7 +120,11 @@
             <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl overflow-hidden">
                 <!-- Header Image -->
                 <div class="w-full bg-gray-100">
-                    <img src="{{ asset('images/psb.webp') }}" alt="Header Pondok Pesantren Syafa'aturrasul"
+                    @php
+                        $headerImg = \App\Models\Setting::value('header_image', 'images/psb.webp');
+                        $headerSrc = str_starts_with($headerImg, 'images/') ? asset($headerImg) : \Illuminate\Support\Facades\Storage::url($headerImg);
+                    @endphp
+                    <img src="{{ $headerSrc }}" alt="Header Pondok Pesantren Syafa'aturrasul"
                         class="w-full h-auto object-cover max-h-64">
                 </div>
 

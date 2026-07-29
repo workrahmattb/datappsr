@@ -1615,3 +1615,71 @@ Semua halaman otomatis update
 ```
 
 ---
+
+---
+
+# Changelog — Sesi 29 Juli 2026 — Pengaturan Header Image
+
+> **Tanggal:** 29 Juli 2026
+> **Fokus:** Menambahkan fitur upload/ubah header image di halaman pendaftaran melalui halaman Pengaturan admin. Ukuran header image sesuai yang sudah ada (tidak diubah).
+
+---
+
+## Ringkasan Perubahan
+
+### File Dimodifikasi (3 file)
+
+| File | Perubahan |
+|------|-----------|
+| `app/Livewire/Admin/Settings.php` | Tambah `WithFileUploads` trait, property `$headerImage`, `$headerImagePreview`, methods `updatedHeaderImage()`, `saveHeader()`, `removeHeader()` |
+| `resources/views/livewire/admin/settings.blade.php` | Tambah card "Header Image Pendaftaran" dengan preview gambar, tombol upload, tombol reset ke default + info rekomendasi ukuran 1600×400 px |
+| `resources/views/livewire/pendaftaran-form.blade.php` | Ganti `asset('images/psb.webp')` jadi dinamis: `Setting::value('header_image', 'images/psb.webp')` + logic fallback asset/storage |
+
+### 🖼️ Detail Header Image
+
+**Lokasi penyimpanan:** `storage/app/public/settings/{file}`
+
+**Validasi:**
+- Format: JPG, JPEG, PNG, WebP
+- Ukuran max: 2MB
+
+**Rekomendasi ukuran:** 1600 × 400 px (sesuai ukuran asli `public/images/psb.webp`)
+
+**Alur:**
+```
+[Admin Login] → Sidebar "Pengaturan" → Scroll ke "Header Image Pendaftaran"
+    │
+    ├── Preview header image saat ini
+    ├── Pilih file gambar baru → preview otomatis muncul
+    ├── Klik "Simpan Header" → file tersimpan, tampil di preview
+    └── Klik "Reset ke Default" → kembali ke gambar default psb.webp
+    ↓
+Halaman Pendaftaran otomatis pakai header image terbaru
+```
+
+### 🔧 Detail Teknis
+
+**Settings.php:**
+- `mount()` — set `$headerImagePreview` dari `Setting::value('header_image', 'images/psb.webp')`
+- `updatedHeaderImage()` — validasi (image, max:2048, mimes:jpg,jpeg,png,webp), set `$headerImagePreview = $this->headerImage->temporaryUrl()`
+- `saveHeader()` — hapus file lama (jika bukan default), simpan file baru ke `settings/`, update Setting, refresh preview via `Storage::url()`
+- `removeHeader()` — hapus file dari storage (jika bukan default), set ke `'images/psb.webp'`
+
+**pendaftaran-form.blade.php:**
+```blade
+@php
+    $headerImg = \App\Models\Setting::value('header_image', 'images/psb.webp');
+@endphp
+<img src="{{ str_starts_with($headerImg, 'images/') ? asset($headerImg) : Storage::url($headerImg) }}"
+     alt="Header Pondok Pesantren Syafa'aturrasul"
+     class="w-full h-auto object-cover max-h-64 rounded-xl">
+```
+
+### 📐 Rekomendasi Ukuran
+
+Info ukuran ditampilkan di halaman settings:
+```
+📐 Rekomendasi ukuran: 1600 × 400 px (lebar 1600, tinggi 400)
+```
+
+---
