@@ -77,9 +77,9 @@
         </section> -->
 
 
-        <!-- Cari Data TA 2026/2027 -->
+        <!-- Cari Data -->
         <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <h2 class="text-4xl font-bold text-gray-900 dark:text-white mb-2">Cari Data TA 2026/2027</h2>
+            <h2 class="text-4xl font-bold text-gray-900 dark:text-white mb-2">Cari Data TA {{ activeTahunAjaran() }}</h2>
             <p class="text-gray-600 dark:text-gray-400 text-sm mb-8">Cari data santri (Update Foto) atau data pendaftaran (Daftar Ulang)</p>
             <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
                 <livewire:cari-siswa-table />

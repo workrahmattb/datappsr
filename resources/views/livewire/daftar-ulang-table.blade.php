@@ -3,7 +3,7 @@
         <!-- Header -->
         <div class="bg-white rounded-lg shadow-xl overflow-hidden mb-6">
             <div class="bg-gradient-to-r from-green-600 to-emerald-600 px-6 sm:px-8 py-8">
-                <h1 class="text-3xl font-bold text-white mb-2">Data Daftar Baru TA 2026/2027</h1>
+                <h1 class="text-3xl font-bold text-white mb-2">Data Daftar Baru TA {{ activeTahunAjaran() }}</h1>
                 <p class="text-green-100">Klik tombol "Daftar Ulang" pada nama siswa untuk melengkapi data pendaftaran</p>
             </div>
 

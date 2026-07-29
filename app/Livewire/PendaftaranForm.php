@@ -13,7 +13,12 @@ class PendaftaranForm extends Component
     public $nisn = '';
     public $nama = '';
 
-    public $tahun_ajaran = '2026/2027';
+    public $tahun_ajaran = '';
+
+    public function boot()
+    {
+        $this->tahun_ajaran = activeTahunAjaran();
+    }
 
     public $jenjang_pendidikan = '';
     public $tempat_lahir = '';

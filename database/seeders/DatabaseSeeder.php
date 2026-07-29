@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Setting;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -13,7 +14,14 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             UserSeeder::class,
-            PendaftaranSeeder::class,
         ]);
+
+        // Set default tahun ajaran aktif
+        Setting::firstOrCreate(
+            ['key' => 'tahun_ajaran_aktif'],
+            ['value' => '2026/2027']
+        );
+
+        $this->command->info('✅ Setting tahun ajaran aktif berhasil dibuat: 2026/2027');
     }
 }

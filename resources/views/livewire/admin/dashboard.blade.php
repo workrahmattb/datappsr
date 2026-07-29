@@ -7,7 +7,15 @@
         
         <div class="relative z-10 flex items-center justify-between">
             <div>
-                <h1 class="text-2xl sm:text-3xl font-bold tracking-tight mb-2 text-zinc-100">Selamat Datang di Admin Panel</h1>
+                <div class="flex items-center gap-4 mb-2 flex-wrap">
+                    <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-zinc-100">Selamat Datang di Admin Panel</h1>
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-500/15 border border-emerald-400/25 text-emerald-300 text-xs font-bold rounded-lg shrink-0">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                        </svg>
+                        TA {{ $tahunAjaranAktif }}
+                    </span>
+                </div>
                 <p class="text-zinc-400 font-medium">Kelola data siswa dan pendaftaran dengan mudah dan terpusat.</p>
             </div>
             <div class="hidden lg:block bg-zinc-800/50 p-4 rounded-xl backdrop-blur-sm border border-zinc-700/50">

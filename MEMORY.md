@@ -1225,7 +1225,7 @@ Halaman Sukses
 - `CariSiswaTable` menggunakan `debounce.300ms` untuk menghindari terlalu banyak request saat mengetik
 - Pencarian dilakukan di 5 tabel sekaligus (4 tabel siswa + 1 tabel pendaftaran)
 - Data diurutkan berdasarkan nama secara ascending
-- Tahun ajaran hardcoded `2026/2027` (perlu diupdate jika tahun ajaran berubah)
+- Tahun ajaran hardcoded `2026/2027` (✅ SUDAH FIX — sekarang pakai sistem settings)
 - Format foto: lingkaran (rounded-full) dengan border tipis
 - Fallback: inisial nama dalam lingkaran abu-abu jika tidak ada foto
 
@@ -1552,3 +1552,66 @@ Halaman Sukses
 | `pending` | ❌ **Disembunyikan** | — |
 | `lunas` | ✅ | 🟢 Hijau |
 | `rejected` / `uploaded` / `verified` | ✅ | 🔴 Merah |
+---
+
+# Changelog — Sesi 29 Juli 2026 — Sistem Pengaturan Tahun Ajaran Aktif
+
+> **Tanggal:** 29 Juli 2026
+> **Fokus:** Membuat sistem settings tahun ajaran aktif yang bisa diubah dari admin panel. Semua halaman (pendaftaran, daftar ulang, pencarian siswa, galeri foto, dashboard) otomatis menggunakan tahun ajaran dari settings.
+
+---
+
+## Ringkasan Perubahan
+
+### 🆕 File Baru (5 files)
+
+| File | Deskripsi |
+|------|-----------|
+| `database/migrations/2026_07_29_154048_create_settings_table.php` | Migration table `settings` (key-value: key unique, text value) |
+| `app/Models/Setting.php` | Model Setting dengan `value()`, `set()`, `activeTahunAjaran()` + in-memory cache |
+| `app/helpers.php` | Global helper function `activeTahunAjaran()` |
+| `app/Livewire/Admin/Settings.php` | Livewire component halaman pengaturan admin |
+| `resources/views/livewire/admin/settings.blade.php` | View halaman pengaturan dengan dropdown tahun ajaran |
+
+### ✏️ File Dimodifikasi (14 files)
+
+| File | Perubahan |
+|------|-----------|
+| `composer.json` | Tambah `autoload.files` untuk `app/helpers.php` |
+| `routes/web.php` | Tambah route `GET /admin/settings` → `admin.settings.index` (middleware admin) |
+| `resources/views/admin/layout.blade.php` | Tambah menu "Pengaturan" di sidebar desktop & mobile |
+| `app/Livewire/CariSiswaTable.php` | Ganti hardcoded `'2026/2027'` → `activeTahunAjaran()` via `boot()` |
+| `app/Livewire/DaftarUlangTable.php` | Ganti hardcoded `'2026/2027'` → `activeTahunAjaran()` |
+| `app/Livewire/FotoTable.php` | Ganti hardcoded `'2026/2027'` → `activeTahunAjaran()` via `boot()` |
+| `app/Livewire/PendaftaranForm.php` | Ganti hardcoded `'2026/2027'` → `activeTahunAjaran()` via `boot()` |
+| `app/Livewire/Admin/Dashboard.php` | Tambah `Setting::activeTahunAjaran()` → view |
+| `resources/views/welcome.blade.php` | Teks "TA 2026/2027" → dinamis `{{ activeTahunAjaran() }}` |
+| `resources/views/livewire/cari-siswa-table.blade.php` | 2 teks hardcoded → dinamis |
+| `resources/views/livewire/daftar-ulang-table.blade.php` | Teks header → dinamis |
+| `resources/views/livewire/pendaftaran-form.blade.php` | Hidden input value & teks → dinamis |
+| `resources/views/livewire/admin/dashboard.blade.php` | Tambah badge "TA {tahun aktif}" di banner |
+| `database/seeders/DatabaseSeeder.php` | Tambah default setting `tahun_ajaran_aktif = 2026/2027` |
+
+### 🐛 Bug Fix
+
+| Masalah | Solusi |
+|---------|--------|
+| `Access to undeclared static property Setting::$cache` | Local static variable `$cache` di method `value()` diubah ke class-level `protected static array $cache`. Method `set()` pakai `unset(static::$cache[$key])` untuk clear cache |
+
+### 🎯 Halaman yang Terdampak
+
+- ✅ **Pendaftaran (Public)** — hidden `tahun_ajaran` otomatis dari settings
+- ✅ **Daftar Ulang (Table)** — filter tahun ajaran dari settings
+- ✅ **Cari Siswa (Welcome)** — filter & teks dari settings
+- ✅ **Galeri Foto (Public)** — filter tahun ajaran dari settings
+- ✅ **Dashboard Admin** — badge TA {aktif} di banner
+
+### 🛠️ Cara Pakai
+
+```
+[Admin Login] → Sidebar "Pengaturan" → Pilih Tahun Ajaran → Simpan
+    ↓
+Semua halaman otomatis update
+```
+
+---

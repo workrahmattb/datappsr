@@ -18,7 +18,12 @@ class FotoTable extends Component
 
     public string $search = '';
     public ?string $jenjang = null;
-    public string $tahunAjaran = '2026/2027';
+    public string $tahunAjaran = '';
+
+    public function boot(): void
+    {
+        $this->tahunAjaran = activeTahunAjaran();
+    }
 
     protected $queryString = [
         'search' => ['except' => ''],

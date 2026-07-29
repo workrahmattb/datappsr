@@ -19,7 +19,7 @@ class DaftarUlangTable extends Component
 
     public function render()
     {
-        $pendaftarans = Pendaftaran::where('tahun_ajaran', '2026/2027')
+        $pendaftarans = Pendaftaran::where('tahun_ajaran', activeTahunAjaran())
             ->where('status_pendaftaran', 'pending')
             ->when($this->search, function ($query) {
                 $query->where(function ($q) {

@@ -90,6 +90,11 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
         Route::delete('maputris/{maputri}', [\App\Http\Controllers\Admin\MaputriController::class, 'destroy'])->name('maputris.destroy');
     });
 
+    // Settings
+    Route::middleware(['\App\Http\Middleware\CheckRole::class,admin'])->group(function () {
+        Route::get('settings', \App\Livewire\Admin\Settings::class)->name('settings.index');
+    });
+
     // Pendaftaran
     Route::middleware(['\App\Http\Middleware\CheckRole::class,admin'])->group(function () {
         Route::get('pendaftarans', \App\Livewire\Admin\PendaftaransTable::class)->name('pendaftarans.index');

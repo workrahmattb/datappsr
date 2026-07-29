@@ -7,6 +7,7 @@ use App\Models\Mtsputri;
 use App\Models\Maputra;
 use App\Models\Maputri;
 use App\Models\Pendaftaran;
+use App\Models\Setting;
 use Livewire\Component;
 use Livewire\Attributes\Layout;
 
@@ -37,6 +38,7 @@ class Dashboard extends Component
             'recentMtsputris',
             'recentMaputras',
             'recentMaputris'
-        ));
+        ))
+        ->with('tahunAjaranAktif', Setting::activeTahunAjaran());
     }
 }

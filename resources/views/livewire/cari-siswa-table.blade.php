@@ -4,7 +4,7 @@
         <input 
             type="text" 
             wire:model.live.debounce.300ms="search" 
-            placeholder="Ketik Nama / NISN / NIK untuk mencari data siswa TA 2026/2027..."
+            placeholder="Ketik Nama / NISN / NIK untuk mencari data siswa TA {{ activeTahunAjaran() }}..."
             class="w-full px-4 py-3 pl-12 rounded-lg border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:border-green-500 focus:outline-none focus:ring-0 transition duration-200"
         >
         <svg class="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -26,7 +26,7 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
             </svg>
             <p class="text-gray-500 dark:text-gray-400 text-lg font-medium">Data tidak ditemukan</p>
-            <p class="text-gray-400 dark:text-gray-500 text-sm mt-1">Tidak ada siswa dengan nama "{{ $search }}" untuk TA 2026/2027</p>
+            <p class="text-gray-400 dark:text-gray-500 text-sm mt-1">Tidak ada siswa dengan nama "{{ $search }}" untuk TA {{ activeTahunAjaran() }}</p>
         </div>
     @else
         <!-- Desktop Table -->

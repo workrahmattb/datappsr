@@ -149,7 +149,7 @@
                             <br class="hidden sm:block">
                             Pondok Pesantren Syafa'aturrasul Kuantan Singingi
                             <br>
-                            <span class="text-green-600 dark:text-green-400 font-semibold">Tahun Ajaran 2026-2027</span>
+                            <span class="text-green-600 dark:text-green-400 font-semibold">Tahun Ajaran {{ str_replace('/', '-', activeTahunAjaran()) }}</span>
                         </p>
                     </div>
 
@@ -233,7 +233,7 @@
 
                     <!-- Tahun Ajaran -->
                     <div class="mb-7">
-                        <input type="hidden" wire:model="tahun_ajaran" value="2026/2027">
+                        <input type="hidden" wire:model="tahun_ajaran" value="{{ activeTahunAjaran() }}">
                     </div>
 
 

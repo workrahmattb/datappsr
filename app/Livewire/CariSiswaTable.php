@@ -15,7 +15,13 @@ class CariSiswaTable extends Component
     use WithPagination;
 
     public $search = '';
-    public $tahunAjaran = '2026/2027';
+    public $tahunAjaran = '';
+
+    public function boot()
+    {
+        // Set tahun ajaran from settings
+        $this->tahunAjaran = activeTahunAjaran();
+    }
 
     public function updatingSearch()
     {
