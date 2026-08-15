@@ -566,13 +566,15 @@ Preview muncul saat Livewire re-render dengan `$fotokk` terisi — tidak tergant
 
 ## Daftar User Non-Admin
 
+> Kredensial berikut bersumber dari `database/seeders/UserSeeder.php` (referensi tunggal yang benar).
+
 | Role | Nama | Email | Password |
 |------|------|-------|----------|
-| 🟢 **MTs Putra** | Admin MTs Putra | `mtsputra@admin.com` | `password` |
-| 🟣 **MTs Putri** | Admin MTs Putri | `mtsputri@admin.com` | `password` |
-| 🔵 **MA Putra** | Admin MA Putra | `maputra@admin.com` | `password` |
-| 🟠 **MA Putri** | Admin MA Putri | `maputri@admin.com` | `password` |
-| 🔴 **Super Admin** | Admin PPSR | `admin@admin.com` | `password` |
+| 🟢 **MTs Putra** | Admin MTs Putra | `mtsputra@admin.com` | `123ppsr` |
+| 🟣 **MTs Putri** | Admin MTs Putri | `mtsputri@admin.com` | `123ppsr` |
+| 🔵 **MA Putra** | Admin MA Putra | `maputra@admin.com` | `123ppsr` |
+| 🟠 **MA Putri** | Admin MA Putri | `maputri@admin.com` | `123ppsr` |
+| 🔴 **Super Admin** | Admin PPSR | `admin@ppsr.local` | `password` |
 
 ---
 

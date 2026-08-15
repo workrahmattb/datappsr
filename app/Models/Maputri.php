@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Concerns\SanitizesInput;
 
 class Maputri extends Model
 {
-    use HasFactory;
+    use HasFactory, SanitizesInput;
 
     protected $fillable = [
         'nama',

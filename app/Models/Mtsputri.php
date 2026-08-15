@@ -4,11 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Casts\Attribute;
+use App\Models\Concerns\SanitizesInput;
 
 class Mtsputri extends Model
 {
-    use HasFactory;
+    use HasFactory, SanitizesInput;
 
     protected $fillable = [
         'nama',
@@ -93,66 +93,6 @@ class Mtsputri extends Model
             'tanggal_lahir_ibu' => 'date',
             'tanggal_lahir_wali' => 'date',
         ];
-    }
-
-    /**
-     * Sanitize nama attribute to prevent XSS
-     */
-    protected function nama(): Attribute
-    {
-        return Attribute::make(
-            set: fn ($value) => strip_tags($value),
-        );
-    }
-
-    /**
-     * Sanitize tempat_lahir attribute to prevent XSS
-     */
-    protected function tempatLahir(): Attribute
-    {
-        return Attribute::make(
-            set: fn ($value) => strip_tags($value),
-        );
-    }
-
-    /**
-     * Sanitize nama_kk attribute to prevent XSS
-     */
-    protected function namaKk(): Attribute
-    {
-        return Attribute::make(
-            set: fn ($value) => strip_tags($value),
-        );
-    }
-
-    /**
-     * Sanitize nama_ayah attribute to prevent XSS
-     */
-    protected function namaAyah(): Attribute
-    {
-        return Attribute::make(
-            set: fn ($value) => strip_tags($value),
-        );
-    }
-
-    /**
-     * Sanitize nama_ibu attribute to prevent XSS
-     */
-    protected function namaIbu(): Attribute
-    {
-        return Attribute::make(
-            set: fn ($value) => strip_tags($value),
-        );
-    }
-
-    /**
-     * Sanitize nama_wali attribute to prevent XSS
-     */
-    protected function namaWali(): Attribute
-    {
-        return Attribute::make(
-            set: fn ($value) => strip_tags($value),
-        );
     }
 
 }
