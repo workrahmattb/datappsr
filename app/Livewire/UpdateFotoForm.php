@@ -2,24 +2,28 @@
 
 namespace App\Livewire;
 
-use App\Models\Mtsputra;
-use App\Models\Mtsputri;
 use App\Models\Maputra;
 use App\Models\Maputri;
+use App\Models\Mtsputra;
+use App\Models\Mtsputri;
+use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 use Livewire\WithFileUploads;
-use Illuminate\Support\Facades\Storage;
 
 class UpdateFotoForm extends Component
 {
     use WithFileUploads;
 
     public $type;
+
     public $studentId;
+
     public $foto;
+
     public $submitted = false;
 
     public $student;
+
     public $existingFoto = null;
 
     public function mount($type, $id)
@@ -28,9 +32,10 @@ class UpdateFotoForm extends Component
         $this->studentId = $id;
 
         $modelClass = $this->getModelClass();
-        if (!$modelClass) {
+        if (! $modelClass) {
             session()->flash('error', 'Jenis data tidak valid.');
-            return redirect()->route('home');
+
+            return redirect()->route('psb');
         }
 
         $this->student = $modelClass::findOrFail($id);
@@ -99,7 +104,7 @@ class UpdateFotoForm extends Component
             session()->flash('success', 'Foto profil berhasil diperbarui!');
 
         } catch (\Exception $e) {
-            session()->flash('error', 'Gagal mengupload foto: ' . $e->getMessage());
+            session()->flash('error', 'Gagal mengupload foto: '.$e->getMessage());
         }
     }
 

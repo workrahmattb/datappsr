@@ -48,6 +48,9 @@
 /.vscode
 /.zed
 /.claude
+/.kilo
+/.qwen
+/.junie
 
 # System
 .DS_Store

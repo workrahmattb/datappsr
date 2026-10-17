@@ -11,7 +11,7 @@
                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                 Export Excel
             </a>
-            <a href="{{ route('admin.pendaftarans.create') }}" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center">
+            <a wire:navigate href="{{ route('admin.pendaftarans.create') }}" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center">
                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
                 Tambah Pendaftaran
             </a>
@@ -27,7 +27,7 @@
                 <option value="completed" {{ request('status') == 'completed' ? 'selected' : '' }}>Completed</option>
             </select>
             <button type="submit" class="bg-gray-800 hover:bg-gray-900 text-white px-4 py-2 rounded-lg">Cari</button>
-            @if(request('search') || request('status'))<a href="{{ route('admin.pendaftarans.index') }}" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-lg">Reset</a>@endif
+            @if(request('search') || request('status'))<a wire:navigate href="{{ route('admin.pendaftarans.index') }}" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-lg">Reset</a>@endif
         </form>
     </div>
 
@@ -55,8 +55,8 @@
                     <td class="px-6 py-4"><div class="text-sm text-gray-900">{{ $pendaftaran->no_hp_ibu ?? $pendaftaran->no_hp_ayah ?? '-' }}</div></td>
                     <td class="px-6 py-4 text-sm font-medium">
                         <div class="flex space-x-2">
-                            <a href="{{ route('admin.pendaftarans.show', $pendaftaran) }}" class="text-blue-600 hover:text-blue-900">Lihat</a>
-                            <a href="{{ route('admin.pendaftarans.edit', $pendaftaran) }}" class="text-yellow-600 hover:text-yellow-900">Edit</a>
+                            <a wire:navigate href="{{ route('admin.pendaftarans.show', $pendaftaran) }}" class="text-blue-600 hover:text-blue-900">Lihat</a>
+                            <a wire:navigate href="{{ route('admin.pendaftarans.edit', $pendaftaran) }}" class="text-yellow-600 hover:text-yellow-900">Edit</a>
                             <form action="{{ route('admin.pendaftarans.destroy', $pendaftaran) }}" method="POST" class="inline" onsubmit="return confirm('Yakin ingin menghapus?')">@csrf @method('DELETE')<button type="submit" class="text-red-600 hover:text-red-900">Hapus</button></form>
                         </div>
                     </td>

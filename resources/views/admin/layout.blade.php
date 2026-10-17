@@ -16,6 +16,83 @@
             --primary-light: #d1fae5;
             --secondary: #f0fdf4;
         }
+
+        /* Scrollbar khusus area menu sidebar (tema emerald gelap) */
+        .sidebar-scroll {
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255, 255, 255, .35) transparent;
+        }
+
+        .sidebar-scroll::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .sidebar-scroll::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .sidebar-scroll::-webkit-scrollbar-thumb {
+            background-color: rgba(255, 255, 255, .3);
+            border-radius: 9999px;
+        }
+
+        /* Rich text hasil editor berita (dipakai halaman detail berita) */
+        .rich-text {
+            color: #374151;
+            font-size: .9375rem;
+            line-height: 1.75;
+        }
+
+        .rich-text > * + * {
+            margin-top: 1rem;
+        }
+
+        .rich-text h1,
+        .rich-text h2,
+        .rich-text h3,
+        .rich-text h4,
+        .rich-text h5,
+        .rich-text h6 {
+            font-weight: 700;
+            color: #111827;
+            line-height: 1.3;
+            margin-top: 1.5rem;
+        }
+
+        .rich-text h1 { font-size: 1.75rem; }
+        .rich-text h2 { font-size: 1.5rem; }
+        .rich-text h3 { font-size: 1.25rem; }
+        .rich-text h4 { font-size: 1.125rem; }
+
+        .rich-text ul { list-style-type: disc; padding-left: 1.5rem; }
+        .rich-text ol { list-style-type: decimal; padding-left: 1.5rem; }
+        .rich-text li + li { margin-top: .25rem; }
+
+        .rich-text blockquote {
+            border-left: 4px solid #10b981;
+            padding-left: 1rem;
+            color: #4b5563;
+            font-style: italic;
+        }
+
+        .rich-text pre {
+            background: #f4f4f5;
+            border-radius: .5rem;
+            padding: .75rem 1rem;
+            overflow-x: auto;
+            font-size: .8125rem;
+        }
+
+        .rich-text code {
+            background: #f4f4f5;
+            border-radius: .25rem;
+            padding: .1rem .35rem;
+            font-size: .8125rem;
+        }
+
+        .rich-text a { color: #059669; text-decoration: underline; }
+        .rich-text img { max-width: 100%; height: auto; border-radius: .5rem; }
+        .rich-text hr { border-color: #e5e7eb; }
     </style>
 
     @stack('styles')
@@ -23,8 +100,8 @@
 <body class="min-h-screen bg-gray-50">
     <div class="flex h-screen overflow-hidden">
         <!-- Sidebar -->
-        <aside class="w-72 bg-gradient-to-b from-emerald-700 to-emerald-600 text-white flex-shrink-0 hidden md:block shadow-xl">
-            <div class="p-6 border-b border-emerald-500">
+        <aside class="w-72 bg-gradient-to-b from-emerald-700 to-emerald-600 text-white flex-shrink-0 hidden md:flex md:flex-col h-screen overflow-hidden shadow-xl">
+            <div class="p-6 border-b border-emerald-500 shrink-0">
                 <div class="flex items-center space-x-3">
                     <div class="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -38,7 +115,7 @@
                 </div>
             </div>
             
-            <nav class="mt-4 px-3 space-y-1">
+            <nav class="mt-4 px-3 space-y-1 flex-1 overflow-y-auto sidebar-scroll pb-6">
                 @if(auth()->user()->hasRole('admin'))
                 <a href="{{ route('admin.dashboard') }}" wire:navigate
                    class="flex items-center px-4 py-3 rounded-lg {{ request()->routeIs('admin.dashboard') ? 'bg-white/20 shadow-lg' : 'hover:bg-white/10' }} transition-all duration-200 group">
@@ -115,6 +192,50 @@
                 </a>
 
                 <div class="pt-4 pb-2 border-t border-emerald-500/50">
+                    <p class="px-4 text-xs font-semibold text-emerald-200 uppercase tracking-wider">Konten Website</p>
+                </div>
+
+                <a href="{{ route('admin.beritas.index') }}" wire:navigate
+                   class="flex items-center px-4 py-3 rounded-lg {{ request()->routeIs('admin.beritas.*') ? 'bg-white/20 shadow-lg' : 'hover:bg-white/10' }} transition-all duration-200 group">
+                    <svg class="w-5 h-5 mr-3 {{ request()->routeIs('admin.beritas.*') ? 'text-white' : 'text-emerald-200 group-hover:text-white' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10l6 6v8a2 2 0 01-2 2zM14 4v6h6M8 13h8M8 17h5"/>
+                    </svg>
+                    <span class="font-medium">Berita</span>
+                </a>
+
+                <a href="{{ route('admin.fasilitas.index') }}" wire:navigate
+                   class="flex items-center px-4 py-3 rounded-lg {{ request()->routeIs('admin.fasilitas.*') ? 'bg-white/20 shadow-lg' : 'hover:bg-white/10' }} transition-all duration-200 group">
+                    <svg class="w-5 h-5 mr-3 {{ request()->routeIs('admin.fasilitas.*') ? 'text-white' : 'text-emerald-200 group-hover:text-white' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 21h18M5 21V7l7-4 7 4v14M9 21v-6h6v6M9 10h.01M15 10h.01"/>
+                    </svg>
+                    <span class="font-medium">Fasilitas</span>
+                </a>
+
+                <a href="{{ route('admin.gurus.index') }}" wire:navigate
+                   class="flex items-center px-4 py-3 rounded-lg {{ request()->routeIs('admin.gurus.*') ? 'bg-white/20 shadow-lg' : 'hover:bg-white/10' }} transition-all duration-200 group">
+                    <svg class="w-5 h-5 mr-3 {{ request()->routeIs('admin.gurus.*') ? 'text-white' : 'text-emerald-200 group-hover:text-white' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5zm0 0v7m-6-4v-4m12 4v-4"/>
+                    </svg>
+                    <span class="font-medium">Profil Guru</span>
+                </a>
+
+                <a href="{{ route('admin.kontaks.index') }}" wire:navigate
+                   class="flex items-center px-4 py-3 rounded-lg {{ request()->routeIs('admin.kontaks.*') || request()->routeIs('admin.kontak-lembaga.*') ? 'bg-white/20 shadow-lg' : 'hover:bg-white/10' }} transition-all duration-200 group">
+                    <svg class="w-5 h-5 mr-3 {{ request()->routeIs('admin.kontaks.*') || request()->routeIs('admin.kontak-lembaga.*') ? 'text-white' : 'text-emerald-200 group-hover:text-white' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+                    </svg>
+                    <span class="font-medium">Kontak</span>
+                </a>
+
+                <a href="{{ route('admin.carousels.index') }}" wire:navigate
+                   class="flex items-center px-4 py-3 rounded-lg {{ request()->routeIs('admin.carousels.*') ? 'bg-white/20 shadow-lg' : 'hover:bg-white/10' }} transition-all duration-200 group">
+                    <svg class="w-5 h-5 mr-3 {{ request()->routeIs('admin.carousels.*') ? 'text-white' : 'text-emerald-200 group-hover:text-white' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5h16a1 1 0 011 1v9a1 1 0 01-1 1H4a1 1 0 01-1-1V6a1 1 0 011-1zm2 14h12M8 9h8"/>
+                    </svg>
+                    <span class="font-medium">Carousel</span>
+                </a>
+
+                <div class="pt-4 pb-2 border-t border-emerald-500/50">
                     <p class="px-4 text-xs font-semibold text-emerald-200 uppercase tracking-wider">Pengaturan</p>
                 </div>
 
@@ -129,7 +250,7 @@
                 @endif
             </nav>
 
-            <div class="absolute bottom-0 w-72 p-4 border-t border-emerald-500 bg-emerald-800/30">
+            <div class="w-full p-4 border-t border-emerald-500 bg-emerald-800/30 shrink-0">
                 <div class="flex items-center space-x-3 mb-3">
                     <div class="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center text-sm font-bold">
                         {{ substr(auth()->user()->name, 0, 1) }}
@@ -183,7 +304,7 @@
             </header>
 
             <!-- Mobile Menu -->
-            <div id="mobile-menu" class="hidden md:hidden bg-emerald-700 text-white">
+            <div id="mobile-menu" class="hidden md:hidden bg-emerald-700 text-white max-h-[70vh] overflow-y-auto sidebar-scroll">
                 <nav class="p-4 space-y-2">
                     @if(auth()->user()->hasRole('admin'))
                     <a href="{{ route('admin.dashboard') }}" wire:navigate class="block py-2 px-4 hover:bg-white/10 rounded-lg">Dashboard</a>
@@ -203,6 +324,11 @@
                     @if(auth()->user()->hasRole('admin'))
                     <a href="{{ route('admin.pendaftarans.index') }}" wire:navigate class="block py-2 px-4 hover:bg-white/10 rounded-lg">Pendaftaran</a>
                     <a href="{{ route('uangmasuk.index') }}" target="_blank" class="block py-2 px-4 hover:bg-white/10 rounded-lg">Uang Masuk</a>
+                    <a href="{{ route('admin.beritas.index') }}" wire:navigate class="block py-2 px-4 hover:bg-white/10 rounded-lg">Berita</a>
+                    <a href="{{ route('admin.fasilitas.index') }}" wire:navigate class="block py-2 px-4 hover:bg-white/10 rounded-lg">Fasilitas</a>
+                    <a href="{{ route('admin.gurus.index') }}" wire:navigate class="block py-2 px-4 hover:bg-white/10 rounded-lg">Profil Guru</a>
+                    <a href="{{ route('admin.kontaks.index') }}" wire:navigate class="block py-2 px-4 hover:bg-white/10 rounded-lg">Kontak</a>
+                    <a href="{{ route('admin.carousels.index') }}" wire:navigate class="block py-2 px-4 hover:bg-white/10 rounded-lg">Carousel</a>
                     <a href="{{ route('admin.settings.index') }}" wire:navigate class="block py-2 px-4 hover:bg-white/10 rounded-lg">Pengaturan</a>
                     @endif
                     <form method="POST" action="{{ route('logout') }}" class="pt-2 border-t border-emerald-500">

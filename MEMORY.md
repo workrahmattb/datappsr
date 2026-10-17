@@ -1,6 +1,293 @@
-# Memory Perubahan Project PPSR 2025 Putra
+# 🧠 MEMORY.md — Alur Kerja & Memori Project PPSR Putra
 
-## Tanggal: 22 April 2026
+> **Dokumen ini adalah memori kerja antara User (Rahmat) dan AI Assistant (Cline).**
+> **Baca bagian ini PERTAMA KALI di setiap sesi**, sebelum menyentuh kode apa pun.
+>
+> - **Bagian atas** (1–7) = cara kita bekerja + kondisi project saat ini.
+> - **Bagian bawah** = ARSIP CHANGELOG HISTORIS (jangan dihapus).
+
+| Info | Nilai |
+|---|---|
+| Project | Sistem PPDB Pondok Pesantren Syafa'aturrasul — 4 jenjang (MTs Putra/Putri, MA Putra/Putri) |
+| Repo | `workrahmattb/datappsr` — branch `main` |
+| Lokasi | `/Users/rahmattanri/Documents/Project Code/ppsr2025putra` |
+| Terakhir diperbarui | 17 Oktober 2026 — sesi 10 (halaman utama dipindah ke `/psb`, `/` jadi website sekolah) |
+| Status kode saat ini | `/` = website sekolah (baru), `/psb` = PSB & cari data — 127 test Pest lulus |
+
+> ⚠️ Di macOS, `memory.md` dan `MEMORY.md` adalah **file yang sama** (filesystem case-insensitive).
+
+---
+
+## 1. ⚖️ Aturan Kerja (WAJIB DIPATUHI)
+
+1. **Jangan ubah kode sebelum diperintah.** Mode *Plan* = hanya baca & analisa. Mode *Act* = baru eksekusi.
+2. **Baca `MEMORY.md` + konteks dulu.** Verifikasi ke file nyata, jangan berasumsi.
+3. **Rencana dulu, baru eksekusi.** Sampaikan plan singkat sebelum mengedit.
+4. **Jangan ubah dependency** (`composer.json` / `package.json`) tanpa persetujuan.
+5. **Jangan buat file dokumentasi baru** kecuali diminta. Cukup perbarui `MEMORY.md`.
+6. **Ikuti konvensi yang sudah ada** (bagian 3). Cek file tetangga sebelum membuat file baru.
+7. **Setiap perubahan harus diuji** (Pest) dan diformat (`vendor/bin/pint --dirty`).
+8. **Setelah sesi selesai:** tambahkan entri changelog baru di **paling bawah** bagian arsip.
+9. **Jangan hapus test atau file penting** tanpa persetujuan.
+10. **Laporkan jujur:** bedakan mana yang sudah diverifikasi vs masih asumsi.
+
+---
+
+## 2. 🔁 Alur Kerja Standar (SOP Per Sesi)
+
+```
+[MULAI]
+  │
+  1. BACA     → MEMORY.md (bagian 1–7) + README.md
+  │             → git status / git log --oneline -5
+  │
+  2. PAHAMI   → baca file relevan + route + konvensi + file tetangga
+  │
+  3. RENCANA  → sampaikan plan singkat + daftar file yang akan disentuh
+  │             (mode Plan: STOP di sini, tunggu perintah)
+  │
+  4. EKSEKUSI → edit minimal & presisi, satu concern per langkah
+  │
+  5. VALIDASI → php artisan test --filter=<relevan>
+  │             → vendor/bin/pint --dirty
+  │             → npm run build (jika ubah blade/css/js)
+  │
+  6. CATAT    → tambah entri changelog di akhir MEMORY.md
+  │             (tanggal, fokus, file, ringkasan, catatan/risiko)
+  │
+  7. LAPOR    → ringkasan + temuan/risiko + langkah lanjut
+[SELESAI]
+```
+
+### Perintah harian
+| Kebutuhan | Perintah |
+|---|---|
+| Jalankan dev lengkap (server+queue+log+vite) | `composer run dev` |
+| Test semua | `php artisan test` |
+| Test 1 file | `php artisan test tests/Feature/XTest.php` |
+| Test 1 nama | `php artisan test --filter=namaTest` |
+| Format kode (wajib sebelum selesai) | `vendor/bin/pint --dirty` |
+| Build asset | `npm run build` |
+| Cek daftar route | `php artisan route:list --except-vendor` |
+| Info environment | `php artisan about` |
+| Storage link | `php artisan storage:link` |
+| Migrasi & seed | `php artisan migrate` · `php artisan db:seed` |
+
+### Definition of Done
+- [ ] Perubahan hanya pada file relevan, alur lain tidak berubah
+- [ ] Tidak ada error di log / browser console
+- [ ] Test relevan dibuat & lulus
+- [ ] `vendor/bin/pint --dirty` bersih
+- [ ] Changelog `MEMORY.md` diperbarui
+- [ ] Ringkasan hasil dilaporkan ke user
+
+## 3. 🗺️ Peta Project & Konvensi
+
+### Stack (jangan diubah tanpa izin)
+| Layer | Teknologi |
+|---|---|
+| Backend | Laravel 12.37 (PHP 8.4) |
+| Interaktivitas | Livewire 3.7 + Volt 1.x |
+| UI | Flux UI 2 (free) + Tailwind CSS 4 (CSS-first `@theme`) |
+| Auth | Fortify 1.30 (session) + Sanctum 4 (API token) |
+| Export / PDF | `spatie/simple-excel` 3.8 · `barryvdh/laravel-dompdf` 3.1 |
+| Database | MySQL `ppsr2025putra` (test: sqlite `:memory:`) |
+| Build | Vite 7 |
+| Test / Format | Pest 4 · Laravel Pint |
+
+### Struktur penting
+```
+app/
+├── Http/Controllers/Admin/     → CRUD per jenjang + Pendaftaran (+ export Excel) + konten (berita/fasilitas/guru/kontak)
+├── Http/Requests/              → Form Request validasi konten (Berita/Fasilitas/Guru/Kontak)
+├── Http/Controllers/Api/       → resource API (⚠️ tanpa auth)
+├── Http/Middleware/CheckRole.php
+├── Http/Responses/LoginResponse.php    → redirect per role setelah login
+├── Livewire/                   → publik: PendaftaranForm, DaftarUlang*, CariSiswa,
+│                                  Foto, UangMasuk, UpdateFoto
+│   └── Admin/                  → Dashboard, *Table (4 jenjang + pendaftaran), Settings
+├── Models/                     → 4 model siswa + Pendaftaran + User + Setting
+│   └── Concerns/SanitizesInput.php
+└── helpers.php                 → activeTahunAjaran()
+resources/views/
+├── admin/                      → layout + view CRUD per jenjang
+├── livewire/                   → view semua komponen Livewire
+├── layouts/standalone.blade.php → layout publik full-page
+└── pdf/rapor.blade.php
+routes/web.php (publik + admin) · routes/api.php (resource, tanpa auth)
+database/migrations/ · database/seeders/ (UserSeeder = sumber kredensial)
+```
+
+### Konvensi kode
+- **Livewire:** satu root element; `wire:model.live` untuk realtime; `wire:key` di dalam loop; `wire:loading` untuk state loading.
+- **Volt:** komponen di project ini **class-based** (`new class extends Component`) — cek tetangga dulu sebelum membuat baru.
+- **Validasi:** pesan error dalam **Bahasa Indonesia**. Untuk resource baru gunakan **Form Request** di `app/Http/Requests` (sudah ada: `BeritaRequest`, `FasilitasRequest`, `GuruRequest`, `KontakRequest`); controller siswa/pendaftaran masih inline (belum dimigrasi).
+- **Konten HTML dari editor:** jangan pernah `{!! !!}` HTML mentah. Simpan lewat `App\Support\HtmlSanitizer::clean()` (whitelist tag/atribut) dan render dengan accessor `isi_html`.
+- **Struktur halaman publik:** `/` = **halaman utama / website sekolah** (`site/home.blade.php`, `Site\HomeController`), `/psb` = **layanan PSB & pencarian data santri** (`site/psb.blade.php`). Halaman navbar: **`/berita`, `/berita/{slug}`, `/fasilitas`, `/guru`, `/kontak`** (`app/Http/Controllers/Site/` + `resources/views/site/`). Semua halaman publik memakai **`layouts/public.blade.php`** (navbar: Berita · Fasilitas · Guru · Kontak + tombol PSB; footer bersama) — jangan buat header/footer baru, pakai layout ini.
+- **Navigasi SPA (wire:navigate):** SEMUA tautan antar-halaman admin wajib memakai `wire:navigate` (termasuk tombol "Tambah", "Batal", "Lihat", "Edit", "Kembali"). **Pengecualian:** link **export Excel** dan tautan **`target="_blank"`** (file/gambar/`wa.me`/website) — jangan diberi `wire:navigate`.
+- **Skrip di halaman admin:** karena halaman dinavigasi via SPA, skrip harus **tahan navigasi** — jangan asumsikan `<script>` hanya jalan sekali. Pola yang dipakai editor berita: `window.__initX()` idempoten (dijaga `dataset`) + panggil saat load + listener `document.addEventListener('livewire:navigated', ...)` yang didaftarkan sekali, dan aset pihak ketiga dimuat dinamis (`window.__quillMemuat`).
+- **Eloquent:** pakai relasi bertipe + eager loading; hindari `DB::` (kecuali transaksi); prefer `Model::query()`.
+- **Cast:** gunakan method `casts()` (konvensi Laravel 12), bukan property `$casts`.
+- **Nama:** variabel & method deskriptif; PHPDoc untuk array shape.
+- **UI:** komponen Flux bila tersedia, fallback komponen Blade sendiri; **wajib dukung dark mode** (`dark:`); spasi list pakai `gap-*`; jangan pakai utility Tailwind v3 yang deprecated.
+
+---
+
+## 4. 📊 Kondisi Project Saat Ini (per 17 Okt 2026)
+
+### Fitur yang sudah berjalan
+| Fitur | Route | Komponen |
+|---|---|---|
+| Pendaftaran awal (publik) | `/pendaftaran` | `PendaftaranForm` |
+| Daftar ulang 2 step (publik) | `/daftar-ulang`, `/daftar-ulang/{id}` | `DaftarUlangTable`, `DaftarUlangForm` |
+| Halaman utama (website sekolah) | `/` | `Site\HomeController` + `site/home.blade.php` — carousel, berita terbaru, fasilitas, profil guru, kontak |
+| Halaman publik: Berita | `/berita`, `/berita/{slug}` | `Site\BeritaController` — daftar (paginasi 9) + detail (`isi_html`) |
+| Halaman publik: Fasilitas | `/fasilitas` | `Site\FasilitasController` — kartu + galeri semua foto |
+| Halaman publik: Profil Guru | `/guru` | `Site\GuruController` |
+| Halaman publik: Kontak | `/kontak` | `Site\KontakController` — info lembaga, kontak person, peta |
+| Layout publik bersama | — | `layouts/public.blade.php` — navbar Berita/Fasilitas/Guru/Kontak + PSB, footer |
+| PSB: pendaftaran & cari siswa | `/psb` | `site/psb.blade.php` + `CariSiswaTable` — **min. 3 huruf** + **pagination 10/halaman** |
+| Update foto mandiri (publik) | `/update-foto/{type}/{id}` | `UpdateFotoForm` |
+| Galeri foto santri | `/foto` | `FotoTable` |
+| Uang masuk (publik) | `/uangmasuk` | `UangMasukTable` |
+| Cetak rapor PDF (auth) | `/cetak-rapor/generate` | `CetakRaporController` |
+| Admin CRUD 4 jenjang + export | `/admin/{jenjang}*` | 4 controller + 4 tabel Livewire |
+| Data pendaftaran admin | `/admin/pendaftarans*` | `PendaftaransTable` + `PendaftaranController` |
+| Pengaturan (TA + header image) | `/admin/settings` | `Admin\Settings` |
+| Konten: Berita | `/admin/beritas*` | `Admin\BeritasTable` + `Admin\BeritaController` |
+| Konten: Fasilitas | `/admin/fasilitas*` | `Admin\FasilitasTable` + `Admin\FasilitasController` |
+| Konten: Profil Guru | `/admin/gurus*` | `Admin\GurusTable` + `Admin\GuruController` |
+| Konten: Kontak person | `/admin/kontaks*` | `Admin\KontaksTable` + `Admin\KontakController` |
+| Konten: Kontak lembaga | `/admin/kontak-lembaga` | `Admin\KontakLembagaSettings` (tabel `settings`) |
+| Konten: Carousel (halaman utama) | `/admin/carousels*` | `Admin\CarouselsTable` + `Admin\CarouselController` |
+| API resource | `/api/*` | 5 controller API |
+
+### Snapshot data (17 Okt 2026)
+`pendaftaran` **236** (23 `pending`) · `mtsputra` 195 · `mtsputri` 389 · `maputra` 6 · `maputri` 22 · `users` 16
+`settings`: `tahun_ajaran_aktif = 2026/2027`, `header_image = images/psb.webp`
+
+### Alur data inti
+```
+pendaftarans (status = pending)
+      │  DaftarUlangForm::submit()  [DB::transaction]
+      ▼
+tabel siswa sesuai jenjang (baris baru dibuat + upload KK/Akta/Pas Photo)
+      │
+      ▼
+pendaftarans (status = completed, student_id & student_type terisi)
+
+Mapping jenjang: Pendaftaran::getTargetModelClass() / getStudentType()
+```
+
+### Akun default (sumber: `database/seeders/UserSeeder.php`)
+| Role | Email | Password |
+|---|---|---|
+| Super Admin | `admin@ppsr.local` | `password` |
+| MTs Putra | `mtsputra@admin.com` | `123ppsr` |
+| MTs Putri | `mtsputri@admin.com` | `123ppsr` |
+| MA Putra | `maputra@admin.com` | `123ppsr` |
+| MA Putri | `maputri@admin.com` | `123ppsr` |
+
+### Struktur storage upload
+```
+storage/app/public/
+├── pendaftaran/                       bukti transfer pendaftaran awal
+├── dokumen-siswa/{transfer,kk,akta}/  dokumen daftar ulang
+├── foto/                              pas photo (daftar ulang & update foto)
+├── documents/{jenjang}/               dokumen + foto dari admin
+├── settings/                          header image
+├── konten/berita/                     gambar berita
+├── konten/berita/isi/                 gambar di dalam isi berita (dari editor)
+├── konten/fasilitas/                  gambar fasilitas
+├── konten/guru/                       foto profil guru
+├── konten/carousel/                   gambar slide carousel
+└── temp/                              export Excel sementara
+```
+
+## 5. 🚧 Backlog & Temuan Review (belum dikerjakan)
+
+> Sumber: review sesi 1 Juli 2026 (skor 7/10) + audit menyeluruh 17 Oktober 2026.
+> Status: ⬜ belum · 🔄 sedang dikerjakan · ✅ selesai
+
+### 🔴 Prioritas Kritis
+| # | Temuan | Bukti | Status |
+|---|---|---|---|
+| K1 | Registrasi publik aktif + default role `admin` → siapa pun bisa mendaftar jadi admin | `config/fortify.php` (`Features::registration()`) · migration `2026_03_20_071742` (`->default('admin')`) | ⬜ |
+| K2 | API `/api/*` tanpa auth — siapa pun bisa CRUD data santri | `routes/api.php` | ⬜ |
+| K3 | Endpoint publik tanpa proteksi identitas: `/update-foto/{type}/{id}`, `/daftar-ulang/{id}`, `/uangmasuk` | `routes/web.php` | ⬜ |
+| K4 | Dynamic class instantiation dari input request | `app/Http/Controllers/CetakRaporController.php` baris 21 (`$siswaType::find()`) | ⬜ |
+| K5 | Backdoor email hardcoded `admin@ppsr.local` di `hasRole()` | `app/Models/User.php` | ⬜ |
+
+### 🟡 Prioritas Menengah
+| # | Temuan | Bukti | Status |
+|---|---|---|---|
+| M1 | Duplikasi masif 4 jenjang (controller/model/view/table/policy) → mulai drift: `casts()` tanggal hanya ada di `Mtsputri` | bandingkan `app/Models/Mtsputri.php` vs `Mtsputra.php` | ⬜ |
+| M2 | Data loss di `DaftarUlangForm::submit()`: field tervalidasi tidak masuk `$data` (`status_milik`, `kode_pos`, `status_ayah/ibu/wali`, `jenjang_pendidikan_sebelumnya`, `status_sekolah_sebelumnya`, `kecamatan/kabupaten/provinsi_sekolah_sebelumnya`) | `app/Livewire/DaftarUlangForm.php` | ⬜ |
+| M3 | Sanitasi XSS tidak konsisten — model `Pendaftaran` belum pakai `SanitizesInput` | `app/Models/Pendaftaran.php` | ⬜ |
+| M4 | Orphan file upload Step 1 daftar ulang + tidak ada rate limit di endpoint upload publik | `DaftarUlangForm::submitStep1()` | ⬜ |
+| M5 | Query boros — `CariSiswaTable` & `FotoTable` load semua baris 4 tabel lalu paginate manual di memori | `app/Livewire/CariSiswaTable.php`, `FotoTable.php` | ⬜ |
+| M6 | Validasi inline panjang di controller (~70 rule) → pindahkan ke Form Request | `app/Http/Controllers/Admin/MtsputraController.php` | 🔄 (4 resource konten baru sudah pakai Form Request; siswa/pendaftaran belum) |
+| M7 | Path & penamaan file upload tidak konsisten (nama memakai nama user + timestamp) | `storage/app/public/*` | ⬜ |
+| M8 | `.env` belum production-ready (`APP_DEBUG=true`, DB `root/root`, `FILESYSTEM_DISK=local`) | `.env` | ⬜ |
+| M9 | Sisa hardcode tahun ajaran di beberapa komponen walau `Setting` sudah ada | grep `2026/2027` | ⬜ |
+
+### 🟢 Prioritas Ringan
+| # | Temuan | Status |
+|---|---|---|
+| R1 | Tidak ada test untuk alur PPDB — `tests/` hanya starter kit (Auth, Settings, Dashboard) | 🔄 (185 test: PPDB + konten website sudah ditest; **15 test starter kit masih gagal** — route `dashboard`/`profile.edit` tidak ada di app ini) |
+| R2 | Tidak ada factory untuk 4 model siswa (dan `Guru`) → sulit menulis feature test | 🔄 (factory `Berita`/`Fasilitas`/`Kontak` sudah dibuat) |
+| R3 | `Pendaftaran` pakai property `$casts` (bukan method `casts()`); belum ada relasi `morphTo`; `kelas_id` tidak ada di `$fillable` | ⬜ |
+| R4 | Modul akademik (`kelas`/`gurus`/`nilais`) belum terhubung ke model siswa → rapor kosong | ⬜ |
+| R5 | Route sisa uji coba masih publik: `/lagibelajar`, `/beranda` | ⬜ |
+| R6 | `AGENTS.md` & `CLAUDE.md` duplikat (±27KB); `.DS_Store` ikut ter-track | ⬜ |
+
+---
+
+## 6. ⚠️ Risiko & Catatan Penting
+
+- **Jangan sentuh data produksi.** DB lokal berisi data nyata (236 pendaftaran). Selalu cek `git status` sebelum & sesudah kerja.
+- `MEMORY.md` & `README.md` **ter-track git** → aman di-restore: `git checkout -- MEMORY.md`.
+- File **untracked** saat ini: `AGENTS.md`, `CLAUDE.md`, `.cursor/`, `.junie/`, `.kilo/`, `.qwen/`, `.mcp.json`, `boost.json`, `opencode.json`, `.github/copilot-instructions.md`.
+- File **termodifikasi belum di-commit**: `composer.json`, `composer.lock` (+`laravel/ai`, boost 1.8), `.DS_Store`.
+- **Upload publik tanpa auth = permukaan risiko terbesar.** Hati-hati saat refactor endpoint publik.
+- `resources/views/livewire/settings/*` ada, tetapi `Features::updateProfileInformation()` & `updatePasswords()` **dimatikan** di Fortify → verifikasi dulu sebelum menyentuh halaman settings.
+- `DaftarUlangForm` menyimpan state di komponen: refresh halaman saat Step 2 akan mengulang Step 1.
+- `Mtsputri` punya date cast, 3 model lain tidak → selalu pakai `\Carbon\Carbon::parse()` saat format tanggal dari model siswa.
+
+## 7. 📝 Cara Menambah Catatan Sesi Baru
+
+Setiap sesi selesai, tambahkan entri baru di **paling bawah** bagian ARSIP CHANGELOG HISTORIS, dengan format:
+
+```markdown
+# Changelog — Sesi <tanggal> — <fokus singkat>
+
+> **Tanggal:** ...
+> **Fokus:** ...
+
+## Ringkasan Perubahan
+- ...
+
+## File yang Dimodifikasi
+| File | Perubahan |
+|------|-----------|
+| `path/file.php` | ... |
+
+## Hasil Validasi
+- `php artisan test --filter=...` → lulus
+- `vendor/bin/pint --dirty` → bersih
+
+## Catatan / Risiko
+- ...
+```
+
+---
+
+# 📚 ARSIP CHANGELOG HISTORIS
+
+> Arsip changelog asli project ini (22 April 2026 – 29 Juli 2026). **Jangan dihapus** — dipakai sebagai referensi riwayat keputusan & perubahan.
+> Format entri baru: lihat bagian 7.
+
+## 22 April 2026
 
 ### Filter Jenjang di Admin Data Pendaftaran
 
@@ -1683,5 +1970,903 @@ Info ukuran ditampilkan di halaman settings:
 ```
 📐 Rekomendasi ukuran: 1600 × 400 px (lebar 1600, tinggi 400)
 ```
+
+---
+
+# Changelog — Sesi 17 Oktober 2026 — Pemahaman Project & Penyusunan Alur Kerja
+
+> **Tanggal:** 17 Oktober 2026
+> **Fokus:** Membaca & memahami seluruh alur project, membaca `MEMORY.md`, review menyeluruh, lalu menyusun `MEMORY.md` menjadi dokumen **Alur Kerja (SOP) + kondisi project + backlog**.
+> **Status kode aplikasi:** ⚠️ **TIDAK ADA perubahan kode** — hanya `MEMORY.md` yang diubah (dokumentasi).
+
+---
+
+## 1. Pemetaan & Pemahaman Project (read-only)
+
+Yang dipelajari: stack (Laravel 12.37 / PHP 8.4 / Livewire 3.7 / Volt / Tailwind 4 / Flux / Fortify / Sanctum / Pest), struktur `app/`, seluruh route (`web.php` + `api.php`), 4 tabel siswa + `pendaftarans`, RBAC (`CheckRole` + `LoginResponse` + `User::hasRole`), `Setting` + `activeTahunAjaran()`, alur pendaftaran → daftar ulang → tabel siswa, dan modul pendukung (uang masuk, galeri foto, cari siswa, update foto, cetak rapor, API).
+
+Snapshot data terverifikasi (tinker read-only): `pendaftaran` 236 (23 pending) · `mtsputra` 195 · `mtsputri` 389 · `maputra` 6 · `maputri` 22 · `users` 16 · `settings.tahun_ajaran_aktif = 2026/2027`.
+
+## 2. Hasil Review (ringkas)
+
+Lihat **bagian 5** dokumen ini (Backlog & Temuan Review) untuk daftar lengkap + prioritas. Temuan paling mendesak:
+1. Registrasi publik aktif dengan default role `admin`.
+2. API `/api/*` tanpa auth.
+3. Endpoint publik tanpa proteksi (`/update-foto/{type}/{id}`, `/daftar-ulang/{id}`, `/uangmasuk`).
+4. Data loss di `DaftarUlangForm::submit()` (field tervalidasi tidak tersimpan).
+
+## 3. File yang Dimodifikasi
+
+| File | Perubahan |
+|------|-----------|
+| `MEMORY.md` | Restrukturisasi: menambahkan **Bagian 1–7 (Alur Kerja, SOP, Peta Project & Konvensi, Kondisi Saat Ini, Backlog & Temuan, Risiko, Format Changelog)** di bagian atas. Seluruh changelog historis (22 Apr 2026 – 29 Jul 2026) **tetap utuh** di bawah judul `# 📚 ARSIP CHANGELOG HISTORIS`. |
+
+## 4. Hasil Validasi
+
+- Tidak ada perubahan kode → tidak ada test yang perlu dijalankan.
+- Verifikasi struktur dokumen: heading 1–7 urut, arsip historis utuh, tidak ada isi lama yang hilang.
+
+## 5. Catatan / Risiko
+
+- `MEMORY.md` & `memory.md` adalah file yang sama di macOS (case-insensitive).
+- Belum ada commit untuk perubahan ini — menunggu perintah user.
+- Backlog (K1–K5, M1–M9, R1–R6) masih ⬜ semua; belum ada yang dikerjakan.
+
+---
+
+
+# Changelog — Sesi 17 Oktober 2026 (sesi 2) — Minimal 3 Huruf di Pencarian Beranda
+
+> **Tanggal:** 17 Oktober 2026
+> **Fokus:** Membatasi pencarian di halaman utama (`/`) agar baru dijalankan setelah user mengetik **minimal 3 huruf**, untuk mengurangi beban server (query ke 4 tabel siswa + 1 tabel pendaftaran tidak lagi jalan setiap keystroke).
+
+---
+
+## 1. Ringkasan Perubahan
+
+- Pencarian **tidak lagi** berjalan saat user baru mengetik 1–2 huruf.
+- Ditambahkan konstanta `MIN_SEARCH_LENGTH = 3` di komponen agar ambang batas mudah diubah di satu tempat.
+- Kata kunci di-`trim()` — spasi di awal/akhir tidak dihitung dan tidak ikut dikirim ke query.
+- UI: ada petunjuk "Minimal 3 huruf untuk mulai mencari" + counter sisa huruf, dan **state khusus** saat baru 1–2 huruf (tidak lagi salah menampilkan "Data tidak ditemukan").
+
+---
+
+## 2. File yang Dimodifikasi
+
+| File | Perubahan |
+|------|-----------|
+| `app/Livewire/CariSiswaTable.php` | Tambah `public const MIN_SEARCH_LENGTH = 3`; method baru `hasValidSearchTerm()` & `searchKeyword()`; guard `if (strlen($this->search) > 0)` → `if ($this->hasValidSearchTerm())`; query memakai `$keyword` hasil trim; kirim `minSearchLength` ke view |
+| `resources/views/livewire/cari-siswa-table.blade.php` | `@php $keyword/$keywordLength`; placeholder baru; baris petunjuk minimal huruf + counter; state `$keywordLength === 0` (empty) / `$keywordLength < 3` (amber "Ketik minimal 3 huruf") / `$students->count() === 0` (tidak ditemukan) / tabel hasil |
+| `tests/Feature/CariSiswaTableTest.php` | **NEW** — 7 test Pest |
+
+---
+
+## 3. Alur Logika Baru
+
+```
+user mengetik
+   │
+   ├─ 0 huruf          → state kosong ("Ketik nama siswa untuk mencari")
+   ├─ 1–2 huruf        → TIDAK query, tampil kartu amber "Ketik minimal 3 huruf"
+   │                     (+ hint "1 huruf lagi...")
+   └─ ≥ 3 huruf        → query 4 tabel siswa + pendaftaran (pending)
+                         ├─ ada hasil  → tabel desktop + card mobile + jumlah hasil
+                         └─ kosong     → "Data tidak ditemukan"
+```
+
+---
+
+## 4. Hasil Validasi
+
+- `php artisan test tests/Feature/CariSiswaTableTest.php` → **7 passed (13 assertions)**
+  - tidak search saat < 3 huruf (dan tidak muncul "Data tidak ditemukan")
+  - search jalan saat ≥ 3 huruf
+  - pesan "Data tidak ditemukan" untuk kata kunci valid tanpa hasil
+  - spasi awal/akhir diabaikan
+  - kata kunci hanya spasi tidak dianggap pencarian
+  - pendaftar `pending` tetap ditemukan + tombol "Daftar Ulang"
+  - halaman utama `GET /` sukses & memuat komponen pencarian
+- `vendor/bin/pint --dirty` → **PASS** (2 files)
+- `php -l app/Livewire/CariSiswaTable.php` → no syntax errors
+
+---
+
+## 5. Catatan / Risiko
+
+- Ambang batas 3 huruf berlaku di **beranda** saja (`CariSiswaTable`). Komponen lain yang juga punya pencarian — `FotoTable` (`/foto`) dan `DaftarUlangTable` (`/daftar-ulang`) — **belum** dibatasi; bisa diterapkan pola yang sama bila diinginkan.
+- Perilaku berubah: keyword 1–2 huruf yang sebelumnya menampilkan hasil (atau "tidak ditemukan") sekarang sengaja tidak menghasilkan query.
+- Livewire tetap mengirim request setiap keystroke (debounce 300ms) selama 1–2 huruf; yang dihindari adalah **query database**-nya. Bila ingin request-nya juga nol, perlu pendekatan Alpine/`wire:model` non-live (belum dilakukan).
+- `php artisan test` (seluruh suite) belum dijalankan; `tests/Feature/DashboardTest.php` memakai `route('dashboard')` yang **tidak ada** di `routes/web.php` → test itu kemungkinan gagal (temuan lama, belum diperbaiki).
+
+---
+
+
+# Changelog — Sesi 17 Oktober 2026 (sesi 3) — Pagination 10 Data per Halaman di Pencarian Beranda
+
+> **Tanggal:** 17 Oktober 2026
+> **Fokus:** Mengaktifkan pagination di tabel pencarian halaman utama (`/`) dengan **10 nama per halaman**.
+
+---
+
+## 1. Temuan Awal (penting)
+
+`CariSiswaTable` **sudah** `use WithPagination`, tetapi pagination-nya **belum diterapkan** — `render()` mengumpulkan semua hasil lalu `$students` di-loop seluruhnya di view (`@forelse($students as $student)`), sehingga semua hasil ter-render sekaligus (berat kalau hasil banyak).
+
+---
+
+## 2. Ringkasan Perubahan
+
+- Pagination manual memakai `LengthAwarePaginator` — **mengikuti pola yang sudah ada di `FotoTable`** (karena hasil digabung dari 4 tabel siswa + tabel pendaftaran, bukan satu query).
+- **10 data per halaman** via konstanta `PER_PAGE = 10`.
+- Ditambahkan link pagination + info rentang data ("menampilkan 1-10 dari 12").
+- `resetPage()` sudah otomatis jalan saat kata kunci berubah (dari sesi 2).
+
+---
+
+## 3. File yang Dimodifikasi
+
+| File | Perubahan |
+|------|-----------|
+| `app/Livewire/CariSiswaTable.php` | Tambah `use Illuminate\Pagination\LengthAwarePaginator`; konstanta `PER_PAGE = 10`; bungkus hasil pencarian ke `LengthAwarePaginator` (`$students->forPage($this->getPage(), self::PER_PAGE)`) dengan `path` + `query` dari request |
+| `resources/views/livewire/cari-siswa-table.blade.php` | `$students->count()` → `$students->total()` (kondisi "tidak ditemukan" + hitungan hasil); tambah blok `@if($students->hasPages()) {{ $students->links() }}`; tambah info rentang `firstItem()`–`lastItem()` + `perPage()` |
+| `tests/Feature/CariSiswaTableTest.php` | Tambah 5 test pagination + helper `buatSiswaUjiPagination()` |
+
+---
+
+## 4. Alur Logika (setelah sesi 2 + sesi 3)
+
+```
+user mengetik
+   │
+   ├─ 0 huruf      → state kosong (tidak query)
+   ├─ 1–2 huruf    → kartu amber "Ketik minimal 3 huruf" (tidak query)
+   └─ ≥ 3 huruf    → query 4 tabel siswa + pendaftaran (pending)
+                     → sort by nama
+                     → potong 10 data sesuai halaman aktif
+                     ├─ ada hasil → tabel/card + link pagination + "Ditemukan N data (menampilkan x-y)"
+                     └─ kosong    → "Data tidak ditemukan"
+```
+
+Catatan: pagination memakai view bawaan Livewire (`livewire::tailwind`) → tombolnya `wire:click="gotoPage(...)"`, jadi **berpindah halaman tanpa reload**.
+
+---
+
+## 5. Hasil Validasi
+
+- `php artisan test tests/Feature/CariSiswaTableTest.php` → **12 passed (26 assertions)**, termasuk:
+  - hanya 10 data per halaman (dibuat 12 data, halaman 1 = Siswa Uji 01–10)
+  - halaman kedua menampilkan sisa data (Siswa Uji 11–12)
+  - info rentang muncul hanya jika hasil > 10
+  - link pagination memakai Livewire (`wire:click="gotoPage(2`) → tanpa reload
+  - ganti kata kunci mereset ke halaman pertama
+- `vendor/bin/pint --dirty` → **PASS** (2 files)
+- `php -l app/Livewire/CariSiswaTable.php` → no syntax errors
+
+---
+
+## 6. Catatan / Risiko
+
+- Pagination tetap **memuat semua hasil ke memory** dulu (collect → sort → `forPage`), jadi query tetap seberat sebelumnya; yang berkurang adalah jumlah elemen yang di-render + dikirim ke browser. Optimasi berikutnya (opsional): pindahkan sort & limit ke level database (mis. `union` query + `orderBy('nama')->paginate(10)`) — lihat backlog **M5**.
+- Urutan data: `sortBy('nama')` (ascending, case-sensitive per perilaku `Collection`). Bila ingin urut mirip SQL (`ORDER BY nama`), perlu penyesuaian terpisah.
+- Ambang minimal 3 huruf (sesi 2) tetap berlaku; pagination hanya aktif pada pencarian valid.
+- Komponen lain belum disamakan: `DaftarUlangTable` sudah `->paginate(10)`, `FotoTable` 15/halaman, `UangMasukTable` 15/halaman.
+
+---
+
+
+# Changelog — Sesi 17 Oktober 2026 (sesi 4) — 4 Resource Admin Konten Website
+
+> **Tanggal:** 17 Oktober 2026
+> **Fokus:** Resource admin (backend) untuk **upload berita**, **profil guru**, **fasilitas**, dan **kontak** (kontak person + pengaturan kontak lembaga).
+> **Ruang lingkup:** Admin/backend saja. Halaman publik untuk menampilkan konten ini **belum dibuat**.
+
+---
+
+## 1. Ringkasan
+
+| Resource | Route | CRUD | Upload | Filter tabel |
+|---|---|---|---|---|
+| Berita | `/admin/beritas*` | lengkap | gambar | search, status (draft/terbit), kategori, perPage |
+| Fasilitas | `/admin/fasilitas*` | lengkap | gambar | search, kategori, perPage |
+| Profil Guru | `/admin/gurus*` | lengkap | foto | search (nama/NIP/jabatan), jenis kelamin, perPage |
+| Kontak person | `/admin/kontaks*` | lengkap | — | search (nama/unit/jabatan/telepon/WA/email), perPage |
+| Kontak lembaga | `/admin/kontak-lembaga` | form pengaturan (singleton) | — | — |
+
+Semua route dilindungi middleware `CheckRole:admin` dan ditambahkan ke sidebar admin pada section baru **"Konten Website"** (desktop & mobile).
+
+---
+
+## 2. Database
+
+**Migration baru (3 tabel):**
+- `beritas` — judul, slug (unique), kategori, ringkasan, isi, gambar, penulis, status (draft/published), published_at, is_featured
+- `fasilitas` — nama, kategori, deskripsi, gambar, urutan, is_active
+- `kontaks` — unit, nama, jabatan, telepon, whatsapp, email, alamat, urutan, is_active
+
+**Migration alter:** `add_profile_fields_to_gurus_table` — menambah kolom **nullable** ke tabel `gurus` yang sudah ada: `nip`, `jabatan`, `jenis_kelamin`, `pendidikan`, `email`, `deskripsi`, `foto`, `urutan`, `is_active`.
+> Dipilih ALTER (bukan tabel baru) agar relasi existing `kelas.guru_id` & `pengajarans.guru_id` tidak terputus.
+
+**Kontak lembaga** tidak memakai tabel baru — disimpan di tabel `settings` (key-value) dengan key `kontak_*`: `alamat`, `telepon`, `whatsapp`, `email`, `jam_layanan`, `maps_embed`, `facebook`, `instagram`, `youtube`.
+
+---
+
+## 3. Model
+
+| File | Catatan |
+|---|---|
+| `app/Models/Berita.php` | slug otomatis unik dari judul (`generateUniqueSlug`), `published_at` otomatis diisi saat status `published`, scope `published()`, konstanta `STATUSES` |
+| `app/Models/Fasilitas.php` | `protected $table = 'fasilitas'` (eksplisit, karena pluralizer Laravel tidak menangani kata Indonesia), scope `aktif()` |
+| `app/Models/Kontak.php` | accessor `whatsapp_link` → `https://wa.me/62...` (nomor `08xx` otomatis dikonversi ke `628xx`), scope `aktif()` |
+| `app/Models/Guru.php` | `$fillable` + `casts()` (`urutan` int, `is_active` bool) + scope `aktif()` ditambahkan |
+| `app/Models/Concerns/SanitizesTextFields.php` | **TRAIT BARU** — strip HTML tags untuk field teks yang dideklarasikan per model via `protected array $sanitizedTextFields` (override `setAttribute`) |
+
+**Factory baru:** `BeritaFactory` (+ state `published()`), `FasilitasFactory` (+ `nonaktif()`), `KontakFactory` (+ `nonaktif()`).
+
+---
+
+## 4. Validasi (Form Request) & Controller
+
+**Form Request baru di `app/Http/Requests/`:** `BeritaRequest`, `FasilitasRequest`, `GuruRequest`, `KontakRequest`
+- `authorize()` memeriksa `hasRole('admin')`
+- pesan error lengkap dalam **Bahasa Indonesia**
+- `BeritaRequest` memakai `Rule::unique('beritas','slug')->ignore($id)` agar slug boleh sama dengan dirinya sendiri saat update
+
+**Controller baru di `app/Http/Controllers/Admin/`:** `BeritaController`, `FasilitasController`, `GuruController`, `KontakController`
+- pola sama seperti controller jenjang: upload ke disk `public`, **hapus file lama** saat update, **cleanup file** saat destroy
+- direktori upload: `konten/berita`, `konten/fasilitas`, `konten/guru`
+
+---
+
+
+## 5. Livewire (Tabel Admin)
+
+**Komponen baru di `app/Livewire/Admin/`:** `BeritasTable`, `FasilitasTable`, `GurusTable`, `KontaksTable`, `KontakLembagaSettings`
+
+Pola mengikuti tabel admin yang sudah ada: `#[Layout('admin.layout')]`, `WithPagination`, `queryString`, search `wire:model.live.debounce.300ms`, dropdown perPage (15/25/50/100), tombol reset filter, modal konfirmasi hapus `flux:modal name="delete-confirm"`, dan `@script` listener untuk `.delete-btn`.
+
+**Perbedaan dari tabel sibling (perbaikan):** `confirmDelete(int $id)` **hanya menerima ID**; nama item di-lookup di dalam komponen — tidak lagi mengirim nama lewat `data-name` dari DOM (lebih aman terhadap tanda kutip pada judul/nama).
+
+---
+
+## 6. View
+
+- `resources/views/livewire/admin/{beritas,fasilitas,gurus,kontaks}-table.blade.php` — 4 view tabel (gaya zinc/rounded-xl seperti tabel admin existing)
+- `resources/views/livewire/admin/kontak-lembaga-settings.blade.php` — form pengaturan kontak lembaga
+- `resources/views/admin/{beritas,fasilitas,gurus,kontaks}/{index,create,edit,show}.blade.php` — 16 view CRUD (`@extends('admin.layout')`)
+- `resources/views/admin/layout.blade.php` — section sidebar **"Konten Website"** (Berita, Fasilitas, Profil Guru, Kontak) di nav desktop & mobile
+
+---
+
+## 7. Hasil Validasi
+
+- `php artisan migrate` → 4 migration **DONE**
+- `php artisan route:list --except-vendor` → 29 route baru terdaftar benar (termasuk `admin/kontak-lembaga`)
+- `vendor/bin/pint` (25 file baru) → **FIXED 5 style issues**, sisanya bersih
+- Test Pest baru:
+  - `tests/Feature/BeritaAdminTest.php` → **11 passed**
+  - `tests/Feature/FasilitasAdminTest.php` → **10 passed**
+  - `tests/Feature/GuruAdminTest.php` → **10 passed**
+  - `tests/Feature/KontakAdminTest.php` → **13 passed**
+- Gabungan dengan test sesi 3: **56 passed (152 assertions)**
+
+Cakupan test: tamu diarahkan ke login, non-admin **403**, admin lihat/tambah/update/hapus, validasi field wajib, upload + **hapus file lama saat update**, cleanup file saat destroy, sanitasi XSS (`strip_tags`), slug unik otomatis, `published_at` otomatis, konversi nomor WA `08xx` → `628xx`, search/filter tabel, dan hapus dari tabel Livewire.
+
+---
+
+## 8. Catatan / Risiko
+
+- **Frontend publik belum dibuat.** Data berita/fasilitas/guru/kontak belum ditampilkan di halaman publik — langkah berikutnya.
+- **Isi berita** ~~plain text~~ → **SUDAH DIPERBARUI di sesi 6**: isi berita memakai editor rich text (Quill) dan disanitasi dengan whitelist `App\Support\HtmlSanitizer` (bukan lagi `strip_tags`).
+- Model `Pendaftaran` **belum** memakai sanitasi (masih temuan M3).
+- Field `alamat` pada `gurus` tetap **NOT NULL** (kolom lama) sehingga dijadikan `required` pada `GuruRequest`.
+- `KontakLembagaSettings` memakai tabel `settings` (key `kontak_*`); bila nanti butuh multi-bahasa/multi-cabang, sebaiknya pindah ke tabel sendiri.
+- Modul ini **belum** punya export Excel (tidak diminta).
+- `php artisan test` (seluruh suite) belum dijalankan; `tests/Feature/DashboardTest.php` masih memakai `route('dashboard')` yang tidak ada (temuan lama).
+
+---
+
+
+# Changelog — Sesi 17 Oktober 2026 (sesi 5) — Sidebar Admin Bisa Di-scroll
+
+> **Tanggal:** 17 Oktober 2026
+> **Fokus:** Memperbaiki UI navbar/sidebar admin yang **tidak bisa di-scroll** sehingga menu bagian bawah terpotong (semakin terasa setelah menu "Konten Website" ditambahkan di sesi 4).
+
+---
+
+## 1. Akar Masalah
+
+- Wrapper `div.flex.h-screen.overflow-hidden` mengunci tinggi layar, sedangkan `<aside>` masih `md:block` (bukan flex) tanpa `overflow-y-auto` → isi menu yang melebihi tinggi layar **terpotong, tidak bisa digeser**.
+- Blok info user + tombol logout memakai `absolute bottom-0 w-72` — diposisikan absolut terhadap viewport (bukan bagian dari alur sidebar), sehingga ikut menutupi/menabrak item menu terbawah.
+
+## 2. Perubahan (`resources/views/admin/layout.blade.php`)
+
+| Elemen | Sebelum | Sesudah |
+|---|---|---|
+| `<aside>` | `hidden md:block shadow-xl` | `hidden md:flex md:flex-col h-screen overflow-hidden shadow-xl` |
+| Header logo | `p-6 border-b border-emerald-500` | + `shrink-0` (tidak ikut ter-scroll) |
+| `<nav>` menu | `mt-4 px-3 space-y-1` | + `flex-1 overflow-y-auto sidebar-scroll pb-6` → **area yang di-scroll** |
+| Footer user/logout | `absolute bottom-0 w-72 p-4 ...` | `w-full p-4 ... shrink-0` (item flex, tetap nempel bawah) |
+| Menu mobile | `hidden md:hidden bg-emerald-700 text-white` | + `max-h-[70vh] overflow-y-auto sidebar-scroll` |
+
+Ditambahkan CSS `scrollbar` tipis bertema emerald (`scrollbar-width: thin` + `::-webkit-scrollbar*`) di blok `<style>` layout.
+
+**Hasil:** header (logo) tetap diam di atas, **daftar menu bisa digeser**, info user + tombol logout tetap terlihat di bawah.
+
+## 3. File yang Dimodifikasi
+
+| File | Perubahan |
+|------|-----------|
+| `resources/views/admin/layout.blade.php` | Struktur sidebar jadi flex-column + area menu scrollable + CSS scrollbar + footer tidak lagi absolute + menu mobile scrollable |
+| `tests/Feature/AdminLayoutTest.php` | **NEW** — 5 test untuk mengunci perilaku ini |
+
+## 4. Hasil Validasi
+
+- `php artisan test tests/Feature/AdminLayoutTest.php` → **5 passed (14 assertions)**
+  - nav sidebar memakai `flex-1 overflow-y-auto sidebar-scroll`
+  - sidebar memakai `md:flex md:flex-col h-screen overflow-hidden` dan footer `absolute bottom-0 w-72` sudah tidak ada
+  - footer info user `w-full ... shrink-0` (nempel bawah)
+  - menu mobile scrollable
+  - menu "Konten Website" (Berita/Fasilitas/Profil Guru/Kontak) tampil di sidebar
+- Regresi semua halaman admin: **61 passed (166 assertions)**
+- `vendor/bin/pint tests/Feature/AdminLayoutTest.php` → **PASS**
+- `php artisan view:clear` dijalankan
+
+## 5. Catatan
+
+- Perbaikan murni Blade + CSS inline di layout → **tidak perlu `npm run build`**.
+- `absolute bottom-0` masih ada di `resources/views/livewire/admin/dashboard.blade.php` dan `daftar-ulang-form.blade.php`, tapi itu elemen dekoratif/progress bar (bukan sidebar) — tidak diubah.
+
+---
+
+
+# Changelog — Sesi 17 Oktober 2026 (sesi 6) — Editor Rich Text (WYSIWYG) untuk Isi Berita
+
+> **Tanggal:** 17 Oktober 2026
+> **Fokus:** Isi berita kini bisa diformat lengkap (bold, miring, heading, list, kutipan, tautan, sisip gambar) memakai editor **WYSIWYG Quill 2** — plus **HTML sanitizer whitelist** agar tetap aman dari XSS.
+
+---
+
+## 1. Ringkasan
+
+- Editor: **Quill 2.0.3** (CDN jsDelivr) dengan toolbar lengkap: heading 1–4, bold/italic/underline/strike, list ordered/bullet, indent, align, blockquote, code-block, link, **upload gambar**, video, dan tombol clear-format.
+- Upload gambar di dalam isi berita lewat endpoint admin baru → tersimpan di `storage/app/public/konten/berita/isi/`.
+- **Tanpa menambah dependency** composer/npm: editor via CDN, sanitizer ditulis sendiri (`App\Support\HtmlSanitizer`).
+- Halaman detail berita (`show`) kini merender HTML berformat (sebelumnya plain text).
+
+---
+
+## 2. Keamanan (penting)
+
+Sebelumnya `isi` melewati `strip_tags` (plain text). Begitu editor dipakai, menyimpan HTML mentah akan membuka **stored XSS**. Solusinya dua lapis:
+
+1. **Sanitasi saat simpan** — `Berita::booted()` → hook `saving` memanggil `HtmlSanitizer::clean()`. Berlaku untuk semua jalur tulis (form admin, factory, seeder).
+2. **Sanitasi saat baca** — accessor `isi_html` memanggil sanitizer lagi (defense in depth, terutama untuk data lama).
+
+**Kebijakan sanitizer:**
+
+| Kategori | Perlakuan |
+|---|---|
+| Tag diizinkan | `p, br, strong, b, em, i, u, s, strike, sub, sup, h1–h6, ul, ol, li, blockquote, pre, code, a, img, hr, span, div` |
+| Atribut diizinkan | `a`: `href, title, target, rel` · `img`: `src, alt, title, width, height` |
+| Dibuang total (beserta isi) | `script, style, iframe, frame, frameset, object, embed, applet, form, input, button, select, option, textarea, svg, math, link, meta, base, noscript, template, title` |
+| Dibuang (tag-nya saja, teks tetap ada) | tag lain yang tidak dikenal → di-*unwrap* |
+| Selalu dibuang | semua atribut `on*` (event handler) & inline `style` |
+| Skema URL | hanya `http`, `https`, `mailto`, `tel`, + URL relatif (`/...`, `#...`, `?...`); `javascript:`, `vbscript:`, `data:`, `file:` ditolak (termasuk yang disamarkan pakai entity/tab) |
+| Link | otomatis diberi `rel="noopener noreferrer"` |
+
+---
+
+## 3. File Baru / Dimodifikasi
+
+| File | Status | Perubahan |
+|---|---|---|
+| `app/Support/HtmlSanitizer.php` | **NEW** | Sanitizer HTML berbasis whitelist (DOMDocument, tanpa dependency) |
+| `app/Models/Berita.php` | EDIT | `isi` dikeluarkan dari `$sanitizedTextFields`; sanitasi `isi` di hook `saving`; accessor baru `isi_html` + `ringkasan_singkat` |
+| `app/Http/Controllers/Admin/BeritaController.php` | EDIT | Method baru `uploadGambar()` (JSON) + konstanta `ISI_GAMBAR_DIRECTORY` |
+| `routes/web.php` | EDIT | Route baru `POST admin/beritas/upload-gambar` (`beritas.upload-gambar`) |
+| `resources/views/admin/beritas/partials/editor-isi.blade.php` | **NEW** | Komponen editor (Quill CDN + toolbar + upload gambar + sinkronisasi ke `<textarea name="isi">`) |
+| `resources/views/admin/beritas/create.blade.php` | EDIT | `<textarea>` isi → `@include` partial editor |
+| `resources/views/admin/beritas/edit.blade.php` | EDIT | Sama, dengan nilai awal dari berita |
+| `resources/views/admin/beritas/show.blade.php` | EDIT | `{{ $berita->isi }}` → `{!! $berita->isi_html !!}` di dalam `.rich-text` |
+| `resources/views/livewire/admin/beritas-table.blade.php` | EDIT | Link "Tambah Berita" & "Edit" **tanpa** `wire:navigate` (agar script editor pasti dimuat) |
+| `resources/views/admin/layout.blade.php` | EDIT | CSS `.rich-text` (gaya heading/list/kutipan/gambar untuk halaman detail) |
+| `tests/Unit/HtmlSanitizerTest.php` | **NEW** | 16 test sanitizer (termasuk dataset vektor XSS) |
+| `tests/Feature/BeritaAdminTest.php` | EDIT | +8 test editor/sanitasi/upload (total 19 test) |
+
+---
+
+
+## 4. Alur Editor
+
+```
+Halaman create/edit
+   ├─ <div id="isi-editor">   ← konten awal (HTML tersanitasi)
+   ├─ <textarea name="isi">   ← field yang DIKIRIM ke server (fallback)
+   └─ JS: jika Quill tersedia → tampilkan editor, sembunyikan textarea,
+          sync Quill → textarea pada setiap perubahan & saat submit
+      jika Quill GAGAL dimuat (offline) → textarea tetap tampil (degradasi aman)
+```
+
+Upload gambar: toolbar image → `POST /admin/beritas/upload-gambar` (CSRF) → simpan ke `konten/berita/isi/` → sisipkan URL ke editor.
+
+---
+
+## 5. Hasil Validasi
+
+- `php artisan test tests/Unit/HtmlSanitizerTest.php` → **16 passed (35 assertions)**
+- `php artisan test tests/Feature/BeritaAdminTest.php` → **19 passed**
+- Gabungan seluruh test sesi ini (layout, 4 resource konten, pencarian, sanitizer) → **85 passed (230 assertions)**
+- `vendor/bin/pint` pada semua file baru/berubah → **PASS**
+
+Test penting: tag diizinkan dipertahankan · `<script>`/`<iframe>`/`<svg>` dibuang beserta isi · `onclick`/`onerror`/`style` dibuang · `javascript:` (termasuk `java&#09;script:`) ditolak · `data:` ditolak · URL relatif/https/mailto/tel diizinkan · tag tak dikenal di-*unwrap* · upload gambar berhasil & tersimpan · non-admin **403** pada endpoint upload · upload non-gambar ditolak · halaman create/edit memuat editor & URL upload · isi HTML tersimpan tersanitasi.
+
+---
+
+## 6. Catatan / Risiko
+
+- **Editor & CSS-nya dari CDN** (`cdn.jsdelivr.net`) — konsisten dengan pola yang sudah ada (font `fonts.bunny.net`, embed Google Maps, link `wa.me`). Bila ingin 100% offline, perlu `npm i quill` + `npm run build` (perlu persetujuan karena mengubah dependency).
+- Bila CDN gagal dimuat, form otomatis memakai `<textarea>` biasa (HTML mentah) — data tetap bisa disimpan.
+- Link "Tambah/Edit Berita" sengaja **tanpa** `wire:navigate` agar script editor selalu dieksekusi (navigasi Livewire tidak menjalankan ulang `<script src>` halaman baru).
+- Gambar yang dihapus dari isi berita **tidak** otomatis dihapus dari storage (belum ada pembersihan orphan) — kandidat backlog.
+- Sanitizer ini ditulis sendiri (bukan HTMLPurifier). Cakupan test sudah mencakup vektor umum; bila nanti butuh jaminan lebih kuat, pertimbangkan `ezyang/htmlpurifier` (butuh persetujuan penambahan dependency).
+- Halaman **publik** berita belum dibuat; saat dibuat, render isi dengan `{!! $berita->isi_html !!}` (jangan HTML mentah).
+
+---
+
+
+# Changelog — Sesi 17 Oktober 2026 (sesi 7) — Resource Admin Carousel (Slide Halaman Utama)
+
+> **Tanggal:** 17 Oktober 2026
+> **Fokus:** Menambahkan resource admin untuk mengelola **carousel/slider halaman utama** (tambah, ubah, atur urutan, aktif/nonaktif, hapus).
+> **Ruang lingkup:** Admin saja. Menampilkan carousel di halaman utama **belum dikerjakan** (akan dibahas terpisah).
+
+---
+
+## 1. Ringkasan
+
+| Item | Keterangan |
+|---|---|
+| Route | `/admin/carousels*` (7 route: index, create, store, show, edit, update, destroy) |
+| Akses | middleware `CheckRole:admin` (role lain **403**) |
+| Menu | Sidebar section **"Konten Website"** → item baru **Carousel** (desktop + mobile) |
+| Upload | `storage/app/public/konten/carousel/` (gambar wajib saat tambah, opsional saat edit) |
+| Fitur | CRUD penuh, search, perPage (15/25/50/100), badge Aktif/Nonaktif, **tombol naik/turun urutan**, modal konfirmasi hapus, pratinjau gambar live (Alpine) |
+
+---
+
+## 2. Skema `carousels`
+
+| Kolom | Tipe | Catatan |
+|---|---|---|
+| `judul` | string nullable | teks utama slide |
+| `deskripsi` | text nullable | teks pendukung |
+| `gambar` | string (NOT NULL) | path di disk `public` |
+| `link_url` | string nullable | tautan tombol (boleh relatif, mis. `/pendaftaran`) |
+| `link_text` | string nullable | label tombol |
+| `urutan` | unsignedInteger default 0 | angka kecil tampil lebih dulu (index) |
+| `is_active` | boolean default true | tampil/tidak di halaman utama |
+
+---
+
+## 3. File Baru / Dimodifikasi
+
+| File | Status | Keterangan |
+|---|---|---|
+| `database/migrations/2026_10_17_180315_create_carousels_table.php` | **NEW** | Tabel `carousels` |
+| `app/Models/Carousel.php` | **NEW** | fillable + casts + scope `aktif()` + accessor `punya_tombol`; hook `saving` menolak `link_url` berbahaya |
+| `database/factories/CarouselFactory.php` | **NEW** | Factory (+ state `nonaktif()`) |
+| `app/Http/Requests/CarouselRequest.php` | **NEW** | Validasi + pesan Bahasa Indonesia; `gambar` **required** saat create, nullable saat update |
+| `app/Http/Controllers/Admin/CarouselController.php` | **NEW** | CRUD + upload/hapus gambar (`konten/carousel`) |
+| `app/Livewire/Admin/CarouselsTable.php` | **NEW** | Tabel admin + aksi `pindah(id, arah)` untuk atur urutan |
+| `resources/views/livewire/admin/carousels-table.blade.php` | **NEW** | View tabel (thumbnail, tombol urutan ↑↓, modal hapus) |
+| `resources/views/admin/carousels/{index,create,edit,show}.blade.php` | **NEW** | 4 view CRUD (create/edit pakai pratinjau gambar live via Alpine) |
+| `routes/web.php` | EDIT | +7 route carousel (dalam grup Konten Website, admin only) |
+| `resources/views/admin/layout.blade.php` | EDIT | Menu sidebar "Carousel" (desktop + mobile) |
+| `app/Support/HtmlSanitizer.php` | EDIT | `isSafeUrl()` diubah `private` → **`public static`** agar bisa dipakai model lain |
+| `tests/Feature/CarouselAdminTest.php` | **NEW** | 14 test |
+
+---
+
+## 4. Keamanan
+
+- **Teks** (`judul`, `deskripsi`, `link_text`) lewat trait `SanitizesTextFields` → `strip_tags` saat disimpan.
+- **`link_url`** divalidasi memakai `HtmlSanitizer::isSafeUrl()` di hook `saving`: `javascript:`, `data:`, `vbscript:`, `file:` **ditolak dan dikosongkan**; URL relatif (`/pendaftaran`) dan `http/https/mailto/tel` diizinkan. Ini mencegah XSS saat nanti dirender di halaman publik.
+- Halaman detail admin menampilkan pratinjau tombol dengan `rel="noopener noreferrer"`.
+
+---
+
+## 5. Hasil Validasi
+
+- `php artisan migrate` → `create_carousels_table` **DONE**
+- `php artisan route:list` → **7 route** `admin/carousels*` terdaftar benar
+- `php artisan test tests/Feature/CarouselAdminTest.php` → **14 passed (41 assertions)**
+- Regresi seluruh suite sesi ini → **99 passed (271 assertions)**
+- `vendor/bin/pint` → **FIXED 1 style issue**, sisanya bersih
+
+Cakupan test: tamu → login, non-admin **403**, admin lihat daftar, tambah slide + gambar tersimpan di `konten/carousel/`, **gambar wajib**, update ganti gambar (+ hapus file lama), update tanpa gambar tetap pakai gambar lama, hapus + cleanup file, `javascript:` pada `link_url` ditolak, tautan relatif tersimpan, teks disanitasi, search, **naik/turun urutan**, hapus via tabel Livewire.
+
+---
+
+## 6. Catatan / Risiko
+
+- **Halaman utama belum menampilkan carousel.** Saat dibuat nanti, ambil data dengan `Carousel::aktif()->get()` dan render `Storage::url($slide->gambar)`; tombol hanya bila `$slide->punya_tombol`.
+- Belum ada batas jumlah slide — disarankan di halaman publik nanti hanya menampilkan slide `is_active` sesuai urutan.
+- Gambar lama otomatis dihapus saat diganti/dihapus, tetapi gambar yang **tidak terpakai** (mis. gagal simpan) tidak dibersihkan — belum ada pembersihan orphan (sama seperti modul konten lain).
+- Tidak ada validasi dimensi gambar; hanya rekomendasi 1920 × 800 px di UI. Ukuran maks **2 MB** (mengikuti konvensi project).
+- Belum ada export Excel untuk carousel (tidak diminta).
+
+---
+
+
+# Changelog — Sesi 17 Oktober 2026 (sesi 8) — Ketentuan Ukuran Gambar & Fasilitas Multi-Foto
+
+> **Tanggal:** 17 Oktober 2026
+> **Fokus:** (1) Menetapkan **ketentuan ukuran gambar** untuk thumbnail berita & foto fasilitas, (2) **Fasilitas bisa mengunggah lebih dari satu foto** (galeri).
+
+---
+
+## 1. Ketentuan Ukuran Gambar
+
+| Gambar | Rekomendasi | Minimum | Rasio (wajib lanskap) | Maks |
+|---|---|---|---|---|
+| Thumbnail berita (`beritas.gambar`) | 1200 × 675 px (16:9) | 800 × 450 px | 1.3 – 2.2 | 2 MB |
+| Foto fasilitas (`fasilitas_fotos.path`) | 1200 × 900 px (4:3) | 800 × 600 px | 1.2 – 1.8 | 2 MB per foto |
+
+Ketentuan ditampilkan sebagai kotak petunjuk di form admin (berita create/edit, fasilitas create/edit) dan **ditegakkan saat validasi**.
+
+### Rule baru: `App\Rules\KetentuanUkuranGambar`
+`KetentuanUkuranGambar(minLebar, minTinggi, minRasio, maxRasio, rekomendasi)` — memakai `getimagesize()`.
+
+Pesan error menyertakan **ukuran gambar yang diunggah** agar pengguna tahu apa yang salah, contoh:
+> "Ukuran gambar terlalu kecil: 400 × 300 px (rasio 1.33). Minimal 800 × 450 px. Rekomendasi 1200 × 675 px (16:9)."
+
+⚠️ **Penting:** rule bawaan Laravel `dimensions:min_ratio` / `max_ratio` **TIDAK dipakai** karena semantiknya terbalik dari namanya (kode Laravel: `min_ratio` gagal bila rasio **lebih besar** dari nilai → jadi batas **atas**; `max_ratio` gagal bila rasio **lebih kecil** → batas **bawah**). Rule kustom dibuat agar maksud kodenya jelas.
+
+---
+
+## 2. Fasilitas Multi-Foto
+
+- **Tabel baru `fasilitas_fotos`**: `id`, `fasilitas_id` (FK cascade), `path`, `urutan`, timestamps.
+- **Model baru `FasilitasFoto`** + relasi `Fasilitas::fotos()` (urut `urutan`, lalu `id`).
+- **`Fasilitas::syncGambarUtama()`** — kolom `fasilitas.gambar` dipakai sebagai **cover** (dipakai daftar/kartu) dan otomatis disinkronkan = path foto pertama. Kolom `gambar` diubah menjadi **nullable** (bila semua foto dihapus).
+- **Backfill**: gambar lama (`fasilitas.gambar`) dipindahkan menjadi foto pertama di galeri. *(Di DB saat ini tabel `fasilitas` masih kosong, jadi tidak ada data yang perlu dipindah.)*
+- **Upload banyak berkas**: input `fotos[]` (multiple) — create wajib minimal 1 foto, maksimal **8 berkas sekali unggah** (`FasilitasRequest::MAX_FOTOS`).
+- **Hapus satu foto**: route baru `DELETE admin/fasilitas/{fasilitas}/foto/{foto}` (`fasilitas.foto.destroy`), lalu cover ikut disinkronkan. Tombol hapus ada di kartu galeri (di luar form utama agar tidak nested form).
+- **Hapus fasilitas**: semua foto (baris + berkas) ikut dihapus — baik dari controller maupun dari tabel Livewire.
+- **Urutan foto** = urutan unggah (foto baru ditambahkan di belakang).
+- Pratinjau foto baru (multi) memakai Alpine `x-data="{ files: [] }"` + `URL.createObjectURL`.
+
+---
+
+## 3. File Baru / Dimodifikasi
+
+| File | Status | Keterangan |
+|---|---|---|
+| `app/Rules/KetentuanUkuranGambar.php` | **NEW** | Rule validasi ukuran + rasio gambar |
+| `database/migrations/2026_10_17_181539_create_fasilitas_fotos_table.php` | **NEW** | Tabel `fasilitas_fotos` + `gambar` jadi nullable + backfill |
+| `app/Models/FasilitasFoto.php` | **NEW** | Model galeri foto |
+| `app/Models/Fasilitas.php` | EDIT | `fotos()`, `syncGambarUtama()` |
+| `app/Http/Requests/BeritaRequest.php` | EDIT | `ketentuanThumbnail()` + rule gambar berita |
+| `app/Http/Requests/FasilitasRequest.php` | EDIT | `MAX_FOTOS`, `ketentuanFoto()`, rule `fotos`/`fotos.*` |
+| `app/Http/Controllers/Admin/FasilitasController.php` | EDIT | Multi-upload, `simpanFotos()`, `destroyFoto()`, destroy semua foto, `withCount('fotos')` |
+| `app/Livewire/Admin/FasilitasTable.php` | EDIT | Hapus fasilitas ikut menghapus semua foto |
+| `resources/views/admin/fasilitas/create.blade.php` | EDIT | Input `fotos[]` multiple + pratinjau + ketentuan |
+| `resources/views/admin/fasilitas/edit.blade.php` | EDIT | Kartu galeri + hapus per foto + tambah foto |
+| `resources/views/admin/fasilitas/show.blade.php` | EDIT | Galeri foto (badge "Foto Utama") |
+| `resources/views/admin/fasilitas/index.blade.php` | EDIT | Kolom Foto (thumbnail + jumlah foto) |
+| `resources/views/admin/beritas/create.blade.php` + `edit.blade.php` | EDIT | Kotak ketentuan ukuran thumbnail |
+| `routes/web.php` | EDIT | + route `fasilitas.foto.destroy` |
+| `tests/Feature/FasilitasAdminTest.php` | EDIT | 14 test (multi-foto, hapus per foto, ketentuan ukuran) |
+| `tests/Feature/BeritaAdminTest.php` | EDIT | 22 test (+3 test ketentuan ukuran thumbnail) |
+
+---
+
+## 4. Hasil Validasi
+
+- `php artisan migrate` → `create_fasilitas_fotos_table` **DONE**
+- `php artisan route:list` → **8 route** fasilitas (termasuk `admin/fasilitas/{fasilitas}/foto/{foto}`)
+- `php artisan test tests/Feature/FasilitasAdminTest.php` → **14 passed (51 assertions)**
+- `php artisan test tests/Feature/BeritaAdminTest.php` → **22 passed (71 assertions)**
+- Regresi seluruh suite → **106 passed (303 assertions)**
+- `vendor/bin/pint` → **PASS** (10 file)
+
+Cakupan test baru: unggah 3 foto sekaligus, foto pertama jadi cover, tambah foto tanpa menghapus foto lama, hapus satu foto + cover otomatis pindah, foto wajib, foto terlalu kecil ditolak, foto portrait ditolak, hapus fasilitas menghapus semua foto, hapus dari tabel Livewire membersihkan berkas, thumbnail berita (sesuai / terlalu kecil / portrait).
+
+---
+
+## 5. Catatan / Risiko
+
+- **Ketentuan bersifat menegakkan (hard rule)** — gambar yang tidak sesuai akan ditolak. Bila dirasa terlalu ketat, cukup ubah parameter di `BeritaRequest::ketentuanThumbnail()` / `FasilitasRequest::ketentuanFoto()` (mis. longgarkan rasio).
+- Belum ada **penanda urutan foto** di UI (urutan = urutan unggah). Bila perlu drag-and-drop urutan, itu penambahan terpisah.
+- Belum ada **pembersihan orphan** bila unggahan gagal di tengah proses (sama seperti modul konten lain).
+- Halaman **publik** (berita/fasilitas/guru/kontak/carousel) belum dibuat; saat itu tiba, fasilitas tampilkan `$fasilitas->fotos` dan cover dari `$fasilitas->gambar`.
+
+---
+
+
+# Changelog — Sesi 17 Oktober 2026 (sesi 9) — Semua Tombol Admin Jadi Navigasi SPA (wire:navigate)
+
+> **Tanggal:** 17 Oktober 2026
+> **Fokus:** Menyeragamkan **seluruh tautan antar-halaman admin** menjadi navigasi SPA Livewire (`wire:navigate`) — sebelumnya banyak tombol "Tambah", "Batal", "Lihat", "Edit", "Kembali" yang masih melakukan full page reload.
+
+---
+
+## 1. Temuan
+
+- Ada **66 tautan** `route('admin.*')` yang belum memakai `wire:navigate` (mayoritas tombol "Batal" di halaman create/edit, tombol "Tambah" di halaman index non-Livewire, dan tombol "Lihat/Edit" di view index lama).
+- Tombol "Tambah Berita" & "Edit" di tabel berita sengaja saya lepas dari `wire:navigate` pada sesi 6 (karena skrip editor Quill tidak ikut jalan saat navigasi SPA). Karena diminta semua SPA, masalah itu **diselesaikan di akarnya**, bukan dengan melepas SPA.
+
+---
+
+## 2. Editor Berita Dibuat Tahan Navigasi SPA
+
+Hasil riset ke source Livewire (`vendor/livewire/livewire/dist/livewire.esm.js`): pada navigasi, Livewire menjalankan ulang `<script>` di body (`prepNewBodyScriptTagsToRun`) dan menggabungkan `<head>` (`mergeNewHead`). Tapi ada **race**: `<script src>` eksternal dieksekusi asinkron, sehingga inline script bisa jalan sebelum library siap.
+
+Solusi di `resources/views/admin/beritas/partials/editor-isi.blade.php`:
+
+| Bagian | Perubahan |
+|---|---|
+| Aset Quill | **Tidak lagi** pakai `<script src>` statis. Dimuat **dinamis** lewat `pastikanAsetQuill()` (dengan `window.__quillMemuat` sebagai promise cache agar hanya sekali) + CSS `<link data-quill-css>` idempoten |
+| Inisialisasi | Dibungkus `window.__initEditorIsi()` yang **idempoten** (dijaga `editorEl.dataset.siap === '1'`) |
+| Pemicu | Dipanggil saat load **dan** pada `document.addEventListener('livewire:navigated', ...)` (listener didaftarkan sekali lewat `window.__editorIsiListener`) |
+| Fallback | Bila Quill gagal dimuat → `<textarea name="isi">` tetap tampil (perilaku aman, tidak berubah) |
+
+Dengan pola ini editor tetap muncul baik saat halaman dibuka langsung (full load) maupun via `wire:navigate`.
+
+---
+
+## 3. Penambahan `wire:navigate`
+
+Diterapkan ke **semua** `<a>` di `resources/views/admin/**` dan `resources/views/livewire/admin/**` yang mengarah ke `route('admin.*')`, dengan **pengecualian** yang disengaja:
+
+- ❌ Link **export Excel** (`admin.*.export`) → harus full navigation agar file ter-download normal.
+- ❌ Tautan **`target="_blank"`** (buka gambar/file, `wa.me`, website pondok, Google Maps).
+
+Setelah perubahan: **hanya 5 tautan** admin yang tanpa `wire:navigate` — semuanya link export.
+
+Contoh yang sekarang SPA: tombol **Tambah** (berita/fasilitas/guru/kontak/carousel/siswa/pendaftaran), tombol **Batal** di semua halaman create & edit, tombol **Lihat/Edit/Kembali** di halaman index & show, serta tombol **Reset filter** pada halaman index lama.
+
+---
+
+## 4. File yang Dimodifikasi
+
+| File | Perubahan |
+|---|---|
+| `resources/views/admin/beritas/partials/editor-isi.blade.php` | Loader aset dinamis + init idempoten + listener `livewire:navigated` |
+| `resources/views/livewire/admin/beritas-table.blade.php` | `wire:navigate` dikembalikan pada tombol Tambah & Edit |
+| `resources/views/livewire/admin/{mtsputras,mtsputris,maputras,maputris}-table.blade.php` | `wire:navigate` pada tombol Tambah Siswa (link export tetap non-SPA) |
+| `resources/views/livewire/admin/carousels-table.blade.php` | `wire:navigate` pada tombol Tambah Slide |
+| `resources/views/admin/{beritas,fasilitas,gurus,kontaks,carousels}/{index,create,edit,show}.blade.php` | `wire:navigate` pada Tambah/Batal/Lihat/Edit/Kembali |
+| `resources/views/admin/{mtsputras,mtsputris,maputras,maputris,pendaftarans}/index.blade.php` | idem |
+| `resources/views/admin/{mtsputras,mtsputris,maputras,maputris,pendaftarans}/show.blade.php` | sudah SPA (tidak berubah) |
+| `tests/Feature/AdminSpaNavigationTest.php` | **NEW** — 15 test regresi |
+
+---
+
+## 5. Hasil Validasi
+
+- `php artisan view:clear` dijalankan
+- `php artisan test tests/Feature/AdminSpaNavigationTest.php` → **15 passed (31 assertions)**
+- Regresi seluruh suite → **121 passed (334 assertions)**
+- `vendor/bin/pint` → **PASS**
+- Audit grep: `66` tautan admin tanpa `wire:navigate` → **tinggal 5** (semua link export)
+
+Cakupan test: tombol Tambah SPA di 7 halaman daftar, tombol Batal SPA di 5 halaman create, tombol Tambah & Edit pada tabel berita SPA, tombol Batal di halaman edit berita SPA, dan link export **tetap tidak** SPA.
+
+---
+
+## 6. Catatan
+
+- Tautan `target="_blank"` yang **sudah** punya `wire:navigate` (mis. "Uang Masuk" di sidebar) tidak diubah — Livewire otomatis mengabaikan `wire:navigate` bila ada `target`.
+- Tidak perlu `npm run build` (perubahan Blade/JS inline saja).
+- Bila nanti menambah halaman admin baru: **wajib** pakai `wire:navigate` untuk tautan antar-halaman admin (kecuali export / `target="_blank"`), dan skrip apa pun harus dibuat tahan navigasi (lihat bagian Konvensi kode).
+
+---
+
+
+# Changelog — Sesi 17 Oktober 2026 (sesi 10) — Halaman Utama Pindah ke `/psb`, `/` Jadi Website Sekolah
+
+> **Tanggal:** 17 Oktober 2026
+> **Fokus:** Memindahkan halaman utama lama (pencarian data santri) ke **`/psb`**, dan menyiapkan **`/`** sebagai **halaman utama / website sekolah** yang akan menampilkan konten website (berita, fasilitas, profil guru, kontak).
+
+---
+
+## 1. Perubahan Struktur Halaman
+
+| URL | Nama route | Sebelum | Sesudah |
+|---|---|---|---|
+| `/` | `home` | Halaman pencarian data santri (`welcome.blade.php`) | **Halaman utama / website sekolah** (`home.blade.php`) |
+| `/psb` | `psb` | — (belum ada) | **PSB & pencarian data santri** (`psb.blade.php`) |
+
+`resources/views/welcome.blade.php` **dipindahkan** (via `git mv`, riwayat terjaga) menjadi `resources/views/psb.blade.php`.
+
+---
+
+## 2. Halaman `/psb` (hasil pindahan)
+
+Konten sama seperti halaman utama lama (pencarian siswa + section about + footer), dengan penyesuaian:
+
+- `<title>` → "PSB & Cari Data Santri - PPSR 2026"
+- Logo di header kini **tautan ke Beranda** (`route('home')`)
+- Menu header diisi tautan nyata: **Beranda · PSB · Galeri Foto · Uang Masuk** (sebelumnya komentar kosong)
+- Footer "Quick Links" (yang masih `#`) diganti tautan nyata: Beranda, PSB & Cari Data, Galeri Foto, Uang Masuk
+- Label footer "PPSR 2025" → "PPSR 2026", copyright jadi `{{ date('Y') }}`
+
+---
+
+## 3. Halaman `/` (baru — website sekolah)
+
+`resources/views/home.blade.php` — halaman publik mandiri (tanpa layout admin), tema hijau konsisten:
+
+| Bagian | Isi |
+|---|---|
+| Header | Logo PPSR, menu (Beranda, Layanan, Kontak, PSB, Galeri Foto), tombol **Cari Data** & **Daftar PSB** |
+| Hero | Nama pondok, tagline, badge **Tahun Ajaran aktif**, 2 CTA (Daftar Santri Baru, Cari Data Santri) |
+| **Layanan** | 4 kartu akses cepat: Pendaftaran Santri Baru, Cari Data Santri, Galeri Foto, Uang Masuk |
+| **Hubungi Kami** | Alamat, telepon/WhatsApp (link `wa.me`), email, jam layanan, + embed Google Maps — **diambil dari Pengaturan → Kontak Lembaga**; seluruh section disembunyikan bila data masih kosong |
+| Catatan | Info strip: berita, fasilitas, dan profil guru **sedang disiapkan** |
+| Footer | Deskripsi, tautan layanan, tautan pendaftaran, kontak (fallback ke data lama bila kosong) |
+
+---
+
+## 4. Penyesuaian Referensi
+
+| File | Perubahan |
+|---|---|
+| `routes/web.php` | `/` → `view('home')` (name `home`), route baru `/psb` → `view('psb')` (name `psb`) |
+| `app/Livewire/UpdateFotoForm.php` | Redirect jenis data tidak valid: `route('home')` → **`route('psb')`** (user berasal dari halaman PSB) |
+| `tests/Feature/CariSiswaTableTest.php` | Test "halaman utama memuat pencarian" → **`route('psb')`** |
+| `tests/Feature/HomePageTest.php` | **NEW** — 6 test halaman utama baru |
+
+Tautan lain yang menunjuk `route('home')` (tombol "Kembali ke Beranda" di Update Foto & Galeri Foto, logo di layout auth) **tetap** — sekarang mengarah ke halaman utama sekolah, sesuai labelnya.
+
+---
+
+## 5. Hasil Validasi
+
+- `php artisan route:list` → `GET /` = `home`, `GET /psb` = `psb` ✓
+- `php artisan view:clear` dijalankan
+- `php artisan test tests/Feature/HomePageTest.php tests/Feature/CariSiswaTableTest.php tests/Feature/ExampleTest.php` → **19 passed (45 assertions)**
+- Regresi seluruh suite → **127 passed (352 assertions)**
+- `vendor/bin/pint` → PASS (pint juga merapikan `UpdateFotoForm.php`: urutan import, spasi `! `, concat — tanpa perubahan logika)
+
+Cakupan test: `/` dapat diakses & memuat nama pondok, `/` menyediakan tautan ke PSB/pendaftaran/galeri/uang masuk, `/` **tidak lagi** memuat komponen pencarian, `/psb` memuat komponen pencarian, section kontak muncul bila data diisi & **tersembunyi** bila kosong.
+
+---
+
+## 6. Catatan / Risiko
+
+- **`/` sekarang bukan lagi halaman pencarian.** Siapa pun yang menyimpan tautan lama ke `/` (mis. dari poster/WhatsApp) akan mendarat di halaman utama baru — tombol **"Cari Data"** sudah disediakan di header & hero sebagai jalan pintas ke `/psb`.
+- Halaman utama masih **versi jembatan**: berita, fasilitas, dan profil guru **belum ditampilkan** (hanya info strip "sedang disiapkan"). Data carousel/berita/fasilitas/guru sudah siap di admin dan tinggal dirender.
+- Halaman publik baru yang **belum ada**: `/berita`, `/berita/{slug}`, `/fasilitas`, `/guru`. Rencana: dibuat saat penyusunan halaman utama lengkap.
+- Belum ada halaman publik untuk daftar fasilitas/guru, sehingga kartu "Fasilitas" belum masuk ke menu.
+- `/beranda` (`testcoba.blade.php`) masih halaman uji coba — belum dibersihkan.
+
+---
+
+# Changelog — Sesi 17 Oktober 2026 (sesi 11) — Website Sekolah Lengkap: Navbar Berita/Fasilitas/Guru/Kontak
+
+> **Tanggal:** 17 Oktober 2026
+> **Fokus:** Melengkapi `/` sebagai website sekolah yang **benar-benar menampilkan Konten Website** (carousel, berita, fasilitas, profil guru, kontak) + membuat **4 halaman publik** di navbar: **Berita, Fasilitas, Guru, Kontak**.
+
+---
+
+## 1. Ringkasan Perubahan
+
+| URL | Nama route | Sebelum | Sesudah |
+|---|---|---|---|
+| `/` | `home` | Versi jembatan (hero + Layanan + Kontak) | **Website sekolah lengkap** (carousel + berita + fasilitas + guru + kontak) |
+| `/berita` | `berita.index` | — | **Daftar berita terbit** (paginasi 9/halaman) |
+| `/berita/{slug}` | `berita.show` | — | **Detail berita** (isi HTML disanitasi + berita lainnya) |
+| `/fasilitas` | `fasilitas.index` | — | **Daftar fasilitas aktif + galeri foto** (paginasi 9) |
+| `/guru` | `guru.index` | — | **Daftar profil guru aktif** (paginasi 12) |
+| `/kontak` | `kontak.index` | — | **Kontak lembaga + kontak person + peta + CTA** |
+| `/psb` | `psb` | Halaman mandiri (header/footer sendiri) | Pakai **layout publik bersama** |
+
+View dipindahkan: `resources/views/psb.blade.php` → **`resources/views/site/psb.blade.php`** (via `git mv`), `resources/views/home.blade.php` → **`resources/views/site/home.blade.php`** (file lama dihapus).
+
+---
+
+## 2. Layout Publik Bersama — `resources/views/layouts/public.blade.php` (BARU)
+
+Header/footer tidak lagi diduplikasi di tiap halaman publik.
+
+| Bagian | Isi |
+|---|---|
+| Navbar | Logo `PPSR 2026` → `route('home')` + **menu: Berita · Fasilitas · Guru · Kontak** (desktop & mobile) + tombol **PSB** |
+| Status aktif | `request()->routeIs(explode('.', $route)[0].'.*')` → `berita.index` menyorot juga `berita.show` |
+| Menu mobile | Toggle vanilla JS (`#site-menu-btn` / `#site-menu`) — tanpa Alpine, aman untuk semua halaman |
+| Footer | 4 kolom: deskripsi, Tautan (Berita/Fasilitas/Guru/Kontak), Layanan (Pendaftaran/PSB/Galeri Foto/Uang Masuk), Kontak (`Setting::value('kontak_*')` + fallback data lama) |
+| Aset | `@vite` + **`@livewireStyles`/`@livewireScripts`** eksplisit → Alpine & Livewire selalu tersedia di halaman publik |
+
+**Catatan penting (Blade):** variabel yang dideklarasikan `@php` di **layout** TIDAK tersedia di `@section('content')` milik child view (child dievaluasi lebih dulu). Karena itu data kontak lembaga yang dipakai isi halaman dikirim dari controller (`$lembaga`), bukan diandalkan dari layout. Layout hanya memakai variabelnya sendiri di footer.
+
+---
+
+## 3. Halaman Utama `/` — `resources/views/site/home.blade.php`
+
+Controller: `app/Http/Controllers/Site/HomeController.php`
+
+| Bagian | Sumber data | Catatan |
+|---|---|---|
+| **Carousel** | `Carousel::aktif()->take(5)` | Slider Alpine (`x-data` + `x-init="mulai()"`): auto 6 detik, tombol ‹ ›, dot indikator, `x-transition.opacity`. Judul/deskripsi/tombol (CTA) dari `link_url` + `link_text` |
+| Hero cadangan | — | Muncul **hanya bila belum ada slide**: gradien hijau + badge Tahun Ajaran aktif + 2 CTA |
+| **Berita** | `Berita::published()->latest('published_at')->take(3)` | Kartu: gambar, kategori, tanggal, `ringkasan_singkat` |
+| **Fasilitas** | `Fasilitas::aktif()->with('fotos')->take(3)` | Kartu: cover (`gambar`), kategori, deskripsi, jumlah foto |
+| **Profil Guru** | `Guru::aktif()->take(4)` | Kartu: foto (fallback inisial nama), nama, jabatan |
+| **Kontak** | `Kontak::aktif()->take(4)` + `Setting::value('kontak_*')` | Info lembaga + kartu kontak person (WhatsApp `wa.me`) + CTA ke `/kontak` & `/pendaftaran` |
+
+Setiap section **disembunyikan otomatis** bila datanya kosong (`@if ($x->isNotEmpty())`), kecuali section Kontak yang selalu tampil sebagai ajakan (dengan pesan pengisian bila data kontak kosong).
+
+---
+
+
+## 4. Halaman Publik Baru (Navbar)
+
+Semua di `app/Http/Controllers/Site/` dan `resources/views/site/`:
+
+| Halaman | Controller | Query | Isi view |
+|---|---|---|---|
+| `/berita` | `BeritaController@index` | `Berita::published()->latest('published_at')->paginate(9)` | Grid kartu berita + pesan kosong + `links()` |
+| `/berita/{slug}` | `BeritaController@show` | `published()->where('slug')->firstOrFail()` + 3 berita lain (`whereKeyNot`) | Judul, kategori, tanggal, penulis, gambar, ringkasan, **`{!! $berita->isi_html !!}`**, tombol kembali, "Berita Lainnya" |
+| `/fasilitas` | `FasilitasController@index` | `Fasilitas::aktif()->with('fotos')->paginate(9)` | Kartu besar (cover + deskripsi) + **galeri semua foto** (klik → buka ukuran penuh), anchor `#fasilitas-{id}` |
+| `/guru` | `GuruController@index` | `Guru::aktif()->paginate(12)` | Grid kartu: foto/inisial, nama, jabatan, pendidikan, deskripsi, anchor `#guru-{id}` |
+| `/kontak` | `KontakController@index` | `Kontak::aktif()->get()` + `Setting::value('kontak_*')` | 4 kartu info lembaga, tautan sosial media, kartu kontak person (`whatsapp_link`), **peta iframe**, CTA pendaftaran |
+
+Kartu di halaman utama menautkan ke halaman ini (mis. fasilitas → `/fasilitas#fasilitas-{id}`, guru → `/guru#guru-{id}`), dengan `scroll-mt-24` pada anchor agar tidak tertutup navbar sticky.
+
+---
+
+## 5. Keamanan — Peta Tidak Lagi Dirender sebagai HTML Mentah
+
+`kontak_maps_embed` disimpan apa adanya (kode embed Google Maps) — sebelumnya berpotensi menjadi celah XSS bila dirender `{!! !!}`.
+
+**Solusi:** method baru **`HtmlSanitizer::embedUrl(?string $html): ?string`**
+- Ambil hanya nilai `src="..."` dari snippet (atau pakai input langsung bila berupa URL);
+- Validasi lewat `HtmlSanitizer::isSafeUrl()` (menolak `javascript:`, `data:`, dll.);
+- View merender **`<iframe src="{{ $lembaga['maps'] }}">` milik sendiri** (dengan `loading="lazy"` + `referrerpolicy`) — bukan HTML dari admin.
+
+Konsisten dengan aturan proyek: **tidak ada `{!! !!}` HTML mentah dari input admin**. Satu-satunya `{!! !!}` yang tersisa adalah `$berita->isi_html` (sudah disanitasi saat simpan + saat baca).
+
+---
+
+## 6. File Baru / Dimodifikasi
+
+**Baru:**
+- `app/Http/Controllers/Site/{HomeController,BeritaController,FasilitasController,GuruController,KontakController}.php`
+- `resources/views/layouts/public.blade.php`
+- `resources/views/site/home.blade.php`, `resources/views/site/psb.blade.php` (dipindah)
+- `resources/views/site/berita/{index,show}.blade.php`, `site/fasilitas/index.blade.php`, `site/guru/index.blade.php`, `site/kontak/index.blade.php`
+- `tests/Feature/SitePagesTest.php` (19 test)
+
+**Dimodifikasi:**
+- `routes/web.php` — blok "Website Sekolah (halaman publik)" + `/psb` → `view('site.psb')`
+- `app/Support/HtmlSanitizer.php` — `embedUrl()`
+- `tests/Feature/HomePageTest.php` — test "bagian kontak disembunyikan bila kosong" → "detail kontak diganti pesan pengisian" (section kontak kini selalu tampil)
+- `tests/Unit/HtmlSanitizerTest.php` — +5 test `embedUrl()`
+- `MEMORY.md`
+
+---
+
+## 7. Hasil Validasi
+
+- `php artisan view:clear` dijalankan; `vendor/bin/pint --dirty` → 2 style issue diperbaiki (import `routes/web.php`, blank line EOF)
+- `php artisan test tests/Feature/SitePagesTest.php tests/Feature/HomePageTest.php tests/Unit/HtmlSanitizerTest.php` → **47 passed (124 assertions)**
+- Seluruh suite → **170 passed (463 assertions)**, 15 gagal (**pre-existing**, lihat catatan)
+- Uji langsung `php artisan serve` (port 8123/8124) + `curl`:
+  - `/`, `/berita`, `/fasilitas`, `/guru`, `/kontak`, `/psb` → **HTTP 200, tanpa error marker**
+  - `/` memuat navbar (Berita/Fasilitas/Guru/Kontak), section Berita (3 berita terbit), Profil Guru (5 guru), Kontak; Fasilitas/Carousel kosong di DB → section disembunyikan, hero cadangan dipakai ✓
+
+Cakupan test: navbar 4 tautan, carousel aktif saja (+ sembunyikan nonaktif), hero cadangan, berita terbit saja, fasilitas & guru aktif saja, kontak lembaga + kontak person aktif, daftar berita (terbit vs draft + pesan kosong), detail berita (isi disanitasi, `<script>` hilang, draft → 404, slug asing → 404), fasilitas (galeri foto + nonaktif tersembunyi + pesan kosong), guru (aktif saja + pesan kosong), kontak (info lembaga, `wa.me`, kontak nonaktif tersembunyi, peta aman vs tidak aman), `embedUrl()` (src dari snippet, URL langsung, null/kosong/javascript/data).
+
+---
+
+## 8. Catatan / Risiko
+
+- **15 test gagal = warisan starter kit Laravel, bukan regresi sesi ini**: `tests/Feature/Auth/*`, `tests/Feature/DashboardTest.php`, `tests/Feature/Settings/*` memanggil route yang **tidak ada** di aplikasi ini (`dashboard`, `profile.edit`). Semua error berupa `RouteNotFoundException`/`ViewException` pada route tersebut. Perlu dibersihkan/disesuaikan pada sesi terpisah (hapus atau arahkan ke `admin.dashboard`).
+- `/beranda` (`testcoba.blade.php`) **masih** halaman uji coba — belum dibersihkan.
+- Carousel/fasilitas/kontak **belum ada datanya di DB lokal** → tampil hero cadangan / section tersembunyi. Isi lewat admin (`/admin/carousels`, `/admin/fasilitas`, `/admin/kontaks`, `/admin/kontak-lembaga`) untuk melihat tampilan penuh.
+- Halaman publik **tanpa cache** — setiap kunjungan menjalankan query; bila trafik naik, pertimbangkan `Cache::remember` untuk carousel/berita terbaru.
+- Semua pekerjaan sesi ini **belum di-commit** (bersama pekerjaan sesi 4–10).
 
 ---

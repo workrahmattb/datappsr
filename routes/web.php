@@ -1,17 +1,9 @@
 <?php
 
-use Livewire\Volt\Volt;
+use App\Http\Controllers\CetakRaporController;
 use App\Livewire\HelloWorld;
 use App\Livewire\PendaftaranForm;
-use Laravel\Fortify\Features;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\CetakRaporController;
-use App\Http\Controllers\Admin\DashboardController;
-use App\Http\Controllers\Admin\MtsputraController;
-use App\Http\Controllers\Admin\MtsputriController;
-use App\Http\Controllers\Admin\MaputraController;
-use App\Http\Controllers\Admin\MaputriController;
-use App\Http\Controllers\Admin\PendaftaranController;
 
 Route::get('/lagibelajar', HelloWorld::class);
 
@@ -29,10 +21,20 @@ Route::get('/cetak-rapor/generate', [CetakRaporController::class, 'generate'])
     ->name('cetak-rapor.generate')
     ->middleware(['auth']);
 
-// Public Routes (Front End)
-Route::get('/', function () {
-    return view('welcome');
-})->name('home');
+// ============================================================
+// Website Sekolah (halaman publik)
+// ============================================================
+Route::get('/', [\App\Http\Controllers\Site\HomeController::class, 'index'])->name('home');
+Route::get('/berita', [\App\Http\Controllers\Site\BeritaController::class, 'index'])->name('berita.index');
+Route::get('/berita/{slug}', [\App\Http\Controllers\Site\BeritaController::class, 'show'])->name('berita.show');
+Route::get('/fasilitas', [\App\Http\Controllers\Site\FasilitasController::class, 'index'])->name('fasilitas.index');
+Route::get('/guru', [\App\Http\Controllers\Site\GuruController::class, 'index'])->name('guru.index');
+Route::get('/kontak', [\App\Http\Controllers\Site\KontakController::class, 'index'])->name('kontak.index');
+
+// PSB: pendaftaran & pencarian data santri (sebelumnya halaman utama)
+Route::get('/psb', function () {
+    return view('site.psb');
+})->name('psb');
 
 Route::get('/beranda', function () {
     return view('testcoba');
@@ -41,7 +43,7 @@ Route::get('/beranda', function () {
 // Admin Routes (Butuh Login)
 Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/', \App\Livewire\Admin\Dashboard::class)->name('dashboard')->middleware(['\App\Http\Middleware\CheckRole::class,admin']);
-    
+
     // Mtsputra
     Route::middleware(['\App\Http\Middleware\CheckRole::class,mtsputra'])->group(function () {
         Route::get('mtsputras', \App\Livewire\Admin\MtsputrasTable::class)->name('mtsputras.index');
@@ -53,7 +55,7 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
         Route::put('mtsputras/{mtsputra}', [\App\Http\Controllers\Admin\MtsputraController::class, 'update'])->name('mtsputras.update');
         Route::delete('mtsputras/{mtsputra}', [\App\Http\Controllers\Admin\MtsputraController::class, 'destroy'])->name('mtsputras.destroy');
     });
-    
+
     // Mtsputri
     Route::middleware(['\App\Http\Middleware\CheckRole::class,mtsputri'])->group(function () {
         Route::get('mtsputris', \App\Livewire\Admin\MtsputrisTable::class)->name('mtsputris.index');
@@ -65,7 +67,7 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
         Route::put('mtsputris/{mtsputri}', [\App\Http\Controllers\Admin\MtsputriController::class, 'update'])->name('mtsputris.update');
         Route::delete('mtsputris/{mtsputri}', [\App\Http\Controllers\Admin\MtsputriController::class, 'destroy'])->name('mtsputris.destroy');
     });
-    
+
     // Maputra
     Route::middleware(['\App\Http\Middleware\CheckRole::class,maputra'])->group(function () {
         Route::get('maputras', \App\Livewire\Admin\MaputrasTable::class)->name('maputras.index');
@@ -77,7 +79,7 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
         Route::put('maputras/{maputra}', [\App\Http\Controllers\Admin\MaputraController::class, 'update'])->name('maputras.update');
         Route::delete('maputras/{maputra}', [\App\Http\Controllers\Admin\MaputraController::class, 'destroy'])->name('maputras.destroy');
     });
-    
+
     // Maputri
     Route::middleware(['\App\Http\Middleware\CheckRole::class,maputri'])->group(function () {
         Route::get('maputris', \App\Livewire\Admin\MaputrisTable::class)->name('maputris.index');
@@ -105,6 +107,59 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
         Route::put('pendaftarans/{pendaftaran}', [\App\Http\Controllers\Admin\PendaftaranController::class, 'update'])->name('pendaftarans.update');
         Route::delete('pendaftarans/{pendaftaran}', [\App\Http\Controllers\Admin\PendaftaranController::class, 'destroy'])->name('pendaftarans.destroy');
         Route::get('pendaftarans-export', [\App\Http\Controllers\Admin\PendaftaranController::class, 'export'])->name('pendaftarans.export');
+    });
+
+    // Konten Website — Berita, Fasilitas, Profil Guru, Kontak (admin only)
+    Route::middleware(['\App\Http\Middleware\CheckRole::class,admin'])->group(function () {
+        // Berita
+        Route::get('beritas', \App\Livewire\Admin\BeritasTable::class)->name('beritas.index');
+        Route::get('beritas/create', [\App\Http\Controllers\Admin\BeritaController::class, 'create'])->name('beritas.create');
+        Route::post('beritas', [\App\Http\Controllers\Admin\BeritaController::class, 'store'])->name('beritas.store');
+        Route::post('beritas/upload-gambar', [\App\Http\Controllers\Admin\BeritaController::class, 'uploadGambar'])->name('beritas.upload-gambar');
+        Route::get('beritas/{berita}', [\App\Http\Controllers\Admin\BeritaController::class, 'show'])->name('beritas.show');
+        Route::get('beritas/{berita}/edit', [\App\Http\Controllers\Admin\BeritaController::class, 'edit'])->name('beritas.edit');
+        Route::put('beritas/{berita}', [\App\Http\Controllers\Admin\BeritaController::class, 'update'])->name('beritas.update');
+        Route::delete('beritas/{berita}', [\App\Http\Controllers\Admin\BeritaController::class, 'destroy'])->name('beritas.destroy');
+
+        // Fasilitas
+        Route::get('fasilitas', \App\Livewire\Admin\FasilitasTable::class)->name('fasilitas.index');
+        Route::get('fasilitas/create', [\App\Http\Controllers\Admin\FasilitasController::class, 'create'])->name('fasilitas.create');
+        Route::post('fasilitas', [\App\Http\Controllers\Admin\FasilitasController::class, 'store'])->name('fasilitas.store');
+        Route::get('fasilitas/{fasilitas}', [\App\Http\Controllers\Admin\FasilitasController::class, 'show'])->name('fasilitas.show');
+        Route::get('fasilitas/{fasilitas}/edit', [\App\Http\Controllers\Admin\FasilitasController::class, 'edit'])->name('fasilitas.edit');
+        Route::put('fasilitas/{fasilitas}', [\App\Http\Controllers\Admin\FasilitasController::class, 'update'])->name('fasilitas.update');
+        Route::delete('fasilitas/{fasilitas}', [\App\Http\Controllers\Admin\FasilitasController::class, 'destroy'])->name('fasilitas.destroy');
+        Route::delete('fasilitas/{fasilitas}/foto/{foto}', [\App\Http\Controllers\Admin\FasilitasController::class, 'destroyFoto'])->name('fasilitas.foto.destroy');
+
+        // Profil Guru
+        Route::get('gurus', \App\Livewire\Admin\GurusTable::class)->name('gurus.index');
+        Route::get('gurus/create', [\App\Http\Controllers\Admin\GuruController::class, 'create'])->name('gurus.create');
+        Route::post('gurus', [\App\Http\Controllers\Admin\GuruController::class, 'store'])->name('gurus.store');
+        Route::get('gurus/{guru}', [\App\Http\Controllers\Admin\GuruController::class, 'show'])->name('gurus.show');
+        Route::get('gurus/{guru}/edit', [\App\Http\Controllers\Admin\GuruController::class, 'edit'])->name('gurus.edit');
+        Route::put('gurus/{guru}', [\App\Http\Controllers\Admin\GuruController::class, 'update'])->name('gurus.update');
+        Route::delete('gurus/{guru}', [\App\Http\Controllers\Admin\GuruController::class, 'destroy'])->name('gurus.destroy');
+
+        // Kontak person
+        Route::get('kontaks', \App\Livewire\Admin\KontaksTable::class)->name('kontaks.index');
+        Route::get('kontaks/create', [\App\Http\Controllers\Admin\KontakController::class, 'create'])->name('kontaks.create');
+        Route::post('kontaks', [\App\Http\Controllers\Admin\KontakController::class, 'store'])->name('kontaks.store');
+        Route::get('kontaks/{kontak}', [\App\Http\Controllers\Admin\KontakController::class, 'show'])->name('kontaks.show');
+        Route::get('kontaks/{kontak}/edit', [\App\Http\Controllers\Admin\KontakController::class, 'edit'])->name('kontaks.edit');
+        Route::put('kontaks/{kontak}', [\App\Http\Controllers\Admin\KontakController::class, 'update'])->name('kontaks.update');
+        Route::delete('kontaks/{kontak}', [\App\Http\Controllers\Admin\KontakController::class, 'destroy'])->name('kontaks.destroy');
+
+        // Kontak lembaga (pengaturan, singleton)
+        Route::get('kontak-lembaga', \App\Livewire\Admin\KontakLembagaSettings::class)->name('kontak-lembaga.index');
+
+        // Carousel halaman utama
+        Route::get('carousels', \App\Livewire\Admin\CarouselsTable::class)->name('carousels.index');
+        Route::get('carousels/create', [\App\Http\Controllers\Admin\CarouselController::class, 'create'])->name('carousels.create');
+        Route::post('carousels', [\App\Http\Controllers\Admin\CarouselController::class, 'store'])->name('carousels.store');
+        Route::get('carousels/{carousel}', [\App\Http\Controllers\Admin\CarouselController::class, 'show'])->name('carousels.show');
+        Route::get('carousels/{carousel}/edit', [\App\Http\Controllers\Admin\CarouselController::class, 'edit'])->name('carousels.edit');
+        Route::put('carousels/{carousel}', [\App\Http\Controllers\Admin\CarouselController::class, 'update'])->name('carousels.update');
+        Route::delete('carousels/{carousel}', [\App\Http\Controllers\Admin\CarouselController::class, 'destroy'])->name('carousels.destroy');
     });
 
 });

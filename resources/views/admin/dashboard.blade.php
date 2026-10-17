@@ -142,7 +142,7 @@
                             {{ $pendaftaran->created_at->format('d M Y') }}
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                            <a href="{{ route('admin.pendaftarans.show', $pendaftaran) }}" class="text-blue-600 hover:text-blue-900">Lihat</a>
+                            <a wire:navigate href="{{ route('admin.pendaftarans.show', $pendaftaran) }}" class="text-blue-600 hover:text-blue-900">Lihat</a>
                         </td>
                     </tr>
                     @empty

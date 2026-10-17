@@ -1,10 +1,15 @@
 <div>
+    @php
+        $keyword = trim($search);
+        $keywordLength = strlen($keyword);
+    @endphp
+
     <!-- Search Bar -->
     <div class="relative">
         <input 
             type="text" 
             wire:model.live.debounce.300ms="search" 
-            placeholder="Ketik Nama / NISN / NIK untuk mencari data siswa TA {{ activeTahunAjaran() }}..."
+            placeholder="Ketik minimal {{ $minSearchLength }} huruf: Nama / NISN / NIK (TA {{ activeTahunAjaran() }})..."
             class="w-full px-4 py-3 pl-12 rounded-lg border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:border-green-500 focus:outline-none focus:ring-0 transition duration-200"
         >
         <svg class="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -12,21 +17,43 @@
         </svg>
     </div>
 
-    @if(strlen($search) === 0)
+    <!-- Petunjuk minimal karakter -->
+    <div class="mt-2 flex flex-wrap items-center justify-between gap-2 text-xs">
+        <span class="text-gray-500 dark:text-gray-400">
+            Minimal <span class="font-semibold">{{ $minSearchLength }}</span> huruf untuk mulai mencari.
+        </span>
+        @if($keywordLength > 0 && $keywordLength < $minSearchLength)
+            <span class="font-semibold text-amber-600 dark:text-amber-400">
+                {{ $minSearchLength - $keywordLength }} huruf lagi...
+            </span>
+        @endif
+    </div>
+
+    @if($keywordLength === 0)
         <div class="text-center py-12 bg-gray-50 dark:bg-gray-700/50 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600 mt-6">
             <svg class="w-12 h-12 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
             </svg>
             <p class="text-gray-500 dark:text-gray-400 text-lg font-medium">Ketik nama siswa untuk mencari</p>
-            <p class="text-gray-400 dark:text-gray-500 text-sm mt-1">Data akan muncul setelah Anda mengetik di kolom pencarian</p>
+            <p class="text-gray-400 dark:text-gray-500 text-sm mt-1">Masukkan minimal {{ $minSearchLength }} huruf agar data siswa muncul</p>
         </div>
-    @elseif($students->count() === 0)
+    @elseif($keywordLength < $minSearchLength)
+        <div class="text-center py-12 bg-amber-50 dark:bg-amber-900/20 rounded-lg border-2 border-dashed border-amber-300 dark:border-amber-700 mt-6">
+            <svg class="w-12 h-12 mx-auto text-amber-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <p class="text-amber-700 dark:text-amber-300 text-lg font-medium">Ketik minimal {{ $minSearchLength }} huruf</p>
+            <p class="text-amber-600 dark:text-amber-400 text-sm mt-1">
+                Anda baru mengetik {{ $keywordLength }} huruf. Teruskan mengetik agar pencarian dijalankan.
+            </p>
+        </div>
+    @elseif($students->total() === 0)
         <div class="text-center py-12 bg-gray-50 dark:bg-gray-700/50 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600 mt-6">
             <svg class="w-12 h-12 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
             </svg>
             <p class="text-gray-500 dark:text-gray-400 text-lg font-medium">Data tidak ditemukan</p>
-            <p class="text-gray-400 dark:text-gray-500 text-sm mt-1">Tidak ada siswa dengan nama "{{ $search }}" untuk TA {{ activeTahunAjaran() }}</p>
+            <p class="text-gray-400 dark:text-gray-500 text-sm mt-1">Tidak ada siswa dengan nama "{{ $keyword }}" untuk TA {{ activeTahunAjaran() }}</p>
         </div>
     @else
         <!-- Desktop Table -->
@@ -173,9 +200,21 @@
             @endforeach
         </div>
 
+        <!-- Pagination -->
+        @if($students->hasPages())
+            <div class="mt-6">
+                {{ $students->links() }}
+            </div>
+        @endif
+
         <!-- Result Count -->
         <div class="mt-4 text-sm text-gray-500 dark:text-gray-400">
-            Ditemukan <span class="font-semibold">{{ $students->count() }}</span> data siswa untuk TA {{ $tahunAjaran }}
+            Ditemukan <span class="font-semibold">{{ $students->total() }}</span> data siswa untuk TA {{ $tahunAjaran }}
+            @if($students->hasPages())
+                <span class="text-gray-400 dark:text-gray-500">
+                    — menampilkan {{ $students->firstItem() }}-{{ $students->lastItem() }} ({{ $students->perPage() }} per halaman)
+                </span>
+            @endif
         </div>
     @endif
 </div>

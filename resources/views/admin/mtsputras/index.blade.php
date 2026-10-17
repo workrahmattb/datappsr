@@ -7,7 +7,7 @@
     <!-- Header -->
     <div class="flex justify-between items-center">
         <h1 class="text-2xl font-bold text-gray-900">Data Siswa MTs Putra</h1>
-        <a href="{{ route('admin.mtsputras.create') }}" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center">
+        <a wire:navigate href="{{ route('admin.mtsputras.create') }}" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center">
             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
             </svg>
@@ -23,7 +23,7 @@
                    class="flex-1 border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
             <button type="submit" class="bg-gray-800 hover:bg-gray-900 text-white px-4 py-2 rounded-lg">Cari</button>
             @if(request('search'))
-                <a href="{{ route('admin.mtsputras.index') }}" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-lg">Reset</a>
+                <a wire:navigate href="{{ route('admin.mtsputras.index') }}" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-lg">Reset</a>
             @endif
         </form>
     </div>
@@ -69,8 +69,8 @@
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                         <div class="flex space-x-2">
-                            <a href="{{ route('admin.mtsputras.show', $mtsputra) }}" class="text-blue-600 hover:text-blue-900">Lihat</a>
-                            <a href="{{ route('admin.mtsputras.edit', $mtsputra) }}" class="text-yellow-600 hover:text-yellow-900">Edit</a>
+                            <a wire:navigate href="{{ route('admin.mtsputras.show', $mtsputra) }}" class="text-blue-600 hover:text-blue-900">Lihat</a>
+                            <a wire:navigate href="{{ route('admin.mtsputras.edit', $mtsputra) }}" class="text-yellow-600 hover:text-yellow-900">Edit</a>
                             <form action="{{ route('admin.mtsputras.destroy', $mtsputra) }}" method="POST" class="inline" onsubmit="return confirm('Yakin ingin menghapus?')">
                                 @csrf
                                 @method('DELETE')
