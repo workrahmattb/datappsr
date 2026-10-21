@@ -1,12 +1,7 @@
-@extends('layouts.public')
-
-@section('title', 'Berita & Pengumuman - PPSR')
-@section('description', "Berita, pengumuman, dan kegiatan terbaru Pondok Pesantren Syafa'aturrasul.")
-
-@section('content')
+<div>
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10">
         <nav class="text-sm text-gray-500 dark:text-gray-400 mb-4">
-            <a href="{{ route('home') }}" class="hover:text-green-600 transition">Beranda</a>
+            <a href="{{ route('home') }}" wire:navigate class="hover:text-green-600 transition">Beranda</a>
             <span class="mx-2">/</span>
             <span class="text-gray-700 dark:text-gray-300">Berita</span>
         </nav>
@@ -28,7 +23,7 @@
         @else
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 @foreach ($beritas as $berita)
-                    <a href="{{ route('berita.show', $berita->slug) }}"
+                    <a href="{{ route('berita.show', $berita->slug) }}" wire:navigate
                         class="group bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-sm hover:shadow-lg border border-gray-100 dark:border-gray-700 transition">
                         @if ($berita->gambar)
                             <img src="{{ Storage::url($berita->gambar) }}" alt="{{ $berita->judul }}"
@@ -69,4 +64,4 @@
             @endif
         @endif
     </section>
-@endsection
+</div>

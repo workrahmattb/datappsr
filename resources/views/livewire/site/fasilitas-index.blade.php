@@ -1,12 +1,7 @@
-@extends('layouts.public')
-
-@section('title', 'Fasilitas - PPSR')
-@section('description', "Sarana dan prasarana Pondok Pesantren Syafa'aturrasul.")
-
-@section('content')
+<div>
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10">
         <nav class="text-sm text-gray-500 dark:text-gray-400 mb-4">
-            <a href="{{ route('home') }}" class="hover:text-green-600 transition">Beranda</a>
+            <a href="{{ route('home') }}" wire:navigate class="hover:text-green-600 transition">Beranda</a>
             <span class="mx-2">/</span>
             <span class="text-gray-700 dark:text-gray-300">Fasilitas</span>
         </nav>
@@ -88,4 +83,4 @@
             @endif
         @endif
     </section>
-@endsection
+</div>

@@ -1,14 +1,9 @@
-@extends('layouts.public')
-
-@section('title', $berita->judul.' - Berita PPSR')
-@section('description', \Illuminate\Support\Str::limit($berita->ringkasan_singkat, 155))
-
-@section('content')
+<div>
     <article class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 pt-10">
         <nav class="text-sm text-gray-500 dark:text-gray-400 mb-4">
-            <a href="{{ route('home') }}" class="hover:text-green-600 transition">Beranda</a>
+            <a href="{{ route('home') }}" wire:navigate class="hover:text-green-600 transition">Beranda</a>
             <span class="mx-2">/</span>
-            <a href="{{ route('berita.index') }}" class="hover:text-green-600 transition">Berita</a>
+            <a href="{{ route('berita.index') }}" wire:navigate class="hover:text-green-600 transition">Berita</a>
         </nav>
 
         <div class="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400 mb-3">
@@ -39,7 +34,7 @@
         <div class="rich-text">{!! $berita->isi_html !!}</div>
 
         <div class="mt-10 pt-6 border-t border-gray-200 dark:border-gray-700">
-            <a href="{{ route('berita.index') }}"
+            <a href="{{ route('berita.index') }}" wire:navigate
                 class="inline-flex items-center gap-2 text-sm font-semibold text-green-600 dark:text-green-400 hover:underline">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
@@ -54,7 +49,7 @@
             <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">Berita Lainnya</h2>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 @foreach ($lainnya as $item)
-                    <a href="{{ route('berita.show', $item->slug) }}"
+                    <a href="{{ route('berita.show', $item->slug) }}" wire:navigate
                         class="group bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-sm hover:shadow-lg border border-gray-100 dark:border-gray-700 transition">
                         @if ($item->gambar)
                             <img src="{{ Storage::url($item->gambar) }}" alt="{{ $item->judul }}"
@@ -72,4 +67,4 @@
             </div>
         </section>
     @endif
-@endsection
+</div>

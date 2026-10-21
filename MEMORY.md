@@ -123,7 +123,7 @@ database/migrations/ · database/seeders/ (UserSeeder = sumber kredensial)
 - **Volt:** komponen di project ini **class-based** (`new class extends Component`) — cek tetangga dulu sebelum membuat baru.
 - **Validasi:** pesan error dalam **Bahasa Indonesia**. Untuk resource baru gunakan **Form Request** di `app/Http/Requests` (sudah ada: `BeritaRequest`, `FasilitasRequest`, `GuruRequest`, `KontakRequest`); controller siswa/pendaftaran masih inline (belum dimigrasi).
 - **Konten HTML dari editor:** jangan pernah `{!! !!}` HTML mentah. Simpan lewat `App\Support\HtmlSanitizer::clean()` (whitelist tag/atribut) dan render dengan accessor `isi_html`.
-- **Struktur halaman publik:** `/` = **halaman utama / website sekolah** (`site/home.blade.php`, `Site\HomeController`), `/psb` = **layanan PSB & pencarian data santri** (`site/psb.blade.php`). Halaman navbar: **`/berita`, `/berita/{slug}`, `/fasilitas`, `/guru`, `/kontak`** (`app/Http/Controllers/Site/` + `resources/views/site/`). Semua halaman publik memakai **`layouts/public.blade.php`** (navbar: Berita · Fasilitas · Guru · Kontak + tombol PSB; footer bersama) — jangan buat header/footer baru, pakai layout ini.
+- **Struktur halaman publik (full SPA Livewire):** SEMUA halaman publik adalah **komponen Livewire full-page** di `app/Livewire/Site/` (view di `resources/views/livewire/site/`) dan memakai satu layout bersama **`layouts.public`** (navbar `<livewire:site.navbar />` + `{{ $slot }}` + footer `<livewire:site.footer />`). Rute: `/` = `Site\Home`, `/berita` = `Site\BeritaIndex`, `/berita/{slug}` = `Site\BeritaShow`, `/fasilitas`, `/guru`, `/kontak`, `/psb`. **Semua tautan internal wajib `wire:navigate`** (kecuali `target="_blank"`/export). Jangan kembali ke `@extends`/controller untuk halaman publik.
 - **Navigasi SPA (wire:navigate):** SEMUA tautan antar-halaman admin wajib memakai `wire:navigate` (termasuk tombol "Tambah", "Batal", "Lihat", "Edit", "Kembali"). **Pengecualian:** link **export Excel** dan tautan **`target="_blank"`** (file/gambar/`wa.me`/website) — jangan diberi `wire:navigate`.
 - **Skrip di halaman admin:** karena halaman dinavigasi via SPA, skrip harus **tahan navigasi** — jangan asumsikan `<script>` hanya jalan sekali. Pola yang dipakai editor berita: `window.__initX()` idempoten (dijaga `dataset`) + panggil saat load + listener `document.addEventListener('livewire:navigated', ...)` yang didaftarkan sekali, dan aset pihak ketiga dimuat dinamis (`window.__quillMemuat`).
 - **Eloquent:** pakai relasi bertipe + eager loading; hindari `DB::` (kecuali transaksi); prefer `Model::query()`.
@@ -140,13 +140,14 @@ database/migrations/ · database/seeders/ (UserSeeder = sumber kredensial)
 |---|---|---|
 | Pendaftaran awal (publik) | `/pendaftaran` | `PendaftaranForm` |
 | Daftar ulang 2 step (publik) | `/daftar-ulang`, `/daftar-ulang/{id}` | `DaftarUlangTable`, `DaftarUlangForm` |
-| Halaman utama (website sekolah) | `/` | `Site\HomeController` + `site/home.blade.php` — carousel, berita terbaru, fasilitas, profil guru, kontak |
-| Halaman publik: Berita | `/berita`, `/berita/{slug}` | `Site\BeritaController` — daftar (paginasi 9) + detail (`isi_html`) |
-| Halaman publik: Fasilitas | `/fasilitas` | `Site\FasilitasController` — kartu + galeri semua foto |
-| Halaman publik: Profil Guru | `/guru` | `Site\GuruController` |
-| Halaman publik: Kontak | `/kontak` | `Site\KontakController` — info lembaga, kontak person, peta |
-| Layout publik bersama | — | `layouts/public.blade.php` — navbar Berita/Fasilitas/Guru/Kontak + PSB, footer |
-| PSB: pendaftaran & cari siswa | `/psb` | `site/psb.blade.php` + `CariSiswaTable` — **min. 3 huruf** + **pagination 10/halaman** |
+| Halaman utama (website sekolah) | `/` | **`Site\Home`** (Livewire) — carousel (`Site\Carousel`), berita terbaru, fasilitas, profil guru, kontak |
+| Halaman publik: Berita | `/berita`, `/berita/{slug}` | **`Site\BeritaIndex`** (paginasi 9) + **`Site\BeritaShow`** (`isi_html`) |
+| Halaman publik: Fasilitas | `/fasilitas` | **`Site\FasilitasIndex`** — kartu + galeri semua foto |
+| Halaman publik: Profil Guru | `/guru` | **`Site\GuruIndex`** |
+| Halaman publik: Kontak | `/kontak` | **`Site\KontakIndex`** — info lembaga, kontak person, peta |
+| Navbar & footer publik | — | **`Site\Navbar`** + **`Site\Footer`** (Livewire) di dalam `layouts.public` |
+| Galeri foto & uang masuk | `/foto`, `/uangmasuk` | `FotoTable`, `UangMasukTable` — kini pakai `layouts.public` (navbar/footer ikut) |
+| PSB: pendaftaran & cari siswa | `/psb` | **`Site\Psb`** + `CariSiswaTable` — **min. 3 huruf** + **pagination 10/halaman** |
 | Update foto mandiri (publik) | `/update-foto/{type}/{id}` | `UpdateFotoForm` |
 | Galeri foto santri | `/foto` | `FotoTable` |
 | Uang masuk (publik) | `/uangmasuk` | `UangMasukTable` |
@@ -2870,3 +2871,275 @@ Cakupan test: navbar 4 tautan, carousel aktif saja (+ sembunyikan nonaktif), her
 - Semua pekerjaan sesi ini **belum di-commit** (bersama pekerjaan sesi 4–10).
 
 ---
+# Changelog — Sesi 18 Oktober 2026 (sesi 12) — Situs Publik Jadi Full SPA Livewire
+
+> **Tanggal:** 18 Oktober 2026
+> **Fokus:** Mengubah **seluruh halaman publik** menjadi **komponen Livewire full-page** (halaman utama, navbar, footer, dan 5 halaman navbar) dengan navigasi **`wire:navigate`** → tanpa reload halaman (SPA).
+
+---
+
+## 1. Ringkasan Perubahan Arsitektur
+
+| Sebelum (sesi 11) | Sesudah (sesi 12) |
+|---|---|
+| `app/Http/Controllers/Site/*Controller.php` + `resources/views/site/*.blade.php` | **`app/Livewire/Site/*.php`** + **`resources/views/livewire/site/*.blade.php`** |
+| `layouts/public.blade.php` (Blade `@extends`, navbar/footer markup statis) | **`layouts/public.blade.php`** = layout Livewire (`{{ $slot }}`) + **`<livewire:site.navbar />`** + **`<livewire:site.footer />`** |
+| Tautan antar halaman = reload penuh | **`wire:navigate`** di semua tautan internal → SPA |
+| Carousel pakai Alpine (`x-data`) | Carousel **server-side** (`Site\Carousel`) + `wire:poll.6s` |
+| `FotoTable` & `UangMasukTable` pakai `layouts.standalone` | Pakai **`layouts.public`** → navbar/footer ikut tampil |
+
+Folder `app/Http/Controllers/Site/` dan `resources/views/site/` **dihapus** (tidak ada lagi controller halaman publik).
+
+---
+
+## 2. Komponen Baru — `app/Livewire/Site/`
+
+| Komponen | Peran | Catatan |
+|---|---|---|
+| `Navbar` | Navbar situs | Menu Berita/Fasilitas/Guru/Kontak + tombol PSB, `$menuTerbuka` (toggle mobile via `wire:click="toggleMenu"` — **state di server**), `$routeAktif` diambil di `mount()` agar sorotan tetap benar saat re-render, `apakahAktif()` + `aria-current="page"` |
+| `Footer` | Footer situs | `mount()` membaca `Setting::value('kontak_*')` |
+| `Carousel` | Slider halaman utama | `$slides` = **array primitif** (bukan model) → polling tidak memicu query ulang; aksi `berikut()`, `sebelumnya()`, `keSlide()`; auto-rotate `wire:poll.6s="berikut"` (hanya bila >1 slide); crossfade murni CSS (`opacity-100`/`opacity-0` + `transition-opacity duration-700`) |
+| `Home` | Halaman utama | `adaSlide`, berita terbaru, fasilitas, guru, kontak, `$lembaga` |
+| `BeritaIndex` | Daftar berita | `WithPagination` → 9/halaman (pagination Livewire, tanpa reload) |
+| `BeritaShow` | Detail berita | `mount(string $slug)` (route parameter otomatis), `firstOrFail()` → 404 untuk draft/slug asing |
+| `FasilitasIndex` | Daftar fasilitas | `WithPagination` 9/halaman + `with('fotos')` |
+| `GuruIndex` | Profil guru | `WithPagination` 12/halaman |
+| `KontakIndex` | Kontak | Info lembaga + kontak person + peta (`HtmlSanitizer::embedUrl`) |
+| `Psb` | Layanan PSB | Membungkus `<livewire:cari-siswa-table />` (nested component) |
+
+Semua halaman: `#[Layout('layouts.public', ['description' => '...'])]` + `#[Title('...')]`. Untuk judul dinamis (detail berita) dipakai `->title(...)->layout('layouts.public', ['description' => ...])` di `render()`.
+
+---
+
+## 3. Detail Teknis yang Perlu Diketahui
+
+- **Judul & deskripsi halaman:** Livewire mengirim `$title` (dari `#[Title]`/`->title()`) dan param `description` (dari `#[Layout('layouts.public', [...])]`/`->layout(..., [...])`) ke layout. Layout memakai `{{ $title ?? ... }}` / `{{ $description ?? ... }}`. **Jangan** pakai `@extends`/`@yield` lagi di halaman publik.
+- **Satu root element** wajib untuk setiap komponen → semua view halaman dibungkus `<div>` (navbar → `<header>`, footer → `<footer>`, carousel → `<section>`).
+- **`@php` di layout tidak tersedia di slot** (slot dirender lebih dulu) → data seperti kontak lembaga dikirim lewat `render()` komponen.
+- **`wire:poll` di `Site\Carousel`** hanya me-render ulang komponen carousel (bukan seluruh halaman) karena polling dipasang di root komponen terpisah. Livewire otomatis menurunkan frekuensi polling saat tab tidak aktif.
+- **Tautan aktif** ditandai `aria-current="page"` (semantik + mudah di-test). Navbar memakai `$routeAktif` dari `mount()`; karena `wire:navigate` men-swap seluruh body, komponen navbar ikut ter-mount ulang sehingga sorotan selalu benar.
+- **Pagination Livewire 3.7** memakai properti `paginators` (bukan `$page`) → test memakai `assertSet('paginators.page', 2)`.
+- **Nested component:** `#[Layout]` hanya berlaku untuk komponen paling luar; navbar/footer/carousel tidak perlu atribut layout.
+
+---
+
+
+## 4. File Baru / Dimodifikasi
+
+**Baru:**
+- `app/Livewire/Site/{Navbar,Footer,Carousel,Home,BeritaIndex,BeritaShow,FasilitasIndex,GuruIndex,KontakIndex,Psb}.php`
+- `resources/views/livewire/site/{navbar,footer,carousel,home,berita-index,berita-show,fasilitas-index,guru-index,kontak-index,psb}.blade.php`
+- `tests/Feature/SiteLivewireTest.php` (17 test)
+
+**Dimodifikasi:**
+- `resources/views/layouts/public.blade.php` → layout Livewire (`{{ $slot }}` + navbar/footer komponen)
+- `routes/web.php` → 7 route publik diarahkan ke komponen Livewire
+- `app/Livewire/FotoTable.php`, `app/Livewire/UangMasukTable.php` → `#[Layout('layouts.public')]`
+- `MEMORY.md`
+
+**Dihapus:** `app/Http/Controllers/Site/` (5 controller) dan `resources/views/site/` (7 view).
+
+---
+
+## 5. Hasil Validasi
+
+- `php artisan test tests/Feature/SiteLivewireTest.php` → **17 passed**
+- Test publik terkait → **41 passed (141 assertions)** (`SiteLivewireTest` + `SitePagesTest` + `HomePageTest`)
+- Seluruh suite → **187 passed (522 assertions)**, 15 gagal (**pre-existing** starter kit, route `dashboard`/`profile.edit`)
+- `vendor/bin/pint --dirty` ✓ · `npm run build` ✓ (CSS 257,95 kB)
+- Uji langsung `php artisan serve` + `curl`:
+
+| URL | HTTP | `wire:snapshot` | `wire:navigate` | Judul halaman |
+|---|---|---|---|---|
+| `/` | 200 | 3 | 28 | Pondok Pesantren Syafa'aturrasul — Kuantan Singingi |
+| `/berita` | 200 | 3 | 19 | Berita & Pengumuman - PPSR |
+| `/fasilitas` | 200 | 3 | 16 | Fasilitas - PPSR |
+| `/guru` | 200 | 3 | 16 | Profil Guru - PPSR |
+| `/kontak` | 200 | 3 | 18 | Kontak - PPSR |
+| `/psb` | 200 | 4 | 17 | Cari Data & Pendaftaran Santri - PPSR 2026 |
+| `/foto` | 200 | 3 | 15 | — |
+| `/uangmasuk` | 200 | 3 | 15 | — |
+
+`wire:snapshot` = 3 → navbar + footer + komponen halaman (semuanya Livewire); `/psb` = 4 (tambah `CariSiswaTable`). Meta `description` per halaman juga terverifikasi muncul.
+
+---
+
+## 6. Catatan / Risiko
+
+- **Halaman formulir tetap standalone** (`PendaftaranForm`, `DaftarUlangForm`, `DaftarUlangTable`, `UpdateFotoForm` memakai `layouts.standalone` via `->layout()` di `render()`) — sengaja dibiarkan fokus tanpa navbar/footer (biasanya dibuka dari tautan/QR). Bila ingin seragam, ganti ke `layouts.public`.
+- **Belum di-commit** (bersama pekerjaan sesi 4–11).
+- 15 test starter kit masih gagal (lihat sesi 11) — perlu dibersihkan terpisah.
+- Carousel/kontak/fasilitas masih kosong di DB lokal → halaman utama menampilkan hero cadangan; isi dari admin untuk melihat tampilan penuh.
+- `resources/views/site/psb.blade.php` (hasil `git mv` dari `welcome.blade.php` di sesi 10) kini dihapus — isinya dikonversi ke `resources/views/livewire/site/psb.blade.php` (riwayat rename tidak lagi terlacak git, tapi isi lama tetap ada di histori).
+
+---
+# Changelog — Sesi 18 Oktober 2026 (sesi 13) — Ukuran Carousel Halaman Utama Disamakan dengan Gambar yang Diunggah
+
+> **Fokus:** Banner carousel di `/` sebelumnya memakai **tinggi tetap** (`h-[380px] md:h-[520px]`) sehingga gambar slide terpotong. Sekarang tinggi banner **mengikuti rasio asli berkas gambar** yang diunggah lewat admin carousel.
+
+---
+
+## 1. Temuan
+
+- Slide nyata di DB lokal: **1920 × 1080 px (rasio 1.78 / 16:9)**; kotak tampilan lama ber-tinggi tetap → gambar terpotong.
+- Rekomendasi ukuran di admin carousel (`admin/carousels/create.blade.php` & `edit.blade.php`): **1920 × 800 px (12:5)** — baru berupa **saran**, belum ada validasi dimensi (berbeda dengan `BeritaRequest`/`FasilitasRequest` yang memakai `KetentuanUkuranGambar`).
+
+---
+
+## 2. Perbaikan
+
+| Bagian | Perubahan |
+|---|---|
+| `Site\Carousel` | `mount()` menghitung rasio tiap slide via `getimagesize()` berkas di disk `public` → disimpan sebagai string `"lebar / tinggi"` di array slide (tetap **primitif**, jadi polling tidak menambah query). Method baru `rasioAktif()`. Konstanta `RASIO_DEFAULT = '12 / 5'` (= 1920×800 rekomendasi admin) dipakai bila berkas hilang/tidak terbaca |
+| `livewire/site/carousel.blade.php` | `h-[380px] md:h-[520px]` → `min-h-[200px] max-h-[800px]` + `style="aspect-ratio: {{ $this->rasioAktif() }}"`. Overlay teks jadi responsif (`text-xl sm:text-2xl md:text-4xl lg:text-5xl`, `pb-6 md:pb-14`, tombol `px-4 py-2 md:px-6 md:py-3`) |
+| `admin/carousels/index.blade.php` | Thumbnail `w-24 h-14` → `w-24 aspect-[12/5]` (pratinjau admin memakai bentuk yang sama) |
+
+**Hasil:** gambar tampil **utuh tanpa crop/distorsi**; gambar 1920×1080 → banner `aspect-ratio: 1920 / 1080`, gambar 1920×800 → `1920 / 800` (12:5).
+
+---
+
+## 3. Hasil Validasi
+
+- Test baru di `SiteLivewireTest`: rasio asli gambar (fake 1200×500 → `aspect-ratio: 1200 / 500`) & cadangan `12 / 5` bila berkas tidak ada → **19 passed**
+- Seluruh suite → **189 passed (526 assertions)**, 15 gagal (**pre-existing** starter kit)
+- Uji langsung `curl /` dengan slide asli 1920×1080 → `aspect-ratio: 1920 / 1080` ✓ (verifikasi live)
+- `vendor/bin/pint --dirty` → PASS · `npm run build` ✓
+
+---
+
+## 4. Catatan
+
+- Karena mengikuti rasio berkas, tinggi banner bisa **berbeda antar slide** bila rasio gambar berbeda. Ingin dikunci seragam? Ganti `style="aspect-ratio: ..."` menjadi kelas `aspect-[12/5]` (standar rekomendasi admin).
+- Validasi dimensi unggah carousel **belum ditambahkan** (opsional): bisa memakai `App\Rules\KetentuanUkuranGambar` seperti berita/fasilitas, mis. `new KetentuanUkuranGambar(1200, 500, 2.0, 3.0, '1920 × 800 px (12:5)')`.
+- Belum di-commit (bersama pekerjaan sesi 4–12).
+
+---
+
+# Changelog — Sesi 18 Oktober 2026 (sesi 14) — Carousel Halaman Utama Didesain Ulang (Rapi & Profesional)
+
+> **Fokus:** Memperbaiki tampilan carousel `/` yang tidak rapi setelah mode "rasio asli" (sesi 13). Sekarang memakai **hero card** dengan rasio bertingkat, kartu teks kaca (glassmorphism), dan kontrol yang tidak saling tumpuk.
+
+---
+
+## 1. Penyebab "tidak rapi"
+
+| Masalah | Penjelasan |
+|---|---|
+| Banner terlalu tinggi | Mode `aspect-ratio` dari berkas gambar: slide 1920×1080 → tinggi banner ~1080 px (memenuhi layar) / terpotong di `max-h-800px` |
+| Kontrol tumpang tindih | Titik indikator di `bottom-5` bertabrakan dengan teks/tombol yang juga menempel di bawah |
+| Gradasi terlalu pekat | `from-black/80 via-black/40` menutupi hampir seluruh foto |
+| Tanpa batas tepi | Banner full-bleed menempel ke navbar sticky |
+
+---
+
+## 2. Desain Baru (`livewire/site/carousel.blade.php`)
+
+- **Hero card**: dibungkus `max-w-7xl mx-auto px-4…pt-6 md:pt-8` + `rounded-2xl md:rounded-3xl shadow-xl ring-1 ring-black/5` → ada jarak dari navbar & tepi layar.
+- **Rasio bertingkat (tinggi konsisten antar slide)**: `aspect-[3/2] sm:aspect-[2/1] lg:aspect-[21/9]` — di 1440 px ≈ 520 px tinggi (tidak memenuhi layar, tidak melompat antar slide). Gambar `object-cover object-center` (tidak gepeng; crop ringan ~11–24%).
+- **Kartu teks kaca**: `max-w-xl rounded-2xl bg-black/30 p-4 ring-1 ring-white/15 backdrop-blur-md` di kiri bawah, dengan `pb-12…lg:pb-16` supaya **tidak menabrak titik indikator**; judul memakai `<h2>` (bukan `<h1>` lagi), deskripsi `line-clamp-2`, tombol dengan ikon panah.
+- **Hanya tampil bila ada teks**: method baru `Carousel::adaTeks()` + atribut `data-slide-caption` (tanpa teks → banner bersih tanpa kartu).
+- **Gradasi lembut**: `from-black/70 via-black/20 to-black/5` (foto tetap terlihat).
+- **Kontrol**: panah `rounded-full bg-white/15 ring-1 ring-white/25 backdrop-blur hover:bg-white/30` (`h-9 w-9 md:h-11 md:w-11`), titik indikator di **tengah bawah** (aktif `w-6 bg-white`, non-aktif `w-1.5 bg-white/50`) + `aria-current`. Semua kontrol hanya muncul bila slide > 1.
+- **Judul utama halaman**: `<h1 class="sr-only">` di `home.blade.php` (karena judul slide & hero cadangan memakai `<h2>`) → struktur heading tetap valid.
+- **Hero cadangan** (bila belum ada slide) disamakan: kartu gradien hijau `rounded-2xl md:rounded-3xl` dalam container yang sama.
+- Method `rasioGambar()`/`rasioAktif()` + konstanta `RASIO_DEFAULT` (sesi 13) **dihapus** (tidak dipakai lagi).
+
+---
+
+## 3. Hasil Validasi
+
+- `SiteLivewireTest` → **19 passed** (test baru: "rasio hero konsisten", "kartu teks hanya tampil bila ada teks")
+- Suite publik (`SiteLivewireTest` + `SitePagesTest` + `HomePageTest`) → **43 passed (148 assertions)**
+- Seluruh suite → **189 passed (529 assertions)**, 15 gagal (**pre-existing** starter kit)
+- `vendor/bin/pint --dirty` PASS · `npm run build` ✓ (CSS 261,26 kB)
+- Uji live `curl /` dengan slide nyata: section `class="relative overflow-hidden rounded-2xl md:rounded-3xl bg-gray-900 shadow-xl ring-1 ring-black/5 aspect-[3/2] sm:aspect-[2/1] lg:aspect-[21/9]"`, tanpa inline style, kartu teks 1×, kontrol (panah/titik) **tidak dirender** karena hanya ada 1 slide ✓
+
+---
+
+## 4. Catatan
+
+- Rasio hero sekarang **tetap** (bukan mengikuti rasio berkas). Ingin kembali ke mode "gambar utuh tanpa crop"? Bisa dibuat opsi lanjutan (mis. `object-contain` + latar blur).
+- Rekomendasi unggah di admin tetap **1920 × 800 px**; dengan rasio hero 2:1/21:9, gambar 16:9 hanya terpotong sedikit (~11–24% di bagian atas/bawah).
+- Belum di-commit (bersama pekerjaan sesi 4–13).
+
+---
+
+# Changelog — Sesi 18 Oktober 2026 (sesi 15) — Hilangkan Latar Kaca (Glassmorphism) di Carousel
+
+> **Fokus:** Atas permintaan: hapus latar kaca pada carousel halaman utama — teks & kontrol tampil **tanpa background**.
+
+---
+
+## 1. Perubahan (`livewire/site/carousel.blade.php`)
+
+| Elemen | Sebelum | Sesudah |
+|---|---|---|
+| Kartu teks (caption) | `rounded-2xl bg-black/30 p-4 ring-1 ring-white/15 backdrop-blur-md` | **tanpa latar** — hanya `<div class="max-w-xl">`; teks langsung di atas foto |
+| Judul slide | `drop-shadow-md` | `text-shadow-md text-shadow-black/60` (Tailwind v4.1 `text-shadow-*`) |
+| Deskripsi | `drop-shadow` | `text-shadow-sm text-shadow-black/60` |
+| Tombol panah ‹ › | `bg-white/15 ring-1 ring-white/25 backdrop-blur` | **tanpa latar** — ikon saja (`text-white drop-shadow-md`, ikon diperbesar `h-6 w-6 md:h-7 md:w-7`, stroke 2.5), hover `bg-white/20` |
+| Gradasi bawah | `from-black/70 via-black/20 to-black/5` | `from-black/75 via-black/25 to-transparent` (sedikit lebih kuat agar teks tetap terbaca tanpa kotak) |
+
+Titik indikator (`bg-white` / `bg-white/50`) tetap — itu indikator, bukan latar kaca.
+
+---
+
+## 2. Hasil Validasi
+
+- Test baru: **"teks dan kontrol carousel tampil tanpa latar kaca"** → `assertDontSeeHtml('backdrop-blur')`, `'bg-black/30'`, `'ring-white/25'` + `assertSeeHtml('text-shadow-md')`
+- `SiteLivewireTest` → **20 passed**; suite publik → **44 passed (153 assertions)**
+- Seluruh suite → **190 passed (534 assertions)**, 15 gagal (**pre-existing** starter kit)
+- `vendor/bin/pint --dirty` PASS · `npm run build` ✓ (CSS 264,11 kB — `text-shadow-md/sm` + `text-shadow-black/60` ter-generate, `--tw-text-shadow-color:#0009`)
+- Uji live `curl /`: carousel **tidak lagi mengandung** `backdrop-blur`/`bg-black/30`/`ring-white/*`; gradasi & text-shadow terpasang ✓. (Satu-satunya `backdrop-blur` di halaman utama berasal dari kartu **"Hubungi Kami"** di section kontak — di luar carousel, sengaja dibiarkan.)
+
+---
+
+## 3. Catatan
+
+- Bila ingin kartu "Hubungi Kami" (section kontak) juga tanpa kaca, tinggal hapus `backdrop-blur-sm bg-white/10 ring-1 ring-white/20` di `livewire/site/home.blade.php`.
+- Belum di-commit (bersama pekerjaan sesi 4–14).
+
+---
+
+# Changelog — Sesi 18 Oktober 2026 (sesi 16) — Tombol WhatsApp Mengambang di Situs Publik
+
+> **Fokus:** Floating button WhatsApp di pojok kanan bawah **semua halaman publik**, lengkap dengan pesan pembuka otomatis.
+
+---
+
+## 1. Komponen Baru — `App\Livewire\Site\WhatsappButton`
+
+| Bagian | Isi |
+|---|---|
+| `NOMOR_DEFAULT` | `6285259875754` (format internasional, tanpa `+`) |
+| `PESAN_DEFAULT` | "Assalamualaikum warohmatullahi wabarokatuh, Kami ingin mengetahui informasi lebih lanjut Pondok Pesantren Syafa'aturrasul" |
+| `nomorDariPengaturan()` (static) | Ambil `Setting::value('kontak_whatsapp')`, buang karakter non-digit, awalan `0` → `62`; bila kosong → `NOMOR_DEFAULT` |
+| `linkWhatsapp()` | `https://wa.me/{nomor}?text={rawurlencode(PESAN_DEFAULT)}` |
+| View `livewire/site/whatsapp-button.blade.php` | `<a>` bulat hijau `bg-[#25D366]` + ikon WhatsApp SVG, **`fixed bottom-5 right-5 z-50`** (mobile) → `md:bottom-6 md:right-6`, hover `scale-105` + `bg-[#20bd5a]`, label "Chat WhatsApp" melebar saat hover (`group-hover:max-w-[10rem]`), `aria-label` + `title`, **`target="_blank" rel="noopener noreferrer"`** (tautan luar → **tanpa** `wire:navigate`) |
+
+Dipasang **satu kali** di `resources/views/layouts/public.blade.php` (setelah `<livewire:site.footer />`) sehingga otomatis tampil di: `/`, `/berita`, `/berita/{slug}`, `/fasilitas`, `/guru`, `/kontak`, `/psb`, `/foto`, `/uangmasuk`.
+
+---
+
+## 2. Hasil Validasi
+
+- **9 test baru** di `SiteLivewireTest`:
+  - tampil di 6 halaman publik (dataset) + `fixed bottom-5 right-5`
+  - tautan wa.me + pesan ter-encode + `target="_blank"` dan **bukan** `wire:navigate`
+  - nomor dari Pengaturan (`085259875754` → `6285259875754`)
+  - fallback ke nomor default bila pengaturan kosong
+- `SiteLivewireTest` → **29 passed**; seluruh suite → **199 passed (565 assertions)**, 15 gagal (**pre-existing** starter kit)
+- `vendor/bin/pint --dirty` PASS · `npm run build` ✓ (`#25d366`, `#20bd5a`, `max-width:10rem` ter-generate)
+- Uji live `curl /` (HTTP 200):
+  - `href="https://wa.me/6285259875754?text=Assalamualaikum%20warohmatullahi%20wabarokatuh%2C%20Kami%20ingin%20mengetahui%20informasi%20lebih%20lanjut%20Pondok%20Pesantren%20Syafa%27aturrasul"` ✓ (setelah didekode = pesan yang diminta)
+  - `class="group fixed bottom-5 right-5 z-50 …"` ✓
+
+---
+
+## 3. Catatan
+
+- Nomor tujuan mengikuti **Pengaturan → Kontak Lembaga** (`kontak_whatsapp`) bila diisi; bila dikosongkan otomatis kembali ke `6285259875754`.
+- Belum di-commit (bersama pekerjaan sesi 4–15).
+
+---
+

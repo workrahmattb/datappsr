@@ -3,20 +3,25 @@
 namespace App\Livewire;
 
 use App\Models\Pendaftaran;
+use Livewire\Attributes\Layout;
 use Livewire\Component;
 use Livewire\WithPagination;
-use Livewire\Attributes\Layout;
 
-#[Layout('layouts.standalone')]
+#[Layout('layouts.public')]
 class UangMasukTable extends Component
 {
     use WithPagination;
 
     public string $search = '';
+
     public ?string $tahunAjaran = null;
+
     public ?string $jenjang = null;
+
     public string $sortField = 'created_at';
+
     public string $sortDirection = 'desc';
+
     public int $perPage = 15;
 
     protected $queryString = [
@@ -67,7 +72,7 @@ class UangMasukTable extends Component
         if ($this->search) {
             $query->where(function ($q) {
                 $q->where('nama', 'like', "%{$this->search}%")
-                  ->orWhere('nisn', 'like', "%{$this->search}%");
+                    ->orWhere('nisn', 'like', "%{$this->search}%");
             });
         }
 

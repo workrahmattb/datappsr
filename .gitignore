@@ -51,6 +51,7 @@
 /.kilo
 /.qwen
 /.junie
+/.cursor
 
 # System
 .DS_Store

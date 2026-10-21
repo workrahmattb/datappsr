@@ -25,7 +25,7 @@
                 <tr class="hover:bg-gray-50">
                     <td class="px-6 py-4">
                         <img src="{{ Storage::url($item->gambar) }}" alt="{{ $item->judul ?: 'Slide '.$item->id }}"
-                             class="w-24 h-14 rounded object-cover border border-gray-200">
+                             class="w-24 aspect-[12/5] rounded object-cover border border-gray-200">
                     </td>
                     <td class="px-6 py-4">
                         <div class="text-sm font-medium text-gray-900">{{ $item->judul ?: 'Tanpa judul' }}</div>

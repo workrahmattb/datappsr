@@ -1,90 +1,39 @@
-@extends('layouts.public')
+<div>
+    {{-- Judul utama halaman (judul slide & hero memakai <h2>) --}}
+    <h1 class="sr-only">Pondok Pesantren Syafa'aturrasul — Kuantan Singingi</h1>
 
-@section('title', "Pondok Pesantren Syafa'aturrasul — Kuantan Singingi")
-@section('description', "Pondok Pesantren Syafa'aturrasul — MTs & MA Putra/Putri di Kuantan Singingi, Riau. Informasi berita, fasilitas, profil guru, dan kontak.")
-
-@section('content')
-    <!-- Carousel / Hero -->
-    @if ($slides->isNotEmpty())
-        <section class="relative bg-gray-900 overflow-hidden" x-data="{
-                aktif: 0,
-                total: {{ $slides->count() }},
-                mulai() { if (this.total > 1) { setInterval(() => this.berikut(), 6000); } },
-                berikut() { this.aktif = (this.aktif + 1) % this.total; },
-                sebelumnya() { this.aktif = (this.aktif - 1 + this.total) % this.total; }
-            }" x-init="mulai()">
-            @foreach ($slides as $i => $slide)
-                <div x-show="aktif === {{ $i }}" x-transition.opacity.duration.700ms class="relative">
-                    <img src="{{ Storage::url($slide->gambar) }}" alt="{{ $slide->judul ?: 'Slide' }}"
-                        class="w-full h-[380px] md:h-[520px] object-cover">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
-                    <div class="absolute inset-0 flex items-end">
-                        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-14 w-full">
-                            <div class="max-w-2xl">
-                                @if (filled($slide->judul))
-                                    <h1 class="text-3xl md:text-5xl font-bold text-white mb-3 leading-tight">
-                                        {{ $slide->judul }}</h1>
-                                @endif
-                                @if (filled($slide->deskripsi))
-                                    <p class="text-white/90 text-base md:text-lg mb-6">{{ $slide->deskripsi }}</p>
-                                @endif
-                                @if ($slide->punya_tombol)
-                                    <a href="{{ $slide->link_url }}"
-                                        class="inline-block px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition shadow-lg">
-                                        {{ $slide->link_text }}
-                                    </a>
-                                @endif
-                            </div>
+    @if ($adaSlide)
+        {{-- Carousel Livewire (auto-rotate via wire:poll di dalam komponennya) --}}
+        <livewire:site.carousel />
+    @else
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 md:pt-8">
+            <section
+                class="relative overflow-hidden rounded-2xl md:rounded-3xl bg-gradient-to-br from-green-600 to-emerald-700 text-white shadow-xl ring-1 ring-black/5">
+                <div class="px-6 py-12 sm:px-10 sm:py-16 lg:px-14 lg:py-20">
+                    <div class="max-w-3xl">
+                        <span class="inline-block px-3 py-1 text-xs font-semibold bg-white/20 rounded-full mb-5">
+                            Tahun Ajaran {{ activeTahunAjaran() }}
+                        </span>
+                        <h2 class="text-3xl sm:text-4xl md:text-5xl font-bold mb-5 leading-tight">
+                            Pondok Pesantren Syafa'aturrasul</h2>
+                        <p class="text-base sm:text-lg md:text-xl text-green-50 mb-8 leading-relaxed">
+                            Pendidikan Islam terpadu untuk putra dan putri — MTs dan MA — di Kuantan Singingi, Riau.
+                            Mendidik generasi Qur'ani yang berilmu, berakhlak, dan mandiri.
+                        </p>
+                        <div class="flex flex-wrap gap-3">
+                            <a href="{{ route('pendaftaran') }}" wire:navigate
+                                class="px-6 py-3 bg-white text-green-700 font-semibold rounded-lg hover:bg-green-50 transition shadow-lg">
+                                Daftar Santri Baru
+                            </a>
+                            <a href="{{ route('psb') }}" wire:navigate
+                                class="px-6 py-3 bg-white/10 border border-white/40 text-white font-semibold rounded-lg hover:bg-white/20 transition">
+                                Cari Data Santri
+                            </a>
                         </div>
                     </div>
                 </div>
-            @endforeach
-
-            @if ($slides->count() > 1)
-                <button type="button" x-on:click="sebelumnya()" aria-label="Slide sebelumnya"
-                    class="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/40 hover:bg-black/60 text-white flex items-center justify-center transition">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-                    </svg>
-                </button>
-                <button type="button" x-on:click="berikut()" aria-label="Slide berikutnya"
-                    class="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/40 hover:bg-black/60 text-white flex items-center justify-center transition">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                    </svg>
-                </button>
-                <div class="absolute bottom-5 left-1/2 -translate-x-1/2 flex gap-2">
-                    @foreach ($slides as $i => $slide)
-                        <button type="button" x-on:click="aktif = {{ $i }}" aria-label="Ke slide {{ $i + 1 }}"
-                            :class="aktif === {{ $i }} ? 'bg-white w-6' : 'bg-white/50 w-2.5'"
-                            class="h-2.5 rounded-full transition-all duration-300"></button>
-                    @endforeach
-                </div>
-            @endif
-        </section>
-    @else
-        <section class="bg-gradient-to-br from-green-600 to-emerald-700 text-white">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
-                <div class="max-w-3xl">
-                    <span class="inline-block px-3 py-1 text-xs font-semibold bg-white/20 rounded-full mb-5">
-                        Tahun Ajaran {{ activeTahunAjaran() }}
-                    </span>
-                    <h1 class="text-4xl md:text-5xl font-bold mb-6 leading-tight">Pondok Pesantren Syafa'aturrasul</h1>
-                    <p class="text-lg md:text-xl text-green-50 mb-8 leading-relaxed">
-                        Pendidikan Islam terpadu untuk putra dan putri — MTs dan MA — di Kuantan Singingi, Riau.
-                        Mendidik generasi Qur'ani yang berilmu, berakhlak, dan mandiri.
-                    </p>
-                    <div class="flex flex-wrap gap-3">
-                        <a href="{{ route('pendaftaran') }}"
-                            class="px-6 py-3 bg-white text-green-700 font-semibold rounded-lg hover:bg-green-50 transition shadow-lg">Daftar
-                            Santri Baru</a>
-                        <a href="{{ route('psb') }}"
-                            class="px-6 py-3 bg-white/10 border border-white/40 text-white font-semibold rounded-lg hover:bg-white/20 transition">Cari
-                            Data Santri</a>
-                    </div>
-                </div>
-            </div>
-        </section>
+            </section>
+        </div>
     @endif
 
     <!-- Berita -->
@@ -95,14 +44,14 @@
                     <h2 class="text-3xl font-bold text-gray-900 dark:text-white">Berita &amp; Pengumuman</h2>
                     <p class="text-gray-600 dark:text-gray-400 mt-1">Kabar terbaru dari pondok pesantren.</p>
                 </div>
-                <a href="{{ route('berita.index') }}"
+                <a href="{{ route('berita.index') }}" wire:navigate
                     class="text-sm font-semibold text-green-600 dark:text-green-400 hover:underline">Lihat semua berita
                     →</a>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 @foreach ($beritas as $berita)
-                    <a href="{{ route('berita.show', $berita->slug) }}"
+                    <a href="{{ route('berita.show', $berita->slug) }}" wire:navigate wire:key="berita-{{ $berita->id }}"
                         class="group bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-sm hover:shadow-lg border border-gray-100 dark:border-gray-700 transition">
                         @if ($berita->gambar)
                             <img src="{{ Storage::url($berita->gambar) }}" alt="{{ $berita->judul }}"
@@ -148,14 +97,15 @@
                         <p class="text-gray-600 dark:text-gray-400 mt-1">Sarana dan prasarana penunjang pendidikan
                             santri.</p>
                     </div>
-                    <a href="{{ route('fasilitas.index') }}"
+                    <a href="{{ route('fasilitas.index') }}" wire:navigate
                         class="text-sm font-semibold text-green-600 dark:text-green-400 hover:underline">Lihat semua
                         fasilitas →</a>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     @foreach ($fasilitasList as $fasilitas)
-                        <a href="{{ route('fasilitas.index') }}#fasilitas-{{ $fasilitas->id }}"
+                        <a href="{{ route('fasilitas.index') }}#fasilitas-{{ $fasilitas->id }}" wire:navigate
+                            wire:key="fasilitas-{{ $fasilitas->id }}"
                             class="group bg-gray-50 dark:bg-gray-700/40 rounded-xl overflow-hidden shadow-sm hover:shadow-lg border border-gray-100 dark:border-gray-700 transition">
                             @if ($fasilitas->gambar)
                                 <img src="{{ Storage::url($fasilitas->gambar) }}" alt="{{ $fasilitas->nama }}"
@@ -199,13 +149,15 @@
                     <h2 class="text-3xl font-bold text-gray-900 dark:text-white">Profil Guru</h2>
                     <p class="text-gray-600 dark:text-gray-400 mt-1">Ustadz dan ustadzah pengajar di pondok pesantren.</p>
                 </div>
-                <a href="{{ route('guru.index') }}"
-                    class="text-sm font-semibold text-green-600 dark:text-green-400 hover:underline">Lihat semua guru →</a>
+                <a href="{{ route('guru.index') }}" wire:navigate
+                    class="text-sm font-semibold text-green-600 dark:text-green-400 hover:underline">Lihat semua guru
+                    →</a>
             </div>
 
             <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
                 @foreach ($gurus as $guru)
-                    <a href="{{ route('guru.index') }}#guru-{{ $guru->id }}"
+                    <a href="{{ route('guru.index') }}#guru-{{ $guru->id }}" wire:navigate
+                        wire:key="guru-{{ $guru->id }}"
                         class="group bg-white dark:bg-gray-800 rounded-xl p-6 text-center shadow-sm hover:shadow-lg border border-gray-100 dark:border-gray-700 transition">
                         @if ($guru->foto)
                             <img src="{{ Storage::url($guru->foto) }}" alt="{{ $guru->name }}"
@@ -237,11 +189,11 @@
                         pondok pesantren.
                     </p>
                     <div class="flex flex-wrap gap-3 mt-6">
-                        <a href="{{ route('kontak.index') }}"
+                        <a href="{{ route('kontak.index') }}" wire:navigate
                             class="px-6 py-3 bg-white text-green-700 font-semibold rounded-lg hover:bg-green-50 transition shadow-lg">
                             Halaman Kontak
                         </a>
-                        <a href="{{ route('pendaftaran') }}"
+                        <a href="{{ route('pendaftaran') }}" wire:navigate
                             class="px-6 py-3 bg-white/10 border border-white/40 text-white font-semibold rounded-lg hover:bg-white/20 transition">
                             Daftar Santri Baru
                         </a>
@@ -289,7 +241,8 @@
             @if ($kontaks->isNotEmpty())
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-10">
                     @foreach ($kontaks as $kontak)
-                        <div class="bg-white/10 border border-white/20 rounded-xl p-5">
+                        <div class="bg-white/10 border border-white/20 rounded-xl p-5"
+                            wire:key="kontak-{{ $kontak->id }}">
                             @if (filled($kontak->unit))
                                 <span
                                     class="inline-block px-2 py-0.5 text-xs font-semibold bg-white/20 rounded-full mb-2">{{ $kontak->unit }}</span>
@@ -309,4 +262,5 @@
             @endif
         </div>
     </section>
-@endsection
+</div>
+

@@ -1,12 +1,7 @@
-@extends('layouts.public')
-
-@section('title', 'Kontak - PPSR')
-@section('description', "Informasi kontak resmi Pondok Pesantren Syafa'aturrasul — alamat, telepon, WhatsApp, dan email.")
-
-@section('content')
+<div>
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10">
         <nav class="text-sm text-gray-500 dark:text-gray-400 mb-4">
-            <a href="{{ route('home') }}" class="hover:text-green-600 transition">Beranda</a>
+            <a href="{{ route('home') }}" wire:navigate class="hover:text-green-600 transition">Beranda</a>
             <span class="mx-2">/</span>
             <span class="text-gray-700 dark:text-gray-300">Kontak</span>
         </nav>
@@ -133,13 +128,13 @@
             <h2 class="text-2xl font-bold mb-2">Ingin mendaftar sebagai santri baru?</h2>
             <p class="text-green-50 mb-6">Isi formulir pendaftaran daring, atau cek status data pendaftaran Anda.</p>
             <div class="flex flex-wrap justify-center gap-3">
-                <a href="{{ route('pendaftaran') }}"
+                <a href="{{ route('pendaftaran') }}" wire:navigate
                     class="px-6 py-3 bg-white text-green-700 font-semibold rounded-lg hover:bg-green-50 transition shadow-lg">Formulir
                     Pendaftaran</a>
-                <a href="{{ route('psb') }}"
+                <a href="{{ route('psb') }}" wire:navigate
                     class="px-6 py-3 bg-white/10 border border-white/40 text-white font-semibold rounded-lg hover:bg-white/20 transition">Cari
                     Data Santri</a>
             </div>
         </div>
     </section>
-@endsection
+</div>

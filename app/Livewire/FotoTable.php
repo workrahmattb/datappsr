@@ -2,22 +2,23 @@
 
 namespace App\Livewire;
 
-use App\Models\Mtsputra;
-use App\Models\Mtsputri;
 use App\Models\Maputra;
 use App\Models\Maputri;
+use App\Models\Mtsputra;
+use App\Models\Mtsputri;
+use Livewire\Attributes\Layout;
 use Livewire\Component;
 use Livewire\WithPagination;
-use Livewire\Attributes\Layout;
-use Illuminate\Support\Facades\Storage;
 
-#[Layout('layouts.standalone')]
+#[Layout('layouts.public')]
 class FotoTable extends Component
 {
     use WithPagination;
 
     public string $search = '';
+
     public ?string $jenjang = null;
+
     public string $tahunAjaran = '';
 
     public function boot(): void
@@ -62,8 +63,8 @@ class FotoTable extends Component
 
             if ($this->search) {
                 $query->where(function ($q) {
-                    $q->where('nama', 'like', '%' . $this->search . '%')
-                        ->orWhere('nisn', 'like', '%' . $this->search . '%');
+                    $q->where('nama', 'like', '%'.$this->search.'%')
+                        ->orWhere('nisn', 'like', '%'.$this->search.'%');
                 });
             }
 
@@ -73,6 +74,7 @@ class FotoTable extends Component
                     ?? collect([$item->desa, $item->kecamatan, $item->kabupaten, $item->provinsi])
                         ->filter()->implode(', ')
                     ?? '-';
+
                 return $item;
             });
 

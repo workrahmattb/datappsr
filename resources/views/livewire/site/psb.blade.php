@@ -1,12 +1,7 @@
-@extends('layouts.public')
-
-@section('title', 'Cari Data & Pendaftaran Santri - PPSR 2026')
-@section('description', 'Pencarian data santri dan pendaftaran santri baru Pondok Pesantren Syafa\'aturrasul.')
-
-@section('content')
+<div>
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10">
         <nav class="text-sm text-gray-500 dark:text-gray-400 mb-4">
-            <a href="{{ route('home') }}" class="hover:text-green-600 transition">Beranda</a>
+            <a href="{{ route('home') }}" wire:navigate class="hover:text-green-600 transition">Beranda</a>
             <span class="mx-2">/</span>
             <span class="text-gray-700 dark:text-gray-300">PSB</span>
         </nav>
@@ -26,9 +21,9 @@
             <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-3">Butuh bantuan?</h2>
             <p class="text-gray-700 dark:text-gray-300 leading-relaxed">
                 Jika data tidak ditemukan atau ada kendala saat daftar ulang, silakan hubungi admin pondok melalui
-                halaman <a href="{{ route('kontak.index') }}"
+                halaman <a href="{{ route('kontak.index') }}" wire:navigate
                     class="text-green-700 dark:text-green-400 underline">Kontak</a>.
             </p>
         </div>
     </section>
-@endsection
+</div>

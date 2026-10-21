@@ -22,19 +22,17 @@ Route::get('/cetak-rapor/generate', [CetakRaporController::class, 'generate'])
     ->middleware(['auth']);
 
 // ============================================================
-// Website Sekolah (halaman publik)
+// Website Sekolah (halaman publik) — full SPA Livewire
 // ============================================================
-Route::get('/', [\App\Http\Controllers\Site\HomeController::class, 'index'])->name('home');
-Route::get('/berita', [\App\Http\Controllers\Site\BeritaController::class, 'index'])->name('berita.index');
-Route::get('/berita/{slug}', [\App\Http\Controllers\Site\BeritaController::class, 'show'])->name('berita.show');
-Route::get('/fasilitas', [\App\Http\Controllers\Site\FasilitasController::class, 'index'])->name('fasilitas.index');
-Route::get('/guru', [\App\Http\Controllers\Site\GuruController::class, 'index'])->name('guru.index');
-Route::get('/kontak', [\App\Http\Controllers\Site\KontakController::class, 'index'])->name('kontak.index');
+Route::get('/', \App\Livewire\Site\Home::class)->name('home');
+Route::get('/berita', \App\Livewire\Site\BeritaIndex::class)->name('berita.index');
+Route::get('/berita/{slug}', \App\Livewire\Site\BeritaShow::class)->name('berita.show');
+Route::get('/fasilitas', \App\Livewire\Site\FasilitasIndex::class)->name('fasilitas.index');
+Route::get('/guru', \App\Livewire\Site\GuruIndex::class)->name('guru.index');
+Route::get('/kontak', \App\Livewire\Site\KontakIndex::class)->name('kontak.index');
 
-// PSB: pendaftaran & pencarian data santri (sebelumnya halaman utama)
-Route::get('/psb', function () {
-    return view('site.psb');
-})->name('psb');
+// PSB: pendaftaran & pencarian data santri
+Route::get('/psb', \App\Livewire\Site\Psb::class)->name('psb');
 
 Route::get('/beranda', function () {
     return view('testcoba');
