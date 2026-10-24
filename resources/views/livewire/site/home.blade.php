@@ -36,56 +36,36 @@
         </div>
     @endif
 
-    <!-- Berita -->
-    @if ($beritas->isNotEmpty())
-        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
-            <div class="flex flex-wrap items-end justify-between gap-4 mb-8">
-                <div>
-                    <h2 class="text-3xl font-bold text-gray-900 dark:text-white">Berita &amp; Pengumuman</h2>
-                    <p class="text-gray-600 dark:text-gray-400 mt-1">Kabar terbaru dari pondok pesantren.</p>
+    <section aria-labelledby="visi-misi-heading" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
+        <div class="flex flex-col gap-3 mb-8">
+            <p class="text-sm font-semibold uppercase tracking-wider text-green-700 dark:text-green-400">Tentang Pesantren</p>
+            <h2 id="visi-misi-heading" class="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white">Visi &amp; Misi Pesantren</h2>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-5 gap-6 lg:gap-8">
+            <div class="lg:col-span-2 flex flex-col gap-6 rounded-2xl bg-linear-to-br from-green-700 to-emerald-900 p-6 sm:p-8 text-white">
+                <h3 class="text-xl font-bold text-green-100">Visi Pesantren</h3>
+                <p class="text-2xl sm:text-3xl font-semibold leading-relaxed">
+                    Menjadi Lembaga Islam Yang Kokoh dalam Melahirkan Generasi Penghafal Al Qur’an Berakhlak Mulia Dan Berwawasan Dunia.
+                </p>
+            </div>
+
+            <div class="lg:col-span-3 flex flex-col gap-6 rounded-2xl border border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 sm:p-8 shadow-sm">
+                <div class="flex flex-col gap-2">
+                    <h3 class="text-2xl font-bold text-gray-900 dark:text-white">Misi Pesantren</h3>
+                    <p class="text-gray-600 dark:text-gray-300">Melahirkan Santri &amp; Santriwati:</p>
                 </div>
-                <a href="{{ route('berita.index') }}" wire:navigate
-                    class="text-sm font-semibold text-green-600 dark:text-green-400 hover:underline">Lihat semua berita
-                    →</a>
+                <ol class="flex flex-col gap-4 list-decimal pl-6 text-base sm:text-lg leading-relaxed text-gray-700 dark:text-gray-200 marker:font-bold marker:text-green-700 dark:marker:text-green-400">
+                    <li class="pl-2">Hafal Al-Quran dan 100 Hadits</li>
+                    <li class="pl-2">Berkarakter 10 Muwasofat</li>
+                    <li class="pl-2">Aktif Berkomunikasi dengan Bahasa asing</li>
+                    <li class="pl-2">Berjiwa Pemimpin dan Wirausaha</li>
+                    <li class="pl-2">Berprestasi dalam Segala Bidang</li>
+                    <li class="pl-2">Lulus PTN dan Swasta Favorit &amp; Lulus Perguruan Tinggi Luar Negeri</li>
+                </ol>
             </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                @foreach ($beritas as $berita)
-                    <a href="{{ route('berita.show', $berita->slug) }}" wire:navigate wire:key="berita-{{ $berita->id }}"
-                        class="group bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-sm hover:shadow-lg border border-gray-100 dark:border-gray-700 transition">
-                        @if ($berita->gambar)
-                            <img src="{{ Storage::url($berita->gambar) }}" alt="{{ $berita->judul }}"
-                                class="w-full h-44 object-cover">
-                        @else
-                            <div
-                                class="w-full h-44 bg-gradient-to-br from-green-100 to-emerald-200 dark:from-gray-700 dark:to-gray-600 flex items-center justify-center">
-                                <svg class="w-10 h-10 text-green-600 dark:text-green-400" fill="none"
-                                    stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                        d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10l6 6v8a2 2 0 01-2 2zM14 4v6h6" />
-                                </svg>
-                            </div>
-                        @endif
-
-                        <div class="p-5">
-                            <div class="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400 mb-2">
-                                @if (filled($berita->kategori))
-                                    <span
-                                        class="px-2 py-0.5 bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-400 rounded-full font-semibold">{{ $berita->kategori }}</span>
-                                @endif
-                                <span>{{ $berita->published_at?->translatedFormat('d F Y') }}</span>
-                            </div>
-                            <h3
-                                class="font-bold text-gray-900 dark:text-white mb-2 line-clamp-2 group-hover:text-green-600 dark:group-hover:text-green-400 transition">
-                                {{ $berita->judul }}</h3>
-                            <p class="text-sm text-gray-600 dark:text-gray-400 line-clamp-3">
-                                {{ $berita->ringkasan_singkat }}</p>
-                        </div>
-                    </a>
-                @endforeach
-            </div>
-        </section>
-    @endif
+        </div>
+    </section>
 
     <!-- Fasilitas -->
     @if ($fasilitasList->isNotEmpty())
@@ -178,6 +158,98 @@
         </section>
     @endif
 
+    <!-- Berita -->
+    @if ($beritas->isNotEmpty())
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
+            <div class="flex flex-wrap items-end justify-between gap-4 mb-8">
+                <div>
+                    <h2 class="text-3xl font-bold text-gray-900 dark:text-white">Berita &amp; Pengumuman</h2>
+                    <p class="text-gray-600 dark:text-gray-400 mt-1">Kabar terbaru dari pondok pesantren.</p>
+                </div>
+                <a href="{{ route('berita.index') }}" wire:navigate
+                    class="text-sm font-semibold text-green-600 dark:text-green-400 hover:underline">Lihat semua berita
+                    →</a>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                @foreach ($beritas as $berita)
+                    <a href="{{ route('berita.show', $berita->slug) }}" wire:navigate wire:key="berita-{{ $berita->id }}"
+                        class="group bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-sm hover:shadow-lg border border-gray-100 dark:border-gray-700 transition">
+                        @if ($berita->gambar)
+                            <img src="{{ Storage::url($berita->gambar) }}" alt="{{ $berita->judul }}"
+                                class="w-full h-44 object-cover">
+                        @else
+                            <div
+                                class="w-full h-44 bg-gradient-to-br from-green-100 to-emerald-200 dark:from-gray-700 dark:to-gray-600 flex items-center justify-center">
+                                <svg class="w-10 h-10 text-green-600 dark:text-green-400" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                        d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10l6 6v8a2 2 0 01-2 2zM14 4v6h6" />
+                                </svg>
+                            </div>
+                        @endif
+
+                        <div class="p-5">
+                            <div class="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400 mb-2">
+                                @if (filled($berita->kategori))
+                                    <span
+                                        class="px-2 py-0.5 bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-400 rounded-full font-semibold">{{ $berita->kategori }}</span>
+                                @endif
+                                <span>{{ $berita->published_at?->translatedFormat('d F Y') }}</span>
+                            </div>
+                            <h3
+                                class="font-bold text-gray-900 dark:text-white mb-2 line-clamp-2 group-hover:text-green-600 dark:group-hover:text-green-400 transition">
+                                {{ $berita->judul }}</h3>
+                            <p class="text-sm text-gray-600 dark:text-gray-400 line-clamp-3">
+                                {{ $berita->ringkasan_singkat }}</p>
+                        </div>
+                    </a>
+                @endforeach
+            </div>
+        </section>
+    @endif
+
+    <section aria-labelledby="lokasi-pondok-heading" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
+        <div class="flex flex-col gap-3 mb-8">
+            <h2 id="lokasi-pondok-heading" class="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white">Lokasi Pondok Pesantren Syafa'aturasul</h2>
+            <p class="text-gray-600 dark:text-gray-400">Temukan lokasi Pondok Putri dan Pondok Putra untuk merencanakan kunjungan Anda.</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <article class="overflow-hidden rounded-2xl border border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm">
+                <div class="flex flex-col gap-2 p-6">
+                    <h3 class="text-2xl font-bold text-gray-900 dark:text-white">Pondok Putri</h3>
+                    <p class="text-gray-600 dark:text-gray-400">Pondok Pesantren Syafa'aturrasul</p>
+                </div>
+                <iframe src="https://www.google.com/maps?q=-0.5124461,101.577084&amp;z=16&amp;output=embed"
+                    title="Peta lokasi Pondok Putri Syafa'aturrasul" class="w-full h-72 sm:h-80 border-0"
+                    loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
+                <div class="p-6">
+                    <a href="https://maps.app.goo.gl/1aHyy2XN8Qn6W7h76" target="_blank" rel="noopener noreferrer"
+                        class="inline-flex items-center justify-center rounded-lg bg-green-700 px-5 py-3 text-sm font-semibold text-white hover:bg-green-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600 transition">
+                        Buka Google Maps Pondok Putri <span aria-hidden="true" class="pl-2">↗</span>
+                    </a>
+                </div>
+            </article>
+
+            <article class="overflow-hidden rounded-2xl border border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm">
+                <div class="flex flex-col gap-2 p-6">
+                    <h3 class="text-2xl font-bold text-gray-900 dark:text-white">Pondok Putra</h3>
+                    <p class="text-gray-600 dark:text-gray-400">Ponpes Syafa'aturrasul 2 Putra</p>
+                </div>
+                <iframe src="https://www.google.com/maps?q=-0.415269,101.6124704&amp;z=16&amp;output=embed"
+                    title="Peta lokasi Pondok Putra Syafa'aturrasul" class="w-full h-72 sm:h-80 border-0"
+                    loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
+                <div class="p-6">
+                    <a href="https://maps.app.goo.gl/dmS8nThqcXPSDhe4A" target="_blank" rel="noopener noreferrer"
+                        class="inline-flex items-center justify-center rounded-lg bg-green-700 px-5 py-3 text-sm font-semibold text-white hover:bg-green-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600 transition">
+                        Buka Google Maps Pondok Putra <span aria-hidden="true" class="pl-2">↗</span>
+                    </a>
+                </div>
+            </article>
+        </div>
+    </section>
+
     <!-- Kontak -->
     <section class="bg-gradient-to-br from-green-600 to-emerald-700 text-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
@@ -263,4 +335,3 @@
         </div>
     </section>
 </div>
-

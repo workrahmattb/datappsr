@@ -3143,3 +3143,63 @@ Dipasang **satu kali** di `resources/views/layouts/public.blade.php` (setelah `<
 
 ---
 
+
+# Changelog — Sesi 24 Oktober 2026 — Visi dan Misi Halaman Utama
+
+## Ringkasan Perubahan
+- Menambahkan Visi Pesantren dan enam Misi dari teks pengguna tepat setelah carousel/hero, sebelum berita.
+- Layout dua kolom pada desktop dan bertumpuk pada mobile, mendukung dark mode.
+- Membersihkan artefak HTML spasi/tanda kutip dan merapikan ejaan “Luar Negri” menjadi “Luar Negeri”.
+- Foto pendukung belum diberikan pengguna; belum ditambahkan.
+- Arahan pengguna: Modul Rapor ditangguhkan sampai diminta kembali.
+
+## File yang Dimodifikasi
+- `resources/views/livewire/site/home.blade.php`
+- `tests/Feature/HomePageTest.php`
+- `MEMORY.md`
+
+## Hasil Validasi
+- Pest `HomePageTest` + `SiteLivewireTest` dengan SQLite `:memory:`: 37 passed, 126 assertions.
+- `vendor/bin/pint --dirty`: PASS.
+- `npm run build`: berhasil.
+- Test baru memastikan visi dan seluruh misi tampil dengan maupun tanpa carousel.
+
+# Changelog — Sesi 24 Oktober 2026 — Peta Lokasi Pondok Putri dan Putra
+
+## Ringkasan Perubahan
+- Menambahkan dua peta Google Maps di halaman utama sebelum Hubungi Kami, berdampingan di desktop dan bertumpuk pada layar kecil.
+- Lokasi diverifikasi dari redirect tautan pengguna: Putri `-0.5124461,101.577084`; Putra `-0.415269,101.6124704`. Menggunakan koordinat tempat (`!3d/!4d`), bukan titik tengah kamera (`@`).
+- Tombol membuka tautan asli Google Maps di tab baru, tanpa `wire:navigate`.
+- Iframe diberi judul aksesibel dan lazy loading. Tidak menambahkan alamat jalan yang belum diberikan/diverifikasi.
+
+## File yang Dimodifikasi
+- `resources/views/livewire/site/home.blade.php`
+- `tests/Feature/HomePageTest.php`
+- `MEMORY.md`
+
+## Hasil Validasi
+- Test halaman utama dan SiteLivewire memeriksa pemetaan judul, koordinat, dan tautan masing-masing pondok.
+- Tampilan peta eksternal memerlukan akses Google Maps dari browser pengunjung.
+
+# Changelog — Sesi 24 Oktober 2026 — Judul Lokasi Pondok
+
+- Mengubah judul peta halaman utama menjadi “Lokasi Pondok Pesantren Syafa'aturasul” mengikuti teks pengguna.
+- Memperbarui assertion judul pada `tests/Feature/HomePageTest.php`.
+- Validasi: HomePageTest 9 test lulus; `vendor/bin/pint --dirty` lulus.
+
+# Changelog — Sesi 24 Oktober 2026 — Posisi Berita Sebelum Lokasi
+
+## Ringkasan Perubahan
+- Memindahkan Berita & Pengumuman dari setelah Visi Misi ke tepat sebelum Lokasi Pondok.
+- Urutan section: carousel/hero → Visi Misi → Fasilitas → Profil Guru → Berita & Pengumuman → Lokasi Pondok → Hubungi Kami. Section konten kosong tetap disembunyikan.
+- Pengguna berencana menambahkan konten lain setelah Visi Misi; konten tersebut belum diberikan.
+
+## File yang Dimodifikasi
+- `resources/views/livewire/site/home.blade.php`
+- `tests/Feature/HomePageTest.php`
+- `MEMORY.md`
+
+## Hasil Validasi
+- HomePageTest: 10 passed, 46 assertions; termasuk pemeriksaan DOM bahwa section tepat sebelum lokasi adalah berita.
+- `vendor/bin/pint --dirty`: PASS.
+- `npm run build`: berhasil.
