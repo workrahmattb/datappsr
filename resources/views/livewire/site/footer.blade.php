@@ -27,18 +27,6 @@
                         <a href="{{ route('pendaftaran') }}" wire:navigate class="hover:text-green-400 transition">Formulir
                             Pendaftaran</a>
                     </li>
-                    <li>
-                        <a href="{{ route('psb') }}" wire:navigate class="hover:text-green-400 transition">Cari Data
-                            Santri</a>
-                    </li>
-                    <li>
-                        <a href="{{ route('foto.index') }}" wire:navigate class="hover:text-green-400 transition">Galeri
-                            Foto</a>
-                    </li>
-                    <li>
-                        <a href="{{ route('uangmasuk.index') }}" wire:navigate class="hover:text-green-400 transition">Uang
-                            Masuk</a>
-                    </li>
                 </ul>
             </div>
 

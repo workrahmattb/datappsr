@@ -139,8 +139,8 @@ test('halaman utama menyediakan tautan ke layanan utama', function () {
 
     $response->assertSeeHtml('href="'.route('psb').'"')
         ->assertSeeHtml('href="'.route('pendaftaran').'"')
-        ->assertSeeHtml('href="'.route('foto.index').'"')
-        ->assertSeeHtml('href="'.route('uangmasuk.index').'"');
+        ->assertDontSeeHtml('href="'.route('foto.index').'"')
+        ->assertDontSeeHtml('href="'.route('uangmasuk.index').'"');
 });
 
 test('halaman utama tidak lagi memuat komponen pencarian siswa', function () {

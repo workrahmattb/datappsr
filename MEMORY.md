@@ -11,8 +11,8 @@
 | Project | Sistem PPDB Pondok Pesantren Syafa'aturrasul — 4 jenjang (MTs Putra/Putri, MA Putra/Putri) |
 | Repo | `workrahmattb/datappsr` — branch `main` |
 | Lokasi | `/Users/rahmattanri/Documents/Project Code/ppsr2025putra` |
-| Terakhir diperbarui | 17 Oktober 2026 — sesi 10 (halaman utama dipindah ke `/psb`, `/` jadi website sekolah) |
-| Status kode saat ini | `/` = website sekolah (baru), `/psb` = PSB & cari data — 127 test Pest lulus |
+| Terakhir diperbarui | 26 Oktober 2026 — sesi 12 (logo navbar, SEO homepage, konsistensi footer publik) |
+| Status kode saat ini | `/` = website sekolah, `/psb` = PSB & cari data — test terkait perubahan lulus; full suite belum dijalankan ulang |
 
 > ⚠️ Di macOS, `memory.md` dan `MEMORY.md` adalah **file yang sama** (filesystem case-insensitive).
 
@@ -145,7 +145,7 @@ database/migrations/ · database/seeders/ (UserSeeder = sumber kredensial)
 | Halaman publik: Fasilitas | `/fasilitas` | **`Site\FasilitasIndex`** — kartu + galeri semua foto |
 | Halaman publik: Profil Guru | `/guru` | **`Site\GuruIndex`** |
 | Halaman publik: Kontak | `/kontak` | **`Site\KontakIndex`** — info lembaga, kontak person, peta |
-| Navbar & footer publik | — | **`Site\Navbar`** + **`Site\Footer`** (Livewire) di dalam `layouts.public` |
+| Navbar & footer publik | — | **`Site\Navbar`** + **`Site\Footer`** (Livewire) di dalam `layouts.public` — satu komponen dipakai semua halaman publik; logo `public/images/logo-navbar.webp` di kiri navbar; footer identik (link Cari Data Santri/Galeri Foto/Uang Masuk dihapus) |
 | Galeri foto & uang masuk | `/foto`, `/uangmasuk` | `FotoTable`, `UangMasukTable` — kini pakai `layouts.public` (navbar/footer ikut) |
 | PSB: pendaftaran & cari siswa | `/psb` | **`Site\Psb`** + `CariSiswaTable` — **min. 3 huruf** + **pagination 10/halaman** |
 | Update foto mandiri (publik) | `/update-foto/{type}/{id}` | `UpdateFotoForm` |
@@ -3353,3 +3353,41 @@ Dipasang **satu kali** di `resources/views/layouts/public.blade.php` (setelah `<
 - Belum push/deploy. Setelah deploy, pastikan APP_ENV=production, APP_DEBUG=false, SEO_URL=https://ppsyafaaturrasul.com (atau default), jalankan php artisan optimize:clear lalu php artisan optimize; sinkronkan build/images/robots.txt ke public_html seperti prosedur hosting sebelumnya.
 - Verifikasi hosting: HTTP dan www harus 301 ke domain HTTPS utama; domain HTTPS utama tetap 200 tanpa loop; /lagibelajar 404, /beranda 301, /sitemap.xml berisi pendaftaran dan berita yang sudah terbit. Jika memakai proxy TLS, periksa konfigurasi proxy sebelum rollout redirect.
 - Tidak menjanjikan peringkat teratas. Konten program pendidikan, berita faktual, informasi kontak, Search Console, dan performa lapangan tetap perlu pemeliharaan; full suite belum dijalankan (baseline kegagalan starter routes terdahulu di luar scope).
+
+# Changelog — Sesi 26 Oktober 2026 — Logo Navbar, SEO Homepage, Konsistensi Footer Publik
+
+> **Tanggal:** 26 Oktober 2026
+> **Fokus:** Logo di navbar publik, metadata SEO homepage, dan penyatuan footer publik.
+
+## Ringkasan Perubahan
+- **Logo navbar:** menyalin `logonavbar/Logo untuk Navbar .webp` ke `public/images/logo-navbar.webp`, lalu mengganti teks `PPSR` + `2026` di kiri navbar dengan `<img>` berukuran `h-10 w-auto object-contain` (width/height 600×134, `decoding="async"`, `fetchpriority="high"`). Tautan logo ke `route('home')` dan `wire:navigate` tetap dipertahankan.
+- **SEO homepage:** `Site\Home` sekarang memakai title persis `Pondok Pesantren Syafa'aturrasul | Kuantan Singingi` dan description persis `Website resmi Pondok Pesantren Syafa'aturrasul di Kuantan Singingi, Riau. Pendidikan MTs dan MA Putra-Putri terakreditasi A.`. `og:site_name` dan canonical `https://ppsyafaaturrasul.com/` sudah sesuai. Menambahkan JSON-LD `WebSite` khusus homepage di `layouts.public` (berdampingan dengan `EducationalOrganization` yang sudah ada).
+- **Pitfall JSON-LD:** key `'@context'` wajib didefinisikan di dalam blok `@php`. Bila ditulis langsung di array inline Blade, `@context` dikompilasi sebagai directive dan merusak output JSON.
+- **Footer publik:** menghapus link **Cari Data Santri**, **Galeri Foto**, dan **Uang Masuk** dari komponen footer bersama (bukan lagi kondisional per halaman). Footer kini identik di seluruh halaman publik dan tetap satu komponen Livewire.
+- **Struktur SPA:** `navbar` dan `footer` tetap satu komponen masing-masing di `layouts.public`; semua tautan internal memakai `wire:navigate`. Admin (`layouts.admin`) dan halaman form standalone (`/pendaftaran`, daftar ulang, update foto) tidak disentuh.
+- **Tes:** `SiteSeoTest` diperbarui untuk title baru dan schema `WebSite`; `HomePageTest` memastikan link foto/uang masuk tidak lagi muncul di homepage.
+
+## File yang Dimodifikasi
+| File | Perubahan |
+|------|-----------|
+| `resources/views/livewire/site/navbar.blade.php` | Teks brand kiri diganti logo `images/logo-navbar.webp` |
+| `public/images/logo-navbar.webp` | Aset logo baru (hasil salin dari folder `logonavbar/`) |
+| `app/Livewire/Site/Home.php` | Title dan description homepage sesuai permintaan |
+| `resources/views/layouts/public.blade.php` | Tambah JSON-LD `WebSite` khusus route `home` |
+| `resources/views/livewire/site/footer.blade.php` | Hapus 3 link layanan dari footer publik bersama |
+| `tests/Feature/SiteSeoTest.php` | Assertion title baru + schema `WebSite` |
+| `tests/Feature/HomePageTest.php` | Assertion homepage tanpa link foto/uang masuk |
+
+## Hasil Validasi
+- `php artisan test tests/Feature/SiteSeoTest.php` → **8 passed, 51 assertions**
+- `php artisan test tests/Feature/SiteLivewireTest.php` → **29 passed, 102 assertions**
+- `php artisan test tests/Feature/HomePageTest.php --filter="layanan utama"` → **1 passed, 5 assertions**
+- `vendor/bin/pint --dirty` → lulus
+- Verifikasi render homepage: title, description, `og:site_name`, canonical, serta dua JSON-LD (`EducationalOrganization` + `WebSite`) sesuai.
+- Tidak menjalankan `npm run build` karena tidak ada perubahan CSS/JS.
+
+## Catatan / Risiko
+- Perubahan footer berlaku untuk **semua halaman publik** yang memakai `layouts.public`: Home, Berita (daftar/detail), Fasilitas, Guru, Kontak, PSB, Galeri Foto, dan Uang Masuk. Link layanan masih bisa diakses lewat URL langsung/admin; tombol **Cari Data Santri** di hero homepage tetap ada.
+- Logo memiliki latar putih, sehingga di dark mode tampil sebagai kotak putih. Belum dibuat versi transparan.
+- Full suite belum dijalankan ulang. Diketahui ada 1 test lama gagal di `HomePageTest` (`Hubungi kami melalui halaman kontak`) karena teks tersebut memang tidak ada di kode sejak HEAD — tidak terkait perubahan sesi ini.
+- Belum di-push/deploy.
