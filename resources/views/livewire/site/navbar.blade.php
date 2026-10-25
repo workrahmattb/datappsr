@@ -2,8 +2,8 @@
     <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
         <a href="{{ route('home') }}" wire:navigate
             @if ($this->apakahAktif('home')) aria-current="page" @endif class="flex items-center gap-2 shrink-0">
-            <span class="text-2xl font-bold text-green-600 dark:text-green-400">PPSR</span>
-            <span class="text-gray-600 dark:text-gray-300 hidden sm:inline">2026</span>
+            <img src="{{ asset('images/logo-navbar.webp') }}" alt="PPSR 2026" width="600" height="134"
+                class="h-10 w-auto object-contain" decoding="async" fetchpriority="high">
         </a>
 
         <!-- Menu desktop -->
