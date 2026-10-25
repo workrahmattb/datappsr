@@ -5,6 +5,9 @@ use App\Models\Berita;
 test('homepage has canonical metadata and valid school structured data', function () {
     config(['seo.url' => 'https://ppsyafaaturrasul.com']);
     $response = $this->get('/?utm_source=test')->assertSuccessful();
+    $response->assertSeeHtml('href="https://ppsyafaaturrasul.com"')
+        ->assertDontSee('https://www.syafaaturrasul.com', false)
+        ->assertDontSee('https://syafaaturrasul.com', false);
     $document = new DOMDocument;
     @$document->loadHTML('<?xml encoding="UTF-8">'.$response->getContent());
     $xpath = new DOMXPath($document);

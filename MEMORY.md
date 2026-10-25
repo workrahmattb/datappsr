@@ -3306,3 +3306,8 @@ Dipasang **satu kali** di `resources/views/layouts/public.blade.php` (setelah `<
 - Validasi: SiteSeoTest + HomePageTest + SitePagesTest 33 passed, 175 assertions; Pint dirty dan npm run build berhasil. Belum push/deploy atau mengakses Google Search Console.
 - Deploy hosting terpisah: sinkronkan build/images seperti sebelumnya, dan salin public/robots.txt ke /home/ppsyafaa/public_html/robots.txt. Route sitemap dilayani aplikasi, bukan file XML yang perlu disalin. Refresh cache Laravel setelah deploy.
 - Tindak lanjut eksternal: verifikasi kepemilikan domain di Search Console, kirim sitemap.xml, periksa pengindeksan homepage, lalu pantau kueri dan halaman. Konten rinci MTs/MA dan profil lokasi perlu materi faktual pengguna untuk dikembangkan berikutnya.
+
+## Domain Resmi — Tautan Footer Diperbarui
+- Pengguna mengonfirmasi syafaaturrasul.com tidak digunakan lagi dan mengizinkan penggantian tautannya.
+- Mengganti tautan Website Pondok pada footer dari https://www.syafaaturrasul.com ke https://ppsyafaaturrasul.com. Referensi domain dalam config SEO dan robots.txt sudah memakai domain baru.
+- SiteSeoTest memeriksa tautan domain baru dan memastikan domain lama tidak muncul dalam HTML homepage. Validasi: SiteSeoTest 3 tes lulus; Pint dirty lulus. Tidak mengatur redirect domain lama atau mengubah DNS. Belum deploy.

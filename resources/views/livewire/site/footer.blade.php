@@ -59,7 +59,7 @@
                 <p class="text-sm">&copy; {{ date('Y') }} PPSR. All rights reserved.</p>
                 <div class="flex gap-4 text-sm">
                     <a href="{{ route('kontak.index') }}" wire:navigate class="hover:text-green-400 transition">Kontak</a>
-                    <a href="https://www.syafaaturrasul.com" target="_blank" rel="noopener"
+                    <a href="https://ppsyafaaturrasul.com" target="_blank" rel="noopener"
                         class="hover:text-green-400 transition">Website Pondok</a>
                 </div>
             </div>
