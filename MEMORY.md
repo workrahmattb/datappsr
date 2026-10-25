@@ -3294,3 +3294,15 @@ Dipasang **satu kali** di `resources/views/layouts/public.blade.php` (setelah `<
 ## Revisi Teks Profil — Komitmen Pesantren
 - Mengganti paragraf komitmen menjadi persis: “Berkomitmen mencetak generasi muslim yang beriman, berilmu, berakhlak mulia, mandiri, dan siap menghadapi tantangan zaman.”
 - HomePageTest memeriksa kalimat baru dan ketiadaan pembuka lama: 12 passed, 94 assertions. Pint dirty lulus. Hanya perubahan teks, belum deploy.
+
+# Changelog — Sesi 25 Oktober 2026 — Fondasi SEO Nama Pesantren dan Kuansing
+- Permintaan pengguna: meningkatkan pencarian syafaaturrasul/syafaturasul, ponpes, pondok pesantren Kuansing/Kuantan Singingi, serta MTs/MA. Peringkat pertama tidak dijanjikan; tidak membuat keyword stuffing atau meta keywords.
+- Memperbarui judul/deskripsi homepage untuk nama Syafaaturrasul, Kuansing, MTs dan MA. Label profil menyebut nama lembaga dan Kuantan Singingi (Kuansing), Riau secara terlihat tanpa mengubah tiga paragraf singkat yang diminta sebelumnya.
+- Layout publik menggunakan lang=id, canonical URL berbasis config seo.url (default domain produksi; dapat diatur SEO_URL), metadata Open Graph, serta JSON-LD EducationalOrganization di homepage. Nama alternatif memakai nama lembaga yang wajar, bukan daftar salah eja. Tidak menambahkan klaim prestasi/alamat yang belum diketahui.
+- Canonical membuang tracking query, mempertahankan page pada listing berita/guru/fasilitas. Layanan pencarian santri PSB diberi noindex pada layout publik; ini bukan kontrol akses atau perlindungan data.
+- Menambahkan SitemapController dan route /sitemap.xml: lima halaman informasi utama serta berita published dengan published_at tidak di masa depan. Draft dan layanan data santri tidak dimasukkan. lastmod hanya dari updated_at berita, tidak memalsukan tanggal halaman statis.
+- robots.txt mencantumkan sitemap domain produksi. Jika domain SEO_URL berubah, robots.txt perlu disesuaikan juga.
+- Dokumentasi Laravel Boost tidak tersedia dalam katalog tools; merujuk dokumentasi resmi Laravel 12 dan Google Search Central sebelum implementasi. Tidak mengubah dependensi atau modul Rapor.
+- Validasi: SiteSeoTest + HomePageTest + SitePagesTest 33 passed, 175 assertions; Pint dirty dan npm run build berhasil. Belum push/deploy atau mengakses Google Search Console.
+- Deploy hosting terpisah: sinkronkan build/images seperti sebelumnya, dan salin public/robots.txt ke /home/ppsyafaa/public_html/robots.txt. Route sitemap dilayani aplikasi, bukan file XML yang perlu disalin. Refresh cache Laravel setelah deploy.
+- Tindak lanjut eksternal: verifikasi kepemilikan domain di Search Console, kirim sitemap.xml, periksa pengindeksan homepage, lalu pantau kueri dan halaman. Konten rinci MTs/MA dan profil lokasi perlu materi faktual pengguna untuk dikembangkan berikutnya.

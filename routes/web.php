@@ -25,6 +25,7 @@ Route::get('/cetak-rapor/generate', [CetakRaporController::class, 'generate'])
 // Website Sekolah (halaman publik) — full SPA Livewire
 // ============================================================
 Route::get('/', \App\Livewire\Site\Home::class)->name('home');
+Route::get('/sitemap.xml', \App\Http\Controllers\SitemapController::class)->name('sitemap');
 Route::get('/berita', \App\Livewire\Site\BeritaIndex::class)->name('berita.index');
 Route::get('/berita/{slug}', \App\Livewire\Site\BeritaShow::class)->name('berita.show');
 Route::get('/fasilitas', \App\Livewire\Site\FasilitasIndex::class)->name('fasilitas.index');

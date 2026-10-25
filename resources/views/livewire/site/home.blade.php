@@ -69,7 +69,7 @@
 
     <section aria-labelledby="profil-pesantren-heading" class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-14">
         <div class="py-2 sm:py-4">
-            <p class="text-sm font-semibold uppercase tracking-wider text-green-700 dark:text-green-400">Mengenal Syafa'aturrasul</p>
+            <p class="text-sm font-semibold uppercase tracking-wider text-green-700 dark:text-green-400">Pondok Pesantren Syafa'aturrasul · Kuantan Singingi (Kuansing), Riau</p>
             <h2 id="profil-pesantren-heading" class="mt-3 mb-6 max-w-3xl text-3xl sm:text-4xl font-bold leading-tight text-gray-900 dark:text-white">Membangun Generasi Qur'ani, Berakhlak Mulia, Berilmu, dan Berprestasi</h2>
             <div class="flex flex-col gap-3 text-base sm:text-lg leading-relaxed text-gray-600 dark:text-gray-300">
                 <div class="grid grid-cols-[104px_minmax(0,1fr)] sm:grid-cols-[160px_minmax(0,1fr)] items-center gap-3 sm:gap-5">
