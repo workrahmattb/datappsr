@@ -43,8 +43,16 @@
                         'addressLocality' => 'Kuantan Singingi', 'addressRegion' => 'Riau', 'addressCountry' => 'ID'],
                 ], config('pesantren.locations'))),
             ];
+            $website = [
+                '@context' => 'https://schema.org',
+                '@type' => 'WebSite',
+                'name' => "Pondok Pesantren Syafa'aturrasul",
+                'alternateName' => 'Syafaaturrasul',
+                'url' => rtrim(config('seo.url'), '/').'/',
+            ];
         @endphp
         <script type="application/ld+json">{!! json_encode($school, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) !!}</script>
+        <script type="application/ld+json">{!! json_encode($website, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) !!}</script>
     @endif
     @if (isset($article))
         @php

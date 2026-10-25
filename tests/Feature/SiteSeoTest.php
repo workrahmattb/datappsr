@@ -13,10 +13,12 @@ test('homepage has canonical metadata and valid school structured data', functio
     $xpath = new DOMXPath($document);
     expect($xpath->query('//html')->item(0)->getAttribute('lang'))->toBe('id')
         ->and($xpath->query('//link[@rel="canonical"]')->item(0)->getAttribute('href'))->toBe('https://ppsyafaaturrasul.com/')
-        ->and($xpath->query('//title')->item(0)->textContent)->toContain('Syafaaturrasul Kuansing');
-    $schema = json_decode($xpath->query('//script[@type="application/ld+json"]')->item(0)->textContent, true, 512, JSON_THROW_ON_ERROR);
-    expect($schema['@type'])->toBe('EducationalOrganization')
-        ->and($schema['address']['addressLocality'])->toBe('Kuantan Singingi');
+        ->and($xpath->query('//title')->item(0)->textContent)->toBe("Pondok Pesantren Syafa'aturrasul | Kuantan Singingi");
+    $schemas = collect($xpath->query('//script[@type="application/ld+json"]'))
+        ->map(fn ($node) => json_decode($node->textContent, true, 512, JSON_THROW_ON_ERROR));
+    $schema = $schemas->firstWhere('@type', 'EducationalOrganization');
+    expect($schema['address']['addressLocality'])->toBe('Kuantan Singingi')
+        ->and($schemas->firstWhere('@type', 'WebSite')['name'])->toBe("Pondok Pesantren Syafa'aturrasul");
 });
 
 test('sitemap includes published articles and excludes drafts future articles and student services', function () {

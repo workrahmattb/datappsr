@@ -14,9 +14,9 @@ use Livewire\Attributes\Title;
 use Livewire\Component;
 
 #[Layout('layouts.public', [
-    'description' => "Pondok Pesantren Syafaaturrasul di Kuantan Singingi (Kuansing), Riau. MTs dan MA Putra/Putri berakreditasi A, pendidikan Al-Qur'an, serta informasi pendaftaran.",
+    'description' => "Website resmi Pondok Pesantren Syafa'aturrasul di Kuantan Singingi, Riau. Pendidikan MTs dan MA Putra-Putri terakreditasi A.",
 ])]
-#[Title('Pesantren Syafaaturrasul Kuansing | MTs & MA')]
+#[Title("Pondok Pesantren Syafa'aturrasul | Kuantan Singingi")]
 class Home extends Component
 {
     /**
