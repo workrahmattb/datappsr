@@ -67,6 +67,37 @@
         </div>
     </section>
 
+    <section aria-labelledby="profil-pesantren-heading" class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-14">
+        <div class="py-2 sm:py-4">
+            <p class="text-sm font-semibold uppercase tracking-wider text-green-700 dark:text-green-400">Mengenal Syafa'aturrasul</p>
+            <h2 id="profil-pesantren-heading" class="mt-3 mb-6 max-w-3xl text-3xl sm:text-4xl font-bold leading-tight text-gray-900 dark:text-white">Membangun Generasi Qur'ani, Berakhlak Mulia, Berilmu, dan Berprestasi</h2>
+            <div class="flex flex-col gap-3 text-base sm:text-lg leading-relaxed text-gray-600 dark:text-gray-300">
+                <div class="grid grid-cols-[104px_minmax(0,1fr)] sm:grid-cols-[160px_minmax(0,1fr)] items-center gap-3 sm:gap-5">
+                    <figure class="min-w-0">
+                        <x-site-image path="images/profil-santriwati.webp" :asset="true" sizes="(min-width: 640px) 160px, 104px"
+                            alt="Santriwati Pondok Pesantren Syafa'aturrasul membawa buku" class="block w-full h-auto" />
+                    </figure>
+                    <p class="min-w-0">Memadukan pendidikan agama, ilmu pengetahuan, pembinaan karakter, dan pengembangan potensi santri.</p>
+                </div>
+                <div class="grid grid-cols-[104px_minmax(0,1fr)] sm:grid-cols-[160px_minmax(0,1fr)] items-center gap-3 sm:gap-5">
+                    <figure class="min-w-0">
+                        <x-site-image path="images/profil-santri-quran.webp" :asset="true" sizes="(min-width: 640px) 160px, 104px"
+                            alt="Santri Pondok Pesantren Syafa'aturrasul memegang Al-Qur'an" class="block w-full h-auto" />
+                    </figure>
+                    <p class="min-w-0"><strong class="font-semibold text-gray-900 dark:text-white">MTs Putra, MTs Putri, MA Putra, dan MA Putri</strong> ber <strong class="font-semibold text-green-700 dark:text-green-400">Akreditasi A</strong>.</p>
+                </div>
+                <div class="grid grid-cols-[104px_minmax(0,1fr)] sm:grid-cols-[160px_minmax(0,1fr)] items-center gap-3 sm:gap-5">
+                    <figure class="min-w-0">
+                        <x-site-image path="images/profil-santri-pramuka.webp" :asset="true" sizes="(min-width: 640px) 160px, 104px"
+                            alt="Santri Pondok Pesantren Syafa'aturrasul berseragam pramuka membawa buku" class="block w-full h-auto" />
+                    </figure>
+                    <p class="min-w-0">Berkomitmen mencetak generasi muslim yang beriman, berilmu, berakhlak mulia, mandiri, dan siap menghadapi tantangan zaman.</p>
+                </div>
+            </div>
+            <p class="mt-6 border-l-4 border-green-600 pl-4 text-lg font-semibold leading-relaxed text-green-800 dark:text-green-300">Pondok Pesantren Syafa'aturrasul — Menanamkan Nilai Islam, Membangun Generasi Masa Depan.</p>
+        </div>
+    </section>
+
     <figure aria-label="Profil Pondok Pesantren Syafa'aturrasul" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-14">
         <x-site-image path="images/profil-pondok-syafaaturrasul.webp" :asset="true" sizes="(min-width: 1280px) 1216px, calc(100vw - 48px)"
             alt="Pondok Pesantren Syafa'aturrasul, Kuantan Singingi, Riau — logo pondok, bangunan, serta foto bersama santri dan santriwati"

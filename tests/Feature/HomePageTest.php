@@ -32,12 +32,53 @@ test('halaman utama dapat diakses', function () {
         ->assertSee("Pondok Pesantren Syafa'aturrasul", false);
 });
 
-test('banner pondok tampil tepat setelah visi misi dengan rasio gambar asli', function () {
+test('profil pesantren dan tiga foto tampil tepat setelah visi misi', function () {
+    $response = $this->get(route('home'))->assertSuccessful()
+        ->assertSee('Memadukan pendidikan agama, ilmu pengetahuan, pembinaan karakter, dan pengembangan potensi santri.')
+        ->assertDontSee("Pondok Pesantren Syafa'aturrasul merupakan lembaga pendidikan Islam", false)
+        ->assertSee("Membangun Generasi Qur'ani, Berakhlak Mulia, Berilmu, dan Berprestasi", false)
+        ->assertSee('MTs Putra, MTs Putri, MA Putra, dan MA Putri')
+        ->assertSee('Akreditasi A')
+        ->assertSee('Berkomitmen mencetak generasi muslim yang beriman, berilmu, berakhlak mulia, mandiri, dan siap menghadapi tantangan zaman.')
+        ->assertDontSee('Dengan lingkungan pendidikan yang islami, tenaga pendidik yang berdedikasi')
+        ->assertSeeHtml('</strong> ber <strong')
+        ->assertDontSee('Kami menyelenggarakan pendidikan melalui empat satuan pendidikan')
+        ->assertSee('Menanamkan Nilai Islam, Membangun Generasi Masa Depan.');
+    $document = new DOMDocument;
+    @$document->loadHTML('<?xml encoding="UTF-8">'.$response->getContent());
+    $xpath = new DOMXPath($document);
+    $section = $xpath->query('//section[@aria-labelledby="visi-misi-heading"]/following-sibling::*[1]')->item(0);
+
+    expect($section->getAttribute('aria-labelledby'))->toBe('profil-pesantren-heading');
+    $images = $xpath->query('.//img', $section);
+    expect($images->length)->toBe(3);
+    expect($xpath->query('.//figure/following-sibling::p', $section)->length)->toBe(3);
+    expect($section->getAttribute('class'))->toContain('max-w-5xl');
+    foreach ($xpath->query('.//figure', $section) as $figure) {
+        expect($figure->parentNode->getAttribute('class'))->toContain('items-center', 'gap-3');
+    }
+
+    foreach (['profil-santriwati.webp', 'profil-santri-quran.webp', 'profil-santri-pramuka.webp'] as $index => $filename) {
+        $image = $images->item($index);
+        $dimensions = getimagesize(public_path('images/'.$filename));
+        $source = imagecreatefromwebp(public_path('images/'.$filename));
+        expect(imagecolorat($source, 0, 0) >> 24)->toBe(127);
+        imagedestroy($source);
+        expect($image->parentNode->getAttribute('class'))->not->toContain('bg-', 'rounded-', 'border');
+        expect($image->getAttribute('src'))->toBe(asset('images/'.$filename))
+            ->and($image->getAttribute('loading'))->toBe('lazy')
+            ->and($image->getAttribute('alt'))->not->toBeEmpty()
+            ->and((int) $image->getAttribute('width'))->toBe($dimensions[0])
+            ->and((int) $image->getAttribute('height'))->toBe($dimensions[1]);
+    }
+});
+
+test('banner pondok tampil tepat setelah profil dengan rasio gambar asli', function () {
     $response = $this->get(route('home'))->assertSuccessful();
     $document = new DOMDocument;
     @$document->loadHTML('<?xml encoding="UTF-8">'.$response->getContent());
     $xpath = new DOMXPath($document);
-    $image = $xpath->query('//section[@aria-labelledby="visi-misi-heading"]/following-sibling::*[1][self::figure]/img')->item(0);
+    $image = $xpath->query('//section[@aria-labelledby="profil-pesantren-heading"]/following-sibling::*[1][self::figure]/img')->item(0);
 
     expect($image)->not->toBeNull();
     expect($image->getAttribute('src'))->toBe(asset('images/profil-pondok-syafaaturrasul.webp'))

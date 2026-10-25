@@ -3248,3 +3248,49 @@ Dipasang **satu kali** di `resources/views/layouts/public.blade.php` (setelah `<
 - Command dapat dijalankan ulang dengan aman, dan perlu dijalankan kembali setelah unggah/perubahan gambar konten. Belum ada otomatisasi saat upload. Tanpa varian, gambar asli tetap menjadi fallback.
 - Pastikan konfigurasi produksi `APP_ENV=production`, `APP_DEBUG=false`, dan `APP_URL` sesuai domain. Setelah konfigurasi benar, jalankan `php artisan optimize --no-interaction`. Untuk build dari source gunakan `npm run build`.
 - Skor PageSpeed dan LCP setelah perubahan **belum diukur di produksi**. Jalankan ulang setelah deploy; konfigurasi kompresi/cache hosting juga perlu diverifikasi pada respons server sebenarnya.
+
+## Pemeriksaan Insiden CSS Setelah Deploy — 25 Oktober 2026
+- Pengguna melakukan deploy menggunakan `git pull` lewat terminal hosting.
+- HTML produksi berhasil dibaca dan menunjuk `/build/assets/site-Bif1qVjs.css`, tetapi URL CSS tersebut mengembalikan HTTP 404. Bundel admin baru `app-xU0pcVhB.css` juga 404; bundel lama `app-CAfEjjPr.css` masih HTTP 200 dengan tipe `text/css`.
+- File build baru sudah dilacak Git lokal (commit terbaru saat pemeriksaan `4680104`). Bukti menunjukkan aset yang disajikan domain belum sinkron dengan manifest/template terbaru; belum dapat memastikan apakah document root terpisah, checkout berbeda, atau proses penyalinan aset belum dilakukan tanpa melihat lokasi folder hosting.
+- Belum mengubah server atau menyatakan insiden selesai. Langkah berikutnya: periksa commit dan keberadaan `public/build/assets/site-Bif1qVjs.css` di checkout hosting, lalu cocokkan lokasi tersebut dengan document root domain. Hindari mengganti kode CSS atau membersihkan cache secara acak karena URL aset secara nyata 404.
+- Hasil terminal pengguna mengonfirmasi checkout `/home/ppsyafaa/datappsr` pada commit `4680104` memiliki CSS terbaru, sementara `/home/ppsyafaa/public_html/build/assets` hanya memiliki CSS lama. Kedua folder build berupa direktori terpisah; `git pull` tidak menyinkronkan salinan di public_html.
+- Perbaikan yang diberikan: salin isi `datappsr/public/build/assets/.` ke `public_html/build/assets/` terlebih dahulu, lalu manifest. Tidak menghapus aset lama. Setelah setiap deploy, sinkronisasi ini perlu diulang selama struktur hosting masih memakai salinan public terpisah. Pemulihan belum terverifikasi sampai command dijalankan dan URL CSS mengembalikan HTTP 200 dengan tipe text/css.
+- Pemeriksaan lanjutan URL banner `images/profil-pondok-syafaaturrasul.webp.optimized-1600.webp?v=1792899679` juga menghasilkan HTTP 404. File asli dan varian tersedia di project lokal. Pengguna diarahkan menyalin isi `datappsr/public/images/.` ke `public_html/images/`, termasuk semua ukuran srcset; sinkronisasi deploy harus meliputi images selain build. Pemulihan banner belum diverifikasi di produksi.
+- Pengguna mengonfirmasi gambar sudah tampil kembali setelah penyalinan. Menjelaskan alur deployment struktur saat ini: build dan tes lokal → commit/push source beserta public/build dan aset images → pull hosting → optimasi gambar bila diperlukan → sinkronisasi assets/images ke public_html → manifest terakhir → refresh cache Laravel → verifikasi HTTP dan tampilan. Otomatisasi script deployment atau perubahan document root belum diimplementasikan.
+
+# Changelog — Sesi 25 Oktober 2026 — Profil Pesantren dan Foto Santri
+
+- Menambahkan bagian profil tepat setelah Visi Misi, sebelum banner pondok yang sudah ada. Teks mengikuti materi pengguna, termasuk empat satuan pendidikan dan keterangan Akreditasi A.
+- Desktop menggunakan dua kolom: teks di kiri, tiga foto di kanan (santriwati di atas, dua foto santri di bawah). Pada ponsel foto berada setelah teks. Mendukung dark mode, alt deskriptif, dan gambar utuh tanpa crop.
+- Menyalin tiga WebP pengguna dari Downloads menjadi `public/images/profil-santriwati.webp`, `profil-santri-quran.webp`, dan `profil-santri-pramuka.webp`; membuat varian responsif memakai command optimasi yang sudah ada. Gambar asli tetap dipertahankan; lazy loading dan srcset melalui komponen site-image.
+- Validasi: HomePageTest + SitePerformanceTest 19 passed, 116 assertions; Pint dirty lulus; build Vite berhasil. Browser ponsel menunjukkan ketiga foto tampil; grid desktop terverifikasi dua kolom. Test posisi banner diperbarui agar berada sesudah profil baru.
+- Deploy: sertakan hasil build dan semua gambar/varian baru dalam commit. Setelah pull hosting, sinkronkan public/build/assets dan public/images ke public_html, lalu manifest terakhir. Belum deploy/push dari sesi ini.
+
+## Penyesuaian Profil — Foto Transparan Menyatu dengan Teks
+- Menghapus seluruh latar warna dan bingkai pada tiga foto profil, serta menghapus kartu putih/border pembungkus profil agar teks dan foto berada di latar halaman yang sama.
+- Ketiga WebP asli sudah memiliki alpha transparan; tidak perlu mengubah foto atau identitas subjek. Susunan foto dibuat lebih rapat; desktop tetap di samping teks dan mobile di bawah teks.
+- HomePageTest diperbarui untuk memeriksa transparansi sudut file sumber dan ketiadaan kelas latar/bingkai pada figure foto. Validasi: 12 passed, 80 assertions; Pint dirty dan build Vite berhasil. Belum deploy.
+
+## Revisi Profil — Foto di Dalam Alur Deskripsi
+- Mengganti dua kolom teks/galeri terpisah menjadi tiga paragraf dengan foto masing-masing di dalam alur teks. Pada layar sm ke atas foto mengambang bergantian kanan/kiri/kanan sehingga teks mengalir di sampingnya; pada ponsel foto berada sebelum paragraf terkait agar area baca tetap cukup lebar.
+- Seluruh foto tetap transparan tanpa kartu/bingkai. Judul dan slogan menjadi pembuka dan penutup bersama; isi teks tetap dipertahankan.
+- Test memeriksa setiap foto berada bersama paragrafnya. HomePageTest: 12 passed, 81 assertions; Pint dirty dan build Vite berhasil. Belum deploy.
+
+## Revisi Profil — Komposisi Lebih Rapat
+- Mengurangi lebar area profil menjadi max-w-5xl agar paragraf tidak terlalu panjang dan foto tidak terasa jauh dari teks.
+- Mengganti float bergantian dengan tiga pasangan foto/paragraf yang konsisten, sejajar vertikal di tengah. Jarak foto-teks 12px pada ponsel dan 20px mulai sm; foto 104px/160px. Tidak ada kotak latar atau bingkai pada foto.
+- Mengurangi jarak antar pasangan menjadi 12px, padding section, dan line-height paragraf dari loose menjadi relaxed. Teks, tiga foto transparan, dan urutan section tetap dipertahankan.
+- Validasi: HomePageTest, Pint dirty, dan build Vite berhasil. Belum deploy; pemeriksaan visual browser belum dilakukan untuk revisi ini.
+
+## Revisi Teks Profil — Paragraf Pembuka Disingkat
+- Mengganti paragraf pembuka profil menjadi persis: “Memadukan pendidikan agama, ilmu pengetahuan, pembinaan karakter, dan pengembangan potensi santri.” sesuai permintaan pengguna.
+- Memperbarui HomePageTest untuk memastikan teks baru tampil dan kalimat lama tidak tampil. HomePageTest: 12 passed, 90 assertions; Pint dirty lulus. Perubahan hanya teks, tidak mengubah CSS/aset. Belum deploy.
+
+## Revisi Teks Profil — Satuan Pendidikan
+- Mengganti kalimat satuan pendidikan sesuai permintaan menjadi “MTs Putra, MTs Putri, MA Putra, dan MA Putri ber Akreditasi A.” Nama satuan pendidikan dan Akreditasi A tetap tebal; penulisan “ber” mengikuti teks pengguna.
+- HomePageTest diperbarui: 12 passed, 92 assertions. Pint dirty lulus. Hanya perubahan teks, belum deploy.
+
+## Revisi Teks Profil — Komitmen Pesantren
+- Mengganti paragraf komitmen menjadi persis: “Berkomitmen mencetak generasi muslim yang beriman, berilmu, berakhlak mulia, mandiri, dan siap menghadapi tantangan zaman.”
+- HomePageTest memeriksa kalimat baru dan ketiadaan pembuka lama: 12 passed, 94 assertions. Pint dirty lulus. Hanya perubahan teks, belum deploy.
