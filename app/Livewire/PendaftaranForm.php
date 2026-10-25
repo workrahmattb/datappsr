@@ -11,6 +11,7 @@ class PendaftaranForm extends Component
     use WithFileUploads;
 
     public $nisn = '';
+
     public $nama = '';
 
     public $tahun_ajaran = '';
@@ -21,16 +22,25 @@ class PendaftaranForm extends Component
     }
 
     public $jenjang_pendidikan = '';
+
     public $tempat_lahir = '';
+
     public $tanggal_lahir = '';
+
     public $asal_sekolah = '';
+
     public $alamat = '';
+
     public $nama_ayah = '';
+
     public $nama_ibu = '';
+
     public $no_hp = '';
+
     public $buktitransfer = null;
 
     public $submitted = false;
+
     public $submittedDataArray = [];
 
     public function rules()
@@ -162,9 +172,11 @@ class PendaftaranForm extends Component
         $this->submittedDataArray = [];
     }
 
-    public function render()
+    public function render(): \Illuminate\View\View
     {
-        return view('livewire.pendaftaran-form')->layout('layouts.standalone');
+        return view('livewire.pendaftaran-form')->layout('layouts.standalone', [
+            'title' => 'Pendaftaran Santri Baru MTs & MA | Syafaaturrasul Kuansing',
+            'description' => 'Formulir pendaftaran santri baru MTs dan MA Pondok Pesantren Syafaaturrasul, Kuantan Singingi, Riau. Lengkapi data calon santri melalui formulir ini.',
+        ]);
     }
 }
-

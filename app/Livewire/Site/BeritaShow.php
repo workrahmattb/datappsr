@@ -34,6 +34,7 @@ class BeritaShow extends Component
         ])
             ->layout('layouts.public', [
                 'description' => Str::limit($this->berita->ringkasan_singkat, 155),
+                'article' => $this->berita,
             ])
             ->title($this->berita->judul.' - Berita PPSR');
     }

@@ -59,7 +59,7 @@
 
             @if ($beritas->hasPages())
                 <div class="mt-10">
-                    {{ $beritas->links() }}
+                    {{ $beritas->links('livewire.site.pagination') }}
                 </div>
             @endif
         @endif

@@ -177,6 +177,6 @@ test('detail kontak lembaga diganti pesan pengisian bila masih kosong', function
     $this->get(route('home'))
         ->assertSuccessful()
         ->assertSee('Hubungi Kami')
-        ->assertSee('Informasi kontak dapat diisi melalui menu Pengaturan')
+        ->assertSee('Hubungi kami melalui halaman kontak')
         ->assertDontSee('Jam Layanan');
 });

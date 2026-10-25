@@ -1,11 +1,8 @@
 <?php
 
 use App\Http\Controllers\CetakRaporController;
-use App\Livewire\HelloWorld;
 use App\Livewire\PendaftaranForm;
 use Illuminate\Support\Facades\Route;
-
-Route::get('/lagibelajar', HelloWorld::class);
 
 Route::get('/pendaftaran', PendaftaranForm::class)->name('pendaftaran');
 
@@ -35,9 +32,7 @@ Route::get('/kontak', \App\Livewire\Site\KontakIndex::class)->name('kontak.index
 // PSB: pendaftaran & pencarian data santri
 Route::get('/psb', \App\Livewire\Site\Psb::class)->name('psb');
 
-Route::get('/beranda', function () {
-    return view('testcoba');
-})->name('beranda');
+Route::permanentRedirect('/beranda', '/')->name('beranda');
 
 // Admin Routes (Butuh Login)
 Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(function () {

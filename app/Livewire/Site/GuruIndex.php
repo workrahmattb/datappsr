@@ -23,7 +23,7 @@ class GuruIndex extends Component
     public function render(): View
     {
         return view('livewire.site.guru-index', [
-            'gurus' => Guru::aktif()->paginate(12),
+            'gurus' => Guru::aktif()->paginate(12)->withPath(route('guru.index')),
         ]);
     }
 }

@@ -10,6 +10,19 @@
     </div>
 
     <!-- Informasi Lembaga -->
+    <section aria-labelledby="alamat-resmi-heading" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
+        <h2 id="alamat-resmi-heading" class="text-2xl font-bold text-gray-900 dark:text-white mb-6">Alamat dan Kontak Resmi</h2>
+        <div class="grid md:grid-cols-3 gap-6 text-gray-700 dark:text-gray-300">
+            @foreach (config('pesantren.locations') as $location)
+                <article class="flex flex-col gap-3">
+                    <h3 class="font-bold text-lg text-gray-900 dark:text-white">{{ $location['name'] }}</h3>
+                    <p class="leading-relaxed">{{ $location['address'] }}</p>
+                    <a href="{{ $location['maps'] }}" target="_blank" rel="noopener noreferrer" class="text-green-700 dark:text-green-400 underline">Buka Google Maps {{ $location['name'] }}</a>
+                </article>
+            @endforeach
+            <div><x-site-contacts /></div>
+        </div>
+    </section>
     <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             @if (filled($lembaga['alamat']))

@@ -25,7 +25,7 @@ class BeritaIndex extends Component
         return view('livewire.site.berita-index', [
             'beritas' => Berita::published()
                 ->latest('published_at')
-                ->paginate(9),
+                ->paginate(9)->withPath(route('berita.index')),
         ]);
     }
 }

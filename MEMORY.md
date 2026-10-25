@@ -3311,3 +3311,45 @@ Dipasang **satu kali** di `resources/views/layouts/public.blade.php` (setelah `<
 - Pengguna mengonfirmasi syafaaturrasul.com tidak digunakan lagi dan mengizinkan penggantian tautannya.
 - Mengganti tautan Website Pondok pada footer dari https://www.syafaaturrasul.com ke https://ppsyafaaturrasul.com. Referensi domain dalam config SEO dan robots.txt sudah memakai domain baru.
 - SiteSeoTest memeriksa tautan domain baru dan memastikan domain lama tidak muncul dalam HTML homepage. Validasi: SiteSeoTest 3 tes lulus; Pint dirty lulus. Tidak mengatur redirect domain lama atau mengubah DNS. Belum deploy.
+
+# Audit SEO — 25 Oktober 2026
+
+## Lingkup dan Metode
+- Audit read-only kode dan respons website produksi: homepage, berita, fasilitas, guru, kontak, pendaftaran; variasi domain HTTP/www; robots; URL 404 uji; CSS produksi. Tidak mengubah perilaku aplikasi atau hosting dalam audit ini.
+- SiteSeoTest dijalankan dengan database SQLite memory: 3 passed, 22 assertions. Tidak menjalankan Lighthouse baru, Rich Results Test, atau masuk akun Search Console. Screenshot pengguna sebelumnya mengonfirmasi sitemap sukses (5 URL) dan homepage indexed.
+
+## Temuan Prioritas
+1. Konsolidasi URL produksi belum tuntas: http://ppsyafaaturrasul.com/ dan https://www.ppsyafaaturrasul.com/ sama-sama merespons HTTP 200 pada HEAD, bukan redirect permanen ke https://ppsyafaaturrasul.com/. Canonical sudah ada tetapi redirect lebih konsisten. Perlu konfigurasi hosting yang memperhitungkan proxy/TLS agar tidak loop.
+2. Pendaftaran memakai layouts.standalone → partials.head, bukan layouts.public. HTML produksi: lang=en, title=syafaaturrasul, tanpa meta description/canonical. Rekomendasi beri metadata spesifik jika halaman dimaksudkan masuk Google, atau sediakan halaman informasi penerimaan santri yang indexable dan pisahkan formulir layanan. Tidak otomatis mengindeks seluruh layanan data siswa.
+3. Halaman percobaan masih dirutekan publik: /beranda (view testcoba, HTTP 200) dan /lagibelajar (HTTP 500 pada HEAD). Rekomendasi batasi pengembangan atau hapus route yang tidak diperlukan, dengan pertimbangan tautan yang sudah dipakai. Belum ada bukti halaman ini terindeks atau menyebabkan penurunan peringkat.
+4. Pagination berita/fasilitas/guru memakai default Livewire links yang menghasilkan button wire:click, tanpa a href untuk halaman berikutnya. Canonical page sudah dipertahankan tetapi penemuan halaman lanjut sebaiknya memakai tautan crawlable. Risiko meningkat saat data lebih dari satu halaman; sitemap berita membantu mitigasi.
+5. Kelengkapan konten: homepage produksi masih memuat pesan “Informasi kontak dapat diisi melalui menu Pengaturan → Kontak Lembaga.” Berita produksi masih kosong. Alamat/kontak lembaga perlu diisi dan konten MTs/MA/pendaftaran faktual perlu dikembangkan; bukan mengulang variasi kata kunci.
+6. Konsistensi berita terjadwal: scopePublished pada model hanya memfilter status, sedangkan sitemap juga mensyaratkan published_at <= now. Berita masa depan dapat muncul di listing/detail tetapi belum masuk sitemap. Temuan kode; tidak ditemukan kasus aktif di produksi yang berita terbitnya masih kosong.
+
+## Yang Sudah Baik
+- Lima halaman informasi yang diperiksa memiliki judul/deskripsi/canonical dan satu H1; layout publik lang=id. Homepage memiliki JSON-LD lembaga dan metadata sosial. Semua enam img homepage memiliki alt.
+- robots.txt produksi HTTP 200 dan mencantumkan sitemap dengan domain benar. Footer produksi sudah tidak mengarah ke domain lama.
+- URL uji yang tidak ada mengembalikan 404. CSS produksi HTTP 200, gzip sekitar 9,4 KB, cache satu minggu (berbeda dengan aturan satu tahun repo tetapi tetap memiliki cache).
+- Belum dapat menyimpulkan peringkat kata kunci, indeks seluruh halaman, atau Core Web Vitals terkini dari audit ini. Data Search Console dan pengukuran performa terpisah diperlukan. Tidak ada jaminan nomor satu.
+
+## Urutan Perbaikan Disarankan
+- Rapikan domain HTTPS/non-www dan route percobaan, kemudian metadata pendaftaran serta pagination, lalu isi kontak dan informasi pendidikan. Article/Breadcrumb structured data dapat menjadi peningkatan lanjutan, bukan penghambat pengindeksan utama.
+
+# Perbaikan Hasil Audit SEO — 25 Oktober 2026
+
+## Implementasi
+- Menambahkan middleware global App\Support\CanonicalDomain setelah middleware bawaan. Aktif secara default jika APP_ENV=production, dapat dikendalikan SEO_REDIRECT_DOMAIN. Untuk host domain SEO dan www-nya, HTTP/www dialihkan ke SEO_URL; path/query dipertahankan, GET/HEAD 301, metode lain 308 agar body/metode tidak hilang. Localhost dan host lain tidak dialihkan. Redirect ini berlaku pada request aplikasi; aturan static assets tetap milik web server.
+- Konfigurasi SEO_URL default https://ppsyafaaturrasul.com. Tidak mempercayai X-Forwarded-Proto dari sumber sembarang. Bila hosting memakai TLS termination/proxy, trusted proxy harus dikonfigurasi berdasarkan infrastruktur sebenarnya sebelum mengaktifkan redirect; dapat mematikan sementara dengan SEO_REDIRECT_DOMAIN=false jika perlu. Belum diuji pada server produksi setelah deploy.
+- Route /lagibelajar dihapus; /beranda menjadi redirect permanen ke /. File view/demo tidak dihapus.
+- Metadata pendaftaran: judul khusus MTs/MA, deskripsi, canonical, lang=id, robots index/follow. Halaman pendaftaran masuk sitemap (enam URL statis sekarang). Layout standalone lainnya diberi noindex/follow untuk layanan formulir.
+- Pagination berita/fasilitas/guru memakai view publik dengan a href untuk prev/next dan wire:navigate. Path paginator ditetapkan ke named route supaya tautan absolut konsisten dan metadata diperbarui saat navigasi halaman.
+- scopePublished sekarang mensyaratkan status published DAN published_at <= now, dipakai bersama oleh listing, detail, homepage dan sitemap. Test membuktikan berita masa depan 404 lalu tersedia setelah waktunya lewat.
+- Detail berita mendapatkan JSON-LD NewsArticle dari konten aktual: headline, deskripsi, tanggal, publisher, author/image jika diisi. OG type menjadi article.
+- Pesan pengisian pengaturan yang semula tampil di homepage diganti arahan pengunjung ke halaman kontak. Tidak mengisi data kontak, berita, atau klaim pendidikan palsu. Data alamat lengkap/kontak/jam layanan diminta melalui pertanyaan pengguna dan masih menunggu.
+
+## Validasi dan Deploy
+- SiteSeoTest, HomePageTest, SitePagesTest, SiteLivewireTest, BeritaAdminTest: 89 passed, 380 assertions dengan SQLite :memory:.
+- vendor/bin/pint --dirty dan npm run build berhasil. Tidak mengubah dependensi atau modul Rapor.
+- Belum push/deploy. Setelah deploy, pastikan APP_ENV=production, APP_DEBUG=false, SEO_URL=https://ppsyafaaturrasul.com (atau default), jalankan php artisan optimize:clear lalu php artisan optimize; sinkronkan build/images/robots.txt ke public_html seperti prosedur hosting sebelumnya.
+- Verifikasi hosting: HTTP dan www harus 301 ke domain HTTPS utama; domain HTTPS utama tetap 200 tanpa loop; /lagibelajar 404, /beranda 301, /sitemap.xml berisi pendaftaran dan berita yang sudah terbit. Jika memakai proxy TLS, periksa konfigurasi proxy sebelum rollout redirect.
+- Tidak menjanjikan peringkat teratas. Konten program pendidikan, berita faktual, informasi kontak, Search Console, dan performa lapangan tetap perlu pemeliharaan; full suite belum dijalankan (baseline kegagalan starter routes terdahulu di luar scope).

@@ -78,7 +78,7 @@
 
             @if ($fasilitasList->hasPages())
                 <div class="mt-10">
-                    {{ $fasilitasList->links() }}
+                    {{ $fasilitasList->links('livewire.site.pagination') }}
                 </div>
             @endif
         @endif

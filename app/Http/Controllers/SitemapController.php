@@ -14,10 +14,10 @@ class SitemapController extends Controller
         $root = $document->createElementNS('http://www.sitemaps.org/schemas/sitemap/0.9', 'urlset');
         $document->appendChild($root);
         $paths = [];
-        foreach (['home', 'berita.index', 'fasilitas.index', 'guru.index', 'kontak.index'] as $name) {
+        foreach (['home', 'berita.index', 'fasilitas.index', 'guru.index', 'kontak.index', 'pendaftaran'] as $name) {
             $paths[] = ['path' => route($name, [], false), 'modified' => null];
         }
-        foreach (Berita::published()->where('published_at', '<=', now())->select(['slug', 'updated_at'])->cursor() as $berita) {
+        foreach (Berita::published()->select(['slug', 'updated_at'])->cursor() as $berita) {
             $paths[] = ['path' => route('berita.show', ['slug' => $berita->slug], false), 'modified' => $berita->updated_at?->toAtomString()];
         }
         foreach ($paths as $path) {

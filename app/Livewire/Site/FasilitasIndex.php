@@ -25,7 +25,7 @@ class FasilitasIndex extends Component
         return view('livewire.site.fasilitas-index', [
             'fasilitasList' => Fasilitas::aktif()
                 ->with('fotos')
-                ->paginate(9),
+                ->paginate(9)->withPath(route('fasilitas.index')),
         ]);
     }
 }

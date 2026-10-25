@@ -257,6 +257,7 @@
                 <div class="flex flex-col gap-2 p-6">
                     <h3 class="text-2xl font-bold text-gray-900 dark:text-white">Pondok Putri</h3>
                     <p class="text-gray-600 dark:text-gray-400">Pondok Pesantren Syafa'aturrasul</p>
+                    <p class="text-sm leading-relaxed text-gray-600 dark:text-gray-300">{{ config('pesantren.locations.putri.address') }}</p>
                 </div>
                 <iframe src="https://www.google.com/maps?q=-0.5124461,101.577084&amp;z=16&amp;output=embed"
                     title="Peta lokasi Pondok Putri Syafa'aturrasul" class="w-full h-72 sm:h-80 border-0"
@@ -273,6 +274,7 @@
                 <div class="flex flex-col gap-2 p-6">
                     <h3 class="text-2xl font-bold text-gray-900 dark:text-white">Pondok Putra</h3>
                     <p class="text-gray-600 dark:text-gray-400">Ponpes Syafa'aturrasul 2 Putra</p>
+                    <p class="text-sm leading-relaxed text-gray-600 dark:text-gray-300">{{ config('pesantren.locations.putra.address') }}</p>
                 </div>
                 <iframe src="https://www.google.com/maps?q=-0.415269,101.6124704&amp;z=16&amp;output=embed"
                     title="Peta lokasi Pondok Putra Syafa'aturrasul" class="w-full h-72 sm:h-80 border-0"
@@ -340,7 +342,7 @@
                         @if (!filled($lembaga['alamat']) && !filled($lembaga['telepon']) && !filled($lembaga['whatsapp']) && !filled($lembaga['email']))
                             <li>
                                 <p class="text-xs font-semibold uppercase tracking-wider text-green-100 mb-1">Kontak</p>
-                                <p>Informasi kontak dapat diisi melalui menu Pengaturan → Kontak Lembaga.</p>
+                                <x-site-contacts />
                             </li>
                         @endif
                     </ul>

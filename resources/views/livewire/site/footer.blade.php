@@ -46,9 +46,10 @@
                 <h2 class="text-white font-bold mb-4">Kontak</h2>
                 <ul class="space-y-2 text-sm">
                     <li>Email: {{ filled($email) ? $email : 'syafaaturrasultatausaha@gmail.com' }}</li>
-                    <li>Telp:
-                        {{ filled($telepon) ? $telepon : (filled($whatsapp) ? $whatsapp : '+6285259875754') }}
-                    </li>
+                    @if (filled($telepon) || filled($whatsapp))
+                        <li>Telp: {{ filled($telepon) ? $telepon : $whatsapp }}</li>
+                    @endif
+                    <li><x-site-contacts /></li>
                     <li>{{ filled($alamat) ? $alamat : 'KUANTAN SINGINGI, RIAU' }}</li>
                 </ul>
             </div>

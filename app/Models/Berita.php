@@ -120,8 +120,8 @@ class Berita extends Model
     /**
      * Scope only published news.
      */
-    public function scopePublished($query)
+    public function scopePublished(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
     {
-        return $query->where('status', 'published');
+        return $query->where('status', 'published')->where('published_at', '<=', now());
     }
 }

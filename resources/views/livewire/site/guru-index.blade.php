@@ -53,7 +53,7 @@
 
             @if ($gurus->hasPages())
                 <div class="mt-10">
-                    {{ $gurus->links() }}
+                    {{ $gurus->links('livewire.site.pagination') }}
                 </div>
             @endif
         @endif
