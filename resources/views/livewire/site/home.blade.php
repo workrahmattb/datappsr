@@ -67,6 +67,12 @@
         </div>
     </section>
 
+    <figure aria-label="Profil Pondok Pesantren Syafa'aturrasul" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-14">
+        <x-site-image path="images/profil-pondok-syafaaturrasul.webp" :asset="true" sizes="(min-width: 1280px) 1216px, calc(100vw - 48px)"
+            alt="Pondok Pesantren Syafa'aturrasul, Kuantan Singingi, Riau — logo pondok, bangunan, serta foto bersama santri dan santriwati"
+            class="block w-full h-auto rounded-2xl shadow-sm" />
+    </figure>
+
     <!-- Fasilitas -->
     @if ($fasilitasList->isNotEmpty())
         <section class="bg-white dark:bg-gray-800 border-y border-gray-100 dark:border-gray-700">
@@ -88,8 +94,8 @@
                             wire:key="fasilitas-{{ $fasilitas->id }}"
                             class="group bg-gray-50 dark:bg-gray-700/40 rounded-xl overflow-hidden shadow-sm hover:shadow-lg border border-gray-100 dark:border-gray-700 transition">
                             @if ($fasilitas->gambar)
-                                <img src="{{ Storage::url($fasilitas->gambar) }}" alt="{{ $fasilitas->nama }}"
-                                    class="w-full h-44 object-cover">
+                                <x-site-image :path="$fasilitas->gambar" :alt="$fasilitas->nama" sizes="(min-width: 768px) 400px, calc(100vw - 48px)"
+                                    class="w-full h-44 object-cover" />
                             @else
                                 <div class="w-full h-44 bg-emerald-50 dark:bg-gray-700 flex items-center justify-center">
                                     <svg class="w-10 h-10 text-emerald-500" fill="none" stroke="currentColor"
@@ -140,8 +146,8 @@
                         wire:key="guru-{{ $guru->id }}"
                         class="group bg-white dark:bg-gray-800 rounded-xl p-6 text-center shadow-sm hover:shadow-lg border border-gray-100 dark:border-gray-700 transition">
                         @if ($guru->foto)
-                            <img src="{{ Storage::url($guru->foto) }}" alt="{{ $guru->name }}"
-                                class="w-20 h-20 rounded-full object-cover mx-auto mb-4 border-2 border-green-100 dark:border-gray-600">
+                            <x-site-image :path="$guru->foto" :alt="$guru->name" sizes="80px"
+                                class="w-20 h-20 rounded-full object-cover mx-auto mb-4 border-2 border-green-100 dark:border-gray-600" />
                         @else
                             <div
                                 class="w-20 h-20 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center text-green-700 dark:text-green-400 font-bold text-2xl mx-auto mb-4">
@@ -176,8 +182,8 @@
                     <a href="{{ route('berita.show', $berita->slug) }}" wire:navigate wire:key="berita-{{ $berita->id }}"
                         class="group bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-sm hover:shadow-lg border border-gray-100 dark:border-gray-700 transition">
                         @if ($berita->gambar)
-                            <img src="{{ Storage::url($berita->gambar) }}" alt="{{ $berita->judul }}"
-                                class="w-full h-44 object-cover">
+                            <x-site-image :path="$berita->gambar" :alt="$berita->judul" sizes="(min-width: 768px) 400px, calc(100vw - 48px)"
+                                class="w-full h-44 object-cover" />
                         @else
                             <div
                                 class="w-full h-44 bg-gradient-to-br from-green-100 to-emerald-200 dark:from-gray-700 dark:to-gray-600 flex items-center justify-center">

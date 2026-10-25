@@ -3203,3 +3203,48 @@ Dipasang **satu kali** di `resources/views/layouts/public.blade.php` (setelah `<
 - HomePageTest: 10 passed, 46 assertions; termasuk pemeriksaan DOM bahwa section tepat sebelum lokasi adalah berita.
 - `vendor/bin/pint --dirty`: PASS.
 - `npm run build`: berhasil.
+
+# Changelog — Sesi 24 Oktober 2026 — Banner Pondok Setelah Visi Misi
+
+## Ringkasan Perubahan
+- Menambahkan banner WebP yang diberikan pengguna tepat di bawah Visi Misi dan sebelum Fasilitas.
+- Gambar asli disalin ke `public/images/profil-pondok-syafaaturrasul.webp`, ditampilkan utuh dengan lebar responsif dan rasio asli 1600 × 383, alt deskriptif, lazy loading, dan decoding async.
+
+## File yang Dimodifikasi
+- `public/images/profil-pondok-syafaaturrasul.webp` (baru)
+- `resources/views/livewire/site/home.blade.php`
+- `tests/Feature/HomePageTest.php`
+- Aset build Vite dan `MEMORY.md`.
+
+## Hasil Validasi
+- HomePageTest: 11 passed, 52 assertions. Test baru memeriksa posisi banner tepat setelah Visi Misi, URL aset, alt, dan dimensi terhadap file asli.
+- `vendor/bin/pint --dirty`: PASS.
+- `npm run build`: berhasil.
+
+# Changelog — Sesi 25 Oktober 2026 — Optimasi Performa Website Publik
+
+## Dasar dan Lingkup
+- Menindaklanjuti PDF PageSpeed pengguna tanggal 22 Oktober: performance mobile 73, LCP 10 detik, rekomendasi utama optimasi gambar dan aset pemblokir render. Angka tersebut adalah laporan sebelum perubahan, bukan hasil pengukuran baru.
+- Fokus halaman publik/utama. Modul Rapor tetap ditangguhkan. Tidak mengubah dependensi atau data santri, dan belum melakukan deploy produksi.
+
+## Perubahan
+- Memisahkan CSS publik `resources/css/site.css` dari CSS aplikasi admin melalui input Vite khusus. Layout publik tidak lagi memuat bundel admin maupun entry JavaScript kosong; Livewire tetap dimuat.
+- Menambahkan `App\Support\ResponsiveImage`, komponen Blade `site-image`, dan command `site:optimize-images`. Varian WebP dibuat di luar request pengunjung, pada lebar 320/640/960/1280/1920 yang dibatasi ukuran asli. File asli tidak diganti.
+- Optimasi dibatasi ke `public/images` dan public disk lokal `konten`; dokumen siswa tidak diproses. File hilang/rusak, gambar terlalu besar, JPEG berorientasi EXIF selain normal, dan WebP animasi dilewati. Varian kedaluwarsa tidak dipakai; URL varian diberi versi timestamp.
+- Hero pertama memakai eager loading dan fetchpriority high; gambar lainnya lazy loading. Banner, fasilitas, guru, dan berita di homepage memakai srcset, sizes, serta dimensi intrinsik.
+- Polling carousel menggunakan `wire:poll.6s.visible` sehingga berhenti ketika tidak terlihat. Memperbaiki hierarki heading footer.
+- `.htaccess` menambahkan kompresi untuk respons teks dan cache immutable satu tahun khusus nama CSS/JS hasil build dengan hash. Memerlukan modul Apache/LiteSpeed yang sesuai; tidak otomatis berlaku pada Nginx.
+
+## Hasil Lokal dan Validasi
+- Build publik: CSS 56,76 KB (gzip 9,28 KB), dibanding bundel aplikasi 268,02 KB (gzip 34,40 KB). Pengurangan ukuran CSS mentah sekitar 79%.
+- Banner asli sekitar 800 KiB; varian 640px sekitar 26 KiB dan 1600px sekitar 100 KiB. Pilihan ukuran unduhan bergantung viewport dan kepadatan piksel perangkat.
+- `site:optimize-images --no-interaction` berhasil menghasilkan varian aset publik dan carousel lokal.
+- Pemeriksaan browser sesi sebelumnya: tampilan desktop/mobile 390px, gambar responsif termuat, menu dan navigasi Berita bekerja, tanpa error JavaScript pada pemeriksaan tersebut.
+- Tes terfokus `SitePerformanceTest`, `HomePageTest`, `SiteLivewireTest`, dan `SitePagesTest`: **65 passed, 258 assertions** dengan `APP_ENV=testing DB_CONNECTION=sqlite DB_DATABASE=:memory:`. Meliputi sumber asli tetap utuh, ukuran responsif, tidak memperbesar gambar kecil, fallback, varian kedaluwarsa, pembatasan folder, opsi command invalid, dan prioritas hero.
+- `vendor/bin/pint --dirty`: PASS. `npm run build`: berhasil. Seluruh suite tidak dijalankan ulang; kegagalan baseline terdahulu di luar lingkup ini tidak dinyatakan selesai.
+
+## Penerapan di Hosting
+- Sertakan source, `public/build`, serta aset/varian `public/images` dalam deploy. Setelah file konten tersedia di server, jalankan `php artisan site:optimize-images --no-interaction`; PHP GD dengan dukungan WebP diperlukan.
+- Command dapat dijalankan ulang dengan aman, dan perlu dijalankan kembali setelah unggah/perubahan gambar konten. Belum ada otomatisasi saat upload. Tanpa varian, gambar asli tetap menjadi fallback.
+- Pastikan konfigurasi produksi `APP_ENV=production`, `APP_DEBUG=false`, dan `APP_URL` sesuai domain. Setelah konfigurasi benar, jalankan `php artisan optimize --no-interaction`. Untuk build dari source gunakan `npm run build`.
+- Skor PageSpeed dan LCP setelah perubahan **belum diukur di produksi**. Jalankan ulang setelah deploy; konfigurasi kompresi/cache hosting juga perlu diverifikasi pada respons server sebenarnya.

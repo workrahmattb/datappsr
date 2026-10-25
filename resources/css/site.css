@@ -1,0 +1,17 @@
+@import 'tailwindcss' source(none);
+
+@source '../views/livewire/site';
+@source '../views/layouts/public.blade.php';
+@source '../views/components/site-image.blade.php';
+@source '../views/livewire/cari-siswa-table.blade.php';
+@source '../views/livewire/foto-table.blade.php';
+@source '../views/livewire/uang-masuk-table.blade.php';
+@source '../../vendor/livewire/livewire/src/Features/SupportPagination/views';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif;
+}
+
+[x-cloak] { display: none !important; }

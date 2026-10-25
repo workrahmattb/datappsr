@@ -2,13 +2,13 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div class="grid md:grid-cols-4 gap-8 mb-12">
             <div>
-                <h4 class="text-white font-bold mb-4">PPSR 2026</h4>
+                <h2 class="text-white font-bold mb-4">PPSR 2026</h2>
                 <p class="text-sm">Pondok Pesantren Syafa'aturrasul — Kuantan Singingi, Riau. Mendidik generasi Qur'ani
                     yang berilmu, berakhlak, dan mandiri.</p>
             </div>
 
             <div>
-                <h4 class="text-white font-bold mb-4">Tautan</h4>
+                <h2 class="text-white font-bold mb-4">Tautan</h2>
                 <ul class="space-y-2 text-sm">
                     @foreach ($menu as $item)
                         <li>
@@ -21,7 +21,7 @@
             </div>
 
             <div>
-                <h4 class="text-white font-bold mb-4">Layanan</h4>
+                <h2 class="text-white font-bold mb-4">Layanan</h2>
                 <ul class="space-y-2 text-sm">
                     <li>
                         <a href="{{ route('pendaftaran') }}" wire:navigate class="hover:text-green-400 transition">Formulir
@@ -43,7 +43,7 @@
             </div>
 
             <div>
-                <h4 class="text-white font-bold mb-4">Kontak</h4>
+                <h2 class="text-white font-bold mb-4">Kontak</h2>
                 <ul class="space-y-2 text-sm">
                     <li>Email: {{ filled($email) ? $email : 'syafaaturrasultatausaha@gmail.com' }}</li>
                     <li>Telp:

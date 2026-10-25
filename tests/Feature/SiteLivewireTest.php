@@ -93,7 +93,7 @@ test('carousel memutar slide dan berputar kembali ke awal', function () {
 
     Livewire::test(Carousel::class)
         ->assertSet('aktif', 0)
-        ->assertSeeHtml('wire:poll.6s="berikut"')
+        ->assertSeeHtml('wire:poll.6s.visible="berikut"')
         ->call('berikut')->assertSet('aktif', 1)
         ->call('berikut')->assertSet('aktif', 2)
         ->call('berikut')->assertSet('aktif', 0)
@@ -106,7 +106,7 @@ test('carousel tidak berputar sendiri bila hanya ada satu slide', function () {
 
     Livewire::test(Carousel::class)
         ->assertSet('aktif', 0)
-        ->assertDontSeeHtml('wire:poll.6s="berikut"')
+        ->assertDontSeeHtml('wire:poll.6s.visible="berikut"')
         ->call('berikut')->assertSet('aktif', 0)
         ->call('sebelumnya')->assertSet('aktif', 0);
 });
@@ -118,7 +118,7 @@ test('carousel hanya memuat slide yang aktif', function () {
     Livewire::test(Carousel::class)
         ->assertSee('Slide Tampil')
         ->assertDontSee('Slide Tersembunyi')
-        ->assertDontSeeHtml('wire:poll.6s="berikut"');
+        ->assertDontSeeHtml('wire:poll.6s.visible="berikut"');
 });
 
 test('carousel memakai rasio hero yang konsisten di semua slide', function () {

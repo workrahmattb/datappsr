@@ -7,7 +7,7 @@
     <title>{{ $title ?? "Pondok Pesantren Syafa'aturrasul" }}</title>
     <meta name="description"
         content="{{ $description ?? "Pondok Pesantren Syafa'aturrasul — MTs & MA Putra/Putri, Kuantan Singingi, Riau." }}">
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @vite('resources/css/site.css')
     @livewireStyles
     @stack('styles')
 </head>

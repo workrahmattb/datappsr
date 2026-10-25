@@ -32,6 +32,23 @@ test('halaman utama dapat diakses', function () {
         ->assertSee("Pondok Pesantren Syafa'aturrasul", false);
 });
 
+test('banner pondok tampil tepat setelah visi misi dengan rasio gambar asli', function () {
+    $response = $this->get(route('home'))->assertSuccessful();
+    $document = new DOMDocument;
+    @$document->loadHTML('<?xml encoding="UTF-8">'.$response->getContent());
+    $xpath = new DOMXPath($document);
+    $image = $xpath->query('//section[@aria-labelledby="visi-misi-heading"]/following-sibling::*[1][self::figure]/img')->item(0);
+
+    expect($image)->not->toBeNull();
+    expect($image->getAttribute('src'))->toBe(asset('images/profil-pondok-syafaaturrasul.webp'))
+        ->and($image->getAttribute('alt'))->not->toBeEmpty();
+
+    $dimensions = getimagesize(public_path('images/profil-pondok-syafaaturrasul.webp'));
+
+    expect((int) $image->getAttribute('width'))->toBe($dimensions[0])
+        ->and((int) $image->getAttribute('height'))->toBe($dimensions[1]);
+});
+
 test('berita dan pengumuman berada tepat sebelum lokasi pondok', function () {
     Berita::factory()->published()->create();
 

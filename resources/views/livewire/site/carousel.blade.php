@@ -4,7 +4,7 @@
     <section
         class="relative overflow-hidden rounded-2xl md:rounded-3xl bg-gray-900 shadow-xl ring-1 ring-black/5 aspect-[3/2] sm:aspect-[2/1] lg:aspect-[21/9]"
         aria-label="Sorotan pondok pesantren"
-        @if ($this->jumlahSlide() > 1) wire:poll.6s="berikut" @endif>
+        @if ($this->jumlahSlide() > 1) wire:poll.6s.visible="berikut" @endif>
         @foreach ($slides as $i => $slide)
             <div wire:key="slide-{{ $i }}"
                 @class([
@@ -12,10 +12,10 @@
                     'opacity-100 z-10' => $i === $aktif,
                     'opacity-0 z-0 pointer-events-none' => $i !== $aktif,
                 ])>
-                <img src="{{ Storage::url($slide['gambar']) }}"
-                    alt="{{ $slide['judul'] ?: 'Sorotan pondok pesantren' }}"
-                    @if ($i > 0) loading="lazy" @endif
-                    class="absolute inset-0 w-full h-full object-cover object-center">
+                <x-site-image :path="$slide['gambar']"
+                    :alt="$slide['judul'] ?: 'Sorotan pondok pesantren'"
+                    :priority="$i === 0" sizes="(min-width: 1280px) 1216px, calc(100vw - 48px)"
+                    class="absolute inset-0 w-full h-full object-cover object-center" />
 
                 {{-- Gradasi lembut: cukup untuk keterbacaan teks tanpa kotak kaca --}}
                 <div class="absolute inset-0 bg-gradient-to-t from-black/75 via-black/25 to-transparent"></div>
