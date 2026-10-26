@@ -67,7 +67,7 @@
 
                             <div class="border-t pt-4 dark:border-gray-700">
                                 <p class="text-sm text-gray-600 dark:text-gray-400 font-semibold">Silahkan klik Tombol dibawah ini</p>
-                                <a href="https://chat.whatsapp.com/HKmThd3bFKn4WXBQvs5kYn"
+                                <a href="https://chat.whatsapp.com/FMyYh8xiajs6YFDaZwCEmr?s=cl&amp;p=a&amp;mlu=4&amp;ilr=4"
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     class="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg transition duration-200 transform hover:scale-105 flex items-center justify-center gap-2 dark:active:bg-green-800">

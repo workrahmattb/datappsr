@@ -3401,3 +3401,8 @@ Dipasang **satu kali** di `resources/views/layouts/public.blade.php` (setelah `<
 ## Favicon Halaman Publik — 26 Oktober 2026
 - Memasang favicon PNG dan apple-touch-icon menggunakan public/favicon.png yang sudah tersedia pada layouts.public. Berlaku untuk homepage dan halaman publik lain yang memakai layout tersebut; URL stabil tanpa query acak.
 - Test memeriksa keberadaan file serta tag favicon pada homepage dan kontak. SiteSeoTest: 10 passed, 79 assertions; Pint dirty lulus. Tidak memerlukan build ulang CSS/JS. Belum deploy; pastikan favicon.png juga tersedia di public_html saat deploy hosting.
+
+## Tautan Grup WhatsApp Setelah Pendaftaran — 26 Oktober 2026
+- Mengganti tautan tombol “Masuk WA Grup Ponpes Syafa'aturrasul” pada tampilan pendaftaran berhasil ke undangan FMyYh8xiajs6YFDaZwCEmr dengan parameter s=cl&p=a&mlu=4&ilr=4 sesuai pengguna. Parameter dipertahankan dan ampersand di-escape untuk HTML.
+- Tautan tetap membuka tab baru dengan noopener noreferrer. Tidak bergabung ke grup atau mengirim pesan.
+- PendaftaranGroupLinkTest menjalankan submit dengan data/file palsu dan storage/database pengujian, memeriksa tautan hanya pada sukses, URL lengkap, serta tidak ada undangan lama: 1 passed, 8 assertions. Pint dirty lulus. Belum deploy.
