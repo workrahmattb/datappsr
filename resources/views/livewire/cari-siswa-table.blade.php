@@ -118,10 +118,12 @@
                             </td>
                             <td class="px-6 py-3 text-center">
                                 @if($student->is_pendaftaran)
+                                    @if($daftarUlangDibuka)
                                     <a href="{{ route('daftar-ulang.form', $student->id) }}"
                                        class="inline-block px-3 py-1.5 text-xs font-semibold text-white bg-amber-600 hover:bg-amber-700 rounded-md transition-colors duration-200">
                                         Daftar Ulang
                                     </a>
+                                @endif
                                 @else
                                     <a href="{{ route('update-foto.form', ['type' => $student->student_type, 'id' => $student->id]) }}"
                                        class="inline-block px-3 py-1.5 text-xs font-semibold text-white bg-green-600 hover:bg-green-700 rounded-md transition-colors duration-200">
@@ -185,10 +187,12 @@
 
                     <div class="mt-3 pt-2 border-t border-gray-200 dark:border-gray-600">
                         @if($student->is_pendaftaran)
-                            <a href="{{ route('daftar-ulang.form', $student->id) }}"
+                            @if($daftarUlangDibuka)
+                                    <a href="{{ route('daftar-ulang.form', $student->id) }}"
                                class="block w-full text-center px-3 py-2 text-xs font-semibold text-white bg-amber-600 hover:bg-amber-700 rounded-md transition-colors duration-200">
                                 Daftar Ulang
                             </a>
+                                @endif
                         @else
                             <a href="{{ route('update-foto.form', ['type' => $student->student_type, 'id' => $student->id]) }}"
                                class="block w-full text-center px-3 py-2 text-xs font-semibold text-white bg-green-600 hover:bg-green-700 rounded-md transition-colors duration-200">

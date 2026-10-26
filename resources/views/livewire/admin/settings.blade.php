@@ -16,6 +16,26 @@
             </div>
         @endif
 
+        <form wire:submit="saveAdmissionPeriod" class="mb-6 flex flex-col gap-4 rounded-xl border border-zinc-200 bg-white p-6 dark:bg-zinc-900 dark:text-white">
+            <h2 class="text-lg font-bold">Periode Pendaftaran — {{ $admissionYear }}</h2>
+            <p class="text-sm text-zinc-500">Pilih tahap penerimaan, lalu simpan. Pengaturan berlaku untuk tahun ajaran aktif yang sudah disimpan.</p>
+            <div class="grid gap-3 sm:grid-cols-2">
+                @foreach (\App\Support\AdmissionPeriod::STAGES as $value => $label)
+                    <label wire:key="stage-{{ $value }}" class="flex cursor-pointer items-start gap-3 rounded-lg border p-4 {{ $admissionStage === $value ? 'border-emerald-600 bg-emerald-50 dark:bg-emerald-950' : 'border-zinc-200' }}">
+                        <input type="radio" wire:model.live="admissionStage" value="{{ $value }}" class="mt-1 accent-emerald-600">
+                        <span class="flex flex-col gap-1">
+                            <strong class="text-sm">{{ $label }}</strong>
+                            <span class="text-xs">Pendaftaran {{ in_array($value, ['registration', 'both']) ? 'dibuka' : 'ditutup' }}</span>
+                            <span class="text-xs">Daftar ulang {{ in_array($value, ['reregistration', 'both']) ? 'dibuka' : 'ditutup' }}</span>
+                        </span>
+                    </label>
+                @endforeach
+            </div>
+            @error('admissionStage') <p class="text-sm text-red-600">{{ $message }}</p> @enderror
+            <p class="text-xs text-zinc-500">Jika belum diatur, keduanya tetap dibuka seperti sebelumnya. Menutup periode tidak menghapus data yang sudah masuk.</p>
+            <flux:button type="submit" variant="primary" wire:loading.attr="disabled" wire:target="saveAdmissionPeriod">Simpan periode penerimaan</flux:button>
+        </form>
+
         <!-- Card: Tahun Ajaran Aktif -->
         <div class="bg-white rounded-xl shadow-sm border border-zinc-200 overflow-hidden">
             <div class="px-6 py-5 border-b border-zinc-100 bg-gradient-to-r from-emerald-50 to-white">

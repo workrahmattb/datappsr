@@ -58,10 +58,12 @@
                         <td class="px-6 py-3 text-gray-600 dark:text-gray-300">{{ $student->jenjang_pendidikan ?? '-' }}</td>
                         <td class="px-6 py-3 text-center">
                             @if(isset($student->status_pendaftaran) && $student->status_pendaftaran === 'pending')
-                                <a href="{{ route('daftar-ulang.form', $student->id) }}" 
+                                @if($daftarUlangDibuka)
+                                    <a href="{{ route('daftar-ulang.form', $student->id) }}"
                                    class="inline-block px-3 py-1.5 text-xs font-semibold text-white bg-green-600 hover:bg-green-700 rounded-md transition-colors duration-200">
                                     Daftar Ulang
                                 </a>
+                                @endif
                             @else
                                 <span class="text-xs text-gray-400 dark:text-gray-500">-</span>
                             @endif
@@ -90,10 +92,12 @@
                             <p class="font-bold text-gray-900 dark:text-white">{{ $student->nama ?? '-' }}</p>
                         </div>
                         @if(isset($student->status_pendaftaran) && $student->status_pendaftaran === 'pending')
-                            <a href="{{ route('daftar-ulang.form', $student->id) }}" 
+                            @if($daftarUlangDibuka)
+                                    <a href="{{ route('daftar-ulang.form', $student->id) }}"
                                class="inline-block px-3 py-1.5 text-xs font-semibold text-white bg-green-600 hover:bg-green-700 rounded-md transition-colors duration-200 whitespace-nowrap">
                                 Daftar Ulang
                             </a>
+                                @endif
                         @endif
                     </div>
 

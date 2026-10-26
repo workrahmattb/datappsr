@@ -78,6 +78,7 @@ class PendaftaranTable extends Component
         }
 
         return view('livewire.pendaftaran-table', [
+            'daftarUlangDibuka' => \App\Support\AdmissionPeriod::reregistrationOpen(),
             'students' => $students,
             'totalItems' => $totalItems,
             'currentPage' => $page,

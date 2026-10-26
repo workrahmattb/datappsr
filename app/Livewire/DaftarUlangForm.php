@@ -3,51 +3,153 @@
 namespace App\Livewire;
 
 use App\Models\Pendaftaran;
-use App\Models\Mtsputri;
-use App\Models\Mtsputra;
-use App\Models\Maputri;
-use App\Models\Maputra;
+use App\Support\AdmissionPeriod;
+use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 use Livewire\WithFileUploads;
-use Illuminate\Support\Facades\DB;
 
 class DaftarUlangForm extends Component
 {
     use WithFileUploads;
 
+    #[\Livewire\Attributes\Locked]
     public $pendaftaranId;
+
     public $currentStep = 1; // 1 = Upload Bukti Transfer, 2 = Form Lengkap
+
     public $submitted = false;
+
     public $jenjangPendidikan = '';
 
     // Step 1: Bukti Transfer
     public $fototransfer;
+
     public $fototransferPath = null;
 
     // Form data (Step 2)
-    public $nama, $tempat_lahir, $tanggal_lahir, $nik, $kk, $nama_kk;
-    public $nisn, $nis, $anak_ke, $jumlah_saudara, $tahun_ajaran;
-    public $jenjang_pendidikan_sebelumnya, $status_sekolah_sebelumnya;
-    public $nama_sekolah_sebelumnya, $npsn_sekolah_sebelumnya;
-    public $alamat_sekolah_sebelumnya, $kecamatan_sekolah_sebelumnya;
-    public $kabupaten_sekolah_sebelumnya, $provinsi_sekolah_sebelumnya;
-    public $nik_ayah, $nama_ayah, $tempat_lahir_ayah, $tanggal_lahir_ayah;
-    public $status_ayah, $no_hp_ayah, $pendidikan_ayah, $pekerjaan_ayah, $penghasilan_ayah;
-    public $nik_ibu, $nama_ibu, $tempat_lahir_ibu, $tanggal_lahir_ibu;
-    public $status_ibu, $no_hp_ibu, $pendidikan_ibu, $pekerjaan_ibu, $penghasilan_ibu;
-    public $status_milik, $rt, $rw, $desa, $kecamatan, $kabupaten, $provinsi, $kode_pos;
-    public $nik_wali, $nama_wali, $tempat_lahir_wali, $tanggal_lahir_wali;
-    public $no_hp_wali, $pendidikan_wali, $pekerjaan_wali, $penghasilan_wali;
-    public $fotokk, $fotoakta;
+    public $nama;
+
+    public $tempat_lahir;
+
+    public $tanggal_lahir;
+
+    public $nik;
+
+    public $kk;
+
+    public $nama_kk;
+
+    public $nisn;
+
+    public $nis;
+
+    public $anak_ke;
+
+    public $jumlah_saudara;
+
+    public $tahun_ajaran;
+
+    public $jenjang_pendidikan_sebelumnya;
+
+    public $status_sekolah_sebelumnya;
+
+    public $nama_sekolah_sebelumnya;
+
+    public $npsn_sekolah_sebelumnya;
+
+    public $alamat_sekolah_sebelumnya;
+
+    public $kecamatan_sekolah_sebelumnya;
+
+    public $kabupaten_sekolah_sebelumnya;
+
+    public $provinsi_sekolah_sebelumnya;
+
+    public $nik_ayah;
+
+    public $nama_ayah;
+
+    public $tempat_lahir_ayah;
+
+    public $tanggal_lahir_ayah;
+
+    public $status_ayah;
+
+    public $no_hp_ayah;
+
+    public $pendidikan_ayah;
+
+    public $pekerjaan_ayah;
+
+    public $penghasilan_ayah;
+
+    public $nik_ibu;
+
+    public $nama_ibu;
+
+    public $tempat_lahir_ibu;
+
+    public $tanggal_lahir_ibu;
+
+    public $status_ibu;
+
+    public $no_hp_ibu;
+
+    public $pendidikan_ibu;
+
+    public $pekerjaan_ibu;
+
+    public $penghasilan_ibu;
+
+    public $status_milik;
+
+    public $rt;
+
+    public $rw;
+
+    public $desa;
+
+    public $kecamatan;
+
+    public $kabupaten;
+
+    public $provinsi;
+
+    public $kode_pos;
+
+    public $nik_wali;
+
+    public $nama_wali;
+
+    public $tempat_lahir_wali;
+
+    public $tanggal_lahir_wali;
+
+    public $no_hp_wali;
+
+    public $pendidikan_wali;
+
+    public $pekerjaan_wali;
+
+    public $penghasilan_wali;
+
+    public $fotokk;
+
+    public $fotoakta;
+
     public $foto;
 
     public function mount($id)
     {
         $this->pendaftaranId = $id;
-        $pendaftaran = Pendaftaran::findOrFail($id);
+        if (! AdmissionPeriod::reregistrationOpen()) {
+            return;
+        }
+        $pendaftaran = Pendaftaran::where('tahun_ajaran', AdmissionPeriod::year())->findOrFail($id);
 
         if ($pendaftaran->status_pendaftaran === 'completed') {
             session()->flash('error', 'Pendaftaran sudah selesai dilakukan.');
+
             return redirect()->route('daftar-ulang.table');
         }
 
@@ -214,8 +316,15 @@ class DaftarUlangForm extends Component
 
     public function submitStep1()
     {
+        if (! AdmissionPeriod::reregistrationOpen()) {
+            return;
+        }
+        $registration = Pendaftaran::where('tahun_ajaran', AdmissionPeriod::year())
+            ->where('status_pendaftaran', 'pending')->findOrFail($this->pendaftaranId);
+        $this->tahun_ajaran = $registration->tahun_ajaran;
+        $this->jenjangPendidikan = $registration->jenjang_pendidikan;
         $this->validate($this->rulesStep1(), [], $this->messages());
-        
+
         try {
             // Simpan file bukti transfer ke storage
             $sanitizedNama = preg_replace('/[^A-Za-z0-9\-]/', '_', $this->nama);
@@ -232,7 +341,7 @@ class DaftarUlangForm extends Component
             $this->currentStep = 2;
             session()->flash('success', 'Bukti transfer berhasil diupload. Silakan lengkapi data pendaftaran.');
         } catch (\Exception $e) {
-            session()->flash('error', 'Gagal mengupload bukti transfer: ' . $e->getMessage());
+            session()->flash('error', 'Gagal mengupload bukti transfer: '.$e->getMessage());
         }
     }
 
@@ -252,6 +361,13 @@ class DaftarUlangForm extends Component
 
     public function submit()
     {
+        if (! AdmissionPeriod::reregistrationOpen()) {
+            return;
+        }
+        $registration = Pendaftaran::where('tahun_ajaran', AdmissionPeriod::year())
+            ->where('status_pendaftaran', 'pending')->findOrFail($this->pendaftaranId);
+        $this->tahun_ajaran = $registration->tahun_ajaran;
+        $this->jenjangPendidikan = $registration->jenjang_pendidikan;
         $this->validate($this->rulesStep2(), [], $this->messages());
 
         try {
@@ -329,7 +445,7 @@ class DaftarUlangForm extends Component
             $pendaftaran = Pendaftaran::findOrFail($this->pendaftaranId);
             $modelClass = $pendaftaran->getTargetModelClass();
 
-            if (!$modelClass) {
+            if (! $modelClass) {
                 throw new \Exception('Jenjang pendidikan tidak valid');
             }
 
@@ -346,12 +462,17 @@ class DaftarUlangForm extends Component
 
         } catch (\Exception $e) {
             DB::rollBack();
-            session()->flash('error', 'Terjadi kesalahan: ' . $e->getMessage());
+            session()->flash('error', 'Terjadi kesalahan: '.$e->getMessage());
         }
     }
 
     public function render()
     {
+        if (! AdmissionPeriod::reregistrationOpen()) {
+            return view('livewire.admission-closed', ['label' => 'Daftar ulang', 'year' => AdmissionPeriod::year()])
+                ->layout('layouts.standalone', ['title' => 'Daftar ulang ditutup', 'description' => 'Informasi periode penerimaan santri.']);
+        }
+
         return view('livewire.daftar-ulang-form')->layout('layouts.standalone');
     }
 }

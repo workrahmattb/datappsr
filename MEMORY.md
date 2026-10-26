@@ -3406,3 +3406,15 @@ Dipasang **satu kali** di `resources/views/layouts/public.blade.php` (setelah `<
 - Mengganti tautan tombol “Masuk WA Grup Ponpes Syafa'aturrasul” pada tampilan pendaftaran berhasil ke undangan FMyYh8xiajs6YFDaZwCEmr dengan parameter s=cl&p=a&mlu=4&ilr=4 sesuai pengguna. Parameter dipertahankan dan ampersand di-escape untuk HTML.
 - Tautan tetap membuka tab baru dengan noopener noreferrer. Tidak bergabung ke grup atau mengirim pesan.
 - PendaftaranGroupLinkTest menjalankan submit dengan data/file palsu dan storage/database pengujian, memeriksa tautan hanya pada sukses, URL lengkap, serta tidak ada undangan lama: 1 passed, 8 assertions. Pint dirty lulus. Belum deploy.
+
+## Kontrol Periode Penerimaan — 26 Oktober 2026
+- Menambahkan empat pilihan tahap pada Pengaturan → Periode Pendaftaran: awal penerimaan (pendaftaran buka/daftar ulang tutup), keduanya buka, penerimaan calon baru selesai (pendaftaran tutup/daftar ulang buka), dan semua proses selesai (keduanya tutup). Pilih tahap lalu Simpan periode penerimaan.
+- Tahap tersimpan di settings per tahun ajaran aktif. Tahun yang belum diatur mempertahankan perilaku sebelumnya: keduanya terbuka. Tidak mengubah database operasional atau memilih tahap atas nama admin. Pergantian tahun memuat pengaturan tahun tujuan; halaman admin lama tidak boleh menyimpan ke tahun yang telah berubah.
+- Pembatasan diterapkan pada render formulir/list publik, URL langsung, submit pendaftaran, upload tahap pertama daftar ulang, dan submit akhir. Setting dibaca segar agar formulir yang sudah dibuka tidak dapat mengirim setelah periode ditutup. Data lama tetap tersimpan.
+- Daftar ulang tetap menggunakan pending dan tahun ajaran aktif; ID Livewire dikunci. Tidak menambahkan aturan kelulusan/seleksi. Layout daftar ulang diperbaiki menjadi standalone karena layout default lama merujuk route dashboard yang tidak tersedia.
+- AdmissionPeriodTest dan PendaftaranGroupLinkTest: 11 passed, 71 assertions, database SQLite memory dan data palsu. Pint dirty dan npm run build berhasil. Full suite tidak dijalankan. Belum push/deploy; build terbaru perlu ikut disalin ke public_html pada hosting sesuai alur deployment sebelumnya.
+
+## Tombol Daftar Ulang pada Pencarian — 26 Oktober 2026
+- Tombol Daftar Ulang di CariSiswaTable dan PendaftaranTable disembunyikan ketika periode daftar ulang ditutup (tahap awal penerimaan dan semua proses selesai), pada tabel desktop dan kartu mobile. Data hasil pencarian tetap tampil; aksi Update Foto untuk siswa tetap seperti sebelumnya.
+- Status periode dibaca saat render, sehingga refresh/pencarian berikutnya mengikuti pengaturan terbaru. Proteksi akses langsung dan submit tetap menggunakan kontrol periode yang telah dibuat sebelumnya.
+- AdmissionPeriodTest: 14 passed, 95 assertions, mencakup empat tahap pada kedua tabel dan kedua tampilan serta perubahan periode saat komponen sudah terbuka. Pint dirty lulus. Tidak ada perubahan CSS/JS baru; tidak perlu build tambahan. Belum push/deploy.

@@ -3,10 +3,13 @@
 namespace App\Livewire\Admin;
 
 use App\Models\Setting;
+use App\Support\AdmissionPeriod;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
+use Livewire\Attributes\Layout;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 use Livewire\WithFileUploads;
-use Livewire\Attributes\Layout;
-use Illuminate\Support\Facades\Storage;
 
 #[Layout('admin.layout')]
 class Settings extends Component
@@ -14,11 +17,19 @@ class Settings extends Component
     use WithFileUploads;
 
     public string $tahunAjaranAktif = '';
+
+    public string $admissionStage = 'both';
+
+    #[Locked]
+    public string $admissionYear = '';
+
     public $headerImage;
+
     public $headerImagePreview = '';
 
     public function mount(): void
     {
+        $this->loadAdmissionPeriod();
         $this->tahunAjaranAktif = Setting::activeTahunAjaran();
         $this->headerImagePreview = Setting::value('header_image', 'images/psb.webp');
     }
@@ -75,9 +86,30 @@ class Settings extends Component
             'tahunAjaranAktif' => 'required|string|max:20',
         ]);
 
+        abort_unless(auth()->user()?->hasRole('admin'), 403);
         Setting::set('tahun_ajaran_aktif', $this->tahunAjaranAktif);
+        $this->loadAdmissionPeriod();
 
-        session()->flash('success', 'Tahun ajaran aktif berhasil diperbarui menjadi ' . $this->tahunAjaranAktif);
+        session()->flash('success', 'Tahun ajaran aktif berhasil diperbarui menjadi '.$this->tahunAjaranAktif);
+    }
+
+    protected function loadAdmissionPeriod(): void
+    {
+        $this->admissionYear = AdmissionPeriod::year();
+        $this->admissionStage = AdmissionPeriod::stage($this->admissionYear);
+    }
+
+    public function saveAdmissionPeriod(): void
+    {
+        abort_unless(auth()->user()?->hasRole('admin'), 403);
+        $this->validate(['admissionStage' => ['required', Rule::in(array_keys(AdmissionPeriod::STAGES))]]);
+        if ($this->admissionYear !== AdmissionPeriod::year()) {
+            $this->addError('admissionStage', 'Tahun ajaran aktif telah berubah. Muat ulang halaman sebelum menyimpan.');
+
+            return;
+        }
+        Setting::set(AdmissionPeriod::key($this->admissionYear), $this->admissionStage);
+        session()->flash('success', 'Periode penerimaan berhasil diperbarui.');
     }
 
     public function render()

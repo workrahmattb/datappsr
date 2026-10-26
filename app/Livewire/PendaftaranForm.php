@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use App\Models\Pendaftaran;
+use App\Support\AdmissionPeriod;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 
@@ -136,6 +137,10 @@ class PendaftaranForm extends Component
 
     public function submit()
     {
+        if (! AdmissionPeriod::registrationOpen()) {
+            return;
+        }
+        $this->tahun_ajaran = AdmissionPeriod::year();
         $this->validate();
 
         // Upload file
@@ -174,6 +179,11 @@ class PendaftaranForm extends Component
 
     public function render(): \Illuminate\View\View
     {
+        if (! AdmissionPeriod::registrationOpen()) {
+            return view('livewire.admission-closed', ['label' => 'Pendaftaran', 'year' => AdmissionPeriod::year()])
+                ->layout('layouts.standalone', ['title' => 'Pendaftaran ditutup', 'description' => 'Informasi periode penerimaan santri.']);
+        }
+
         return view('livewire.pendaftaran-form')->layout('layouts.standalone', [
             'title' => 'Pendaftaran Santri Baru MTs & MA | Syafaaturrasul Kuansing',
             'description' => 'Formulir pendaftaran santri baru MTs dan MA Pondok Pesantren Syafaaturrasul, Kuantan Singingi, Riau. Lengkapi data calon santri melalui formulir ini.',

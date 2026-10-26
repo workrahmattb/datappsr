@@ -119,6 +119,7 @@ class CariSiswaTable extends Component
         );
 
         return view('livewire.cari-siswa-table', [
+            'daftarUlangDibuka' => \App\Support\AdmissionPeriod::reregistrationOpen(),
             'students' => $paginator,
             'minSearchLength' => self::MIN_SEARCH_LENGTH,
         ]);
