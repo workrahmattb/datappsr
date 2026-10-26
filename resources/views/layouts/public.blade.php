@@ -4,6 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="{{ asset('favicon.png') }}" type="image/png">
+    <link rel="apple-touch-icon" href="{{ asset('favicon.png') }}">
     <title>{{ $title ?? "Pondok Pesantren Syafa'aturrasul" }}</title>
     <meta name="description"
         content="{{ $description ?? "Pondok Pesantren Syafa'aturrasul — MTs & MA Putra/Putri, Kuantan Singingi, Riau." }}">

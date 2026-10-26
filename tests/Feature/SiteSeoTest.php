@@ -95,3 +95,37 @@ test('article structured data reflects the published article', function () {
     $schema = json_decode($xpath->query('//script[@type="application/ld+json"]')->item(0)->textContent, true, 512, JSON_THROW_ON_ERROR);
     expect($schema['@type'])->toBe('NewsArticle')->and($schema['headline'])->toBe($article->judul);
 });
+
+test('homepage metadata matches the requested Google search identity', function () {
+    $response = $this->get('/')->assertSuccessful();
+    $document = new DOMDocument;
+    @$document->loadHTML('<?xml encoding="UTF-8">'.$response->getContent());
+    $xpath = new DOMXPath($document);
+    expect(trim($xpath->query('//title')->item(0)->textContent))->toBe("Pondok Pesantren Syafa'aturrasul | Kuantan Singingi")
+        ->and($xpath->query('//meta[@name="description"]')->item(0)->getAttribute('content'))->toBe("Website resmi Pondok Pesantren Syafa'aturrasul di Kuantan Singingi, Riau. Pendidikan MTs dan MA Putra-Putri terakreditasi A.")
+        ->and($xpath->query('//meta[@property="og:site_name"]')->item(0)->getAttribute('content'))->toBe("Pondok Pesantren Syafa'aturrasul");
+    $schemas = collect(iterator_to_array($xpath->query('//script[@type="application/ld+json"]')))
+        ->map(fn ($script) => json_decode($script->textContent, true, 512, JSON_THROW_ON_ERROR));
+    expect($schemas->firstWhere('@type', 'WebSite'))->toMatchArray([
+        'name' => "Pondok Pesantren Syafa'aturrasul", 'alternateName' => 'Syafaaturrasul',
+        'url' => rtrim(config('seo.url'), '/').'/',
+    ]);
+    $school = $schemas->firstWhere('@type', 'EducationalOrganization');
+    expect(array_column($school['contactPoint'], 'telephone'))->toBe(['+6285259875754', '+6282223995230'])
+        ->and($school['location'][0]['address']['streetAddress'])->toContain('Beringin Taluk')
+        ->and($school['location'][1]['address']['streetAddress'])->toContain('Jalur Patah');
+    foreach (['/', '/kontak'] as $url) {
+        $this->get($url)->assertSuccessful()->assertSee(config('pesantren.locations.putri.address'))
+            ->assertSee(config('pesantren.locations.putra.address'))
+            ->assertSeeHtml('href="tel:+6282223995230"');
+    }
+});
+
+test('public pages include the existing favicon', function () {
+    expect(is_file(public_path('favicon.png')))->toBeTrue();
+    foreach (['/', '/kontak'] as $url) {
+        $this->get($url)->assertSuccessful()
+            ->assertSeeHtml('<link rel="icon" href="'.asset('favicon.png').'" type="image/png">')
+            ->assertSeeHtml('<link rel="apple-touch-icon" href="'.asset('favicon.png').'">');
+    }
+});

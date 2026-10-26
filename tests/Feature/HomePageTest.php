@@ -167,7 +167,7 @@ test('halaman utama menampilkan kontak lembaga bila sudah diisi', function () {
         ->assertSee('info@ppsr.local');
 });
 
-test('detail kontak lembaga diganti pesan pengisian bila masih kosong', function () {
+test('kontak resmi tersedia ketika pengaturan lembaga masih kosong', function () {
     Setting::set('kontak_alamat', '');
     Setting::set('kontak_email', '');
     Setting::set('kontak_telepon', '');
@@ -177,6 +177,9 @@ test('detail kontak lembaga diganti pesan pengisian bila masih kosong', function
     $this->get(route('home'))
         ->assertSuccessful()
         ->assertSee('Hubungi Kami')
-        ->assertSee('Hubungi kami melalui halaman kontak')
+        ->assertSee('Ustad Rahmat')
+        ->assertSee('085259875754')
+        ->assertSee('Ustad Resdi')
+        ->assertSee('082223995230')
         ->assertDontSee('Jam Layanan');
 });

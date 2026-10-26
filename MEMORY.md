@@ -3391,3 +3391,13 @@ Dipasang **satu kali** di `resources/views/layouts/public.blade.php` (setelah `<
 - Logo memiliki latar putih, sehingga di dark mode tampil sebagai kotak putih. Belum dibuat versi transparan.
 - Full suite belum dijalankan ulang. Diketahui ada 1 test lama gagal di `HomePageTest` (`Hubungi kami melalui halaman kontak`) karena teks tersebut memang tidak ada di kode sejak HEAD — tidak terkait perubahan sesi ini.
 - Belum di-push/deploy.
+
+## Verifikasi Metadata Contoh Google Search — 26 Oktober 2026
+- Memeriksa kode terbaru setelah perubahan sesi lain: title dan meta description homepage sudah persis sesuai contoh pengguna, og:site_name/canonical benar, JSON-LD WebSite berisi nama Pondok Pesantren Syafa'aturrasul, alternateName Syafaaturrasul, URL domain utama. EducationalOrganization tetap terpisah untuk alamat dan kontak.
+- Menambahkan regresi DOM/JSON-LD untuk metadata persis, dua nomor telepon internasional, dan alamat Putri/Putra pada homepage serta halaman kontak. Memperbaiki assertion lama HomePageTest yang masih menunggu pesan kontak kosong, kini memeriksa kontak resmi.
+- HomePageTest + SiteSeoTest: 21 passed, 169 assertions; Pint dirty lulus. Tidak mengubah metadata yang sudah sesuai atau perubahan pengguna pada .DS_Store. Tidak melakukan deploy atau pemeriksaan metadata produksi pada sesi ini.
+- Menjelaskan bahwa nama situs, judul, dan snippet Google merupakan pilihan otomatis. Markup adalah preferensi/sinyal, bukan jaminan tampilan persis. Setelah deploy dapat meminta pengindeksan ulang homepage; Rich Results Test tidak mendukung validasi fitur site names, sesuai dokumentasi Google.
+
+## Favicon Halaman Publik — 26 Oktober 2026
+- Memasang favicon PNG dan apple-touch-icon menggunakan public/favicon.png yang sudah tersedia pada layouts.public. Berlaku untuk homepage dan halaman publik lain yang memakai layout tersebut; URL stabil tanpa query acak.
+- Test memeriksa keberadaan file serta tag favicon pada homepage dan kontak. SiteSeoTest: 10 passed, 79 assertions; Pint dirty lulus. Tidak memerlukan build ulang CSS/JS. Belum deploy; pastikan favicon.png juga tersedia di public_html saat deploy hosting.
