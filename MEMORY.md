@@ -3433,3 +3433,8 @@ Dipasang **satu kali** di `resources/views/layouts/public.blade.php` (setelah `<
 ## Lingkaran Foto Guru Putih — 31 Oktober 2026
 - Mengganti border hijau foto profil guru menjadi border putih dengan shadow-md pada homepage dan halaman daftar guru. Avatar inisial tanpa foto juga memakai latar putih dan shadow, termasuk mode gelap.
 - SitePagesTest: 19 passed, 68 assertions. Pint dirty dan npm run build berhasil. Build terbaru disertakan; belum push/deploy. Perubahan konfigurasi/pedoman lain yang sudah ada tidak diubah.
+
+## Panduan Foto Profil Guru — 31 Oktober 2026
+- Form tambah/edit Profil Guru kini menggunakan komponen unggah bersama dengan rekomendasi 800 × 800 piksel (1:1), panduan wajah di tengah dan ruang kepala/hijab, serta template SVG 800 × 800 yang dapat diunduh dari public/images/template-foto-guru.svg. Panduan harus dihapus sebelum ekspor foto final JPG/PNG/WebP.
+- Pratinjau foto lokal berbentuk lingkaran putih dengan shadow, object-cover/object-center sama seperti frontend. Menampilkan dimensi file dan keterangan pemotongan jika tidak persegi. Batas tetap 2 MB; tidak memaksa dimensi baru atau mengubah foto lama/file asli. Edit menampilkan foto tersimpan sebelum memilih foto pengganti.
+- GuruAdminTest: 11 passed, 47 assertions; uji JavaScript dengan DOM simulasi untuk pemilihan foto, ukuran berlebih, dan pembatalan berhasil. Pint dirty dan build berhasil. Belum verifikasi visual browser, push, atau deploy. Saat deploy sertakan template SVG pada public_html/images bersama build terbaru.

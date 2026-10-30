@@ -75,11 +75,7 @@
                     @error('deskripsi')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
                 </div>
                 <div class="md:col-span-2">
-                    <label class="block text-sm font-medium text-gray-700">Foto</label>
-                    <input type="file" name="foto" accept="image/*"
-                           class="block w-full text-sm text-gray-600 border border-gray-300 rounded-md px-3 py-2">
-                    <p class="text-xs text-gray-500 mt-1">Format JPG, JPEG, PNG, atau WebP. Maksimal 2 MB.</p>
-                    @error('foto')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
+                    <x-guru-photo-upload />
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700">Urutan Tampil</label>

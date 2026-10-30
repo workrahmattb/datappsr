@@ -153,3 +153,19 @@ test('hapus dari tabel profil guru menghapus data', function () {
 
     expect(Guru::find($guru->id))->toBeNull();
 });
+
+test('form guru menyediakan panduan ukuran dan pratinjau foto lingkaran', function () {
+    $guru = buatGuru(['foto' => 'gurus/foto-lama.webp']);
+    $this->actingAs(adminGuru());
+    foreach ([route('admin.gurus.create'), route('admin.gurus.edit', $guru)] as $url) {
+        $this->get($url)->assertSuccessful()
+            ->assertSee('800 × 800 piksel')
+            ->assertSee('data-photo-preview', false)
+            ->assertSee('object-cover object-center shadow-md', false)
+            ->assertSee('template-foto-guru-800x800.svg', false)
+            ->assertSee('name="foto"', false);
+    }
+    $this->get(route('admin.gurus.edit', $guru))->assertSee(Storage::url($guru->foto), false);
+    $svg = file_get_contents(public_path('images/template-foto-guru.svg'));
+    expect($svg)->toContain('width="800" height="800"')->toContain('viewBox="0 0 800 800"');
+});

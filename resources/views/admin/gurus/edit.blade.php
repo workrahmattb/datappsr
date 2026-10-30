@@ -77,21 +77,7 @@
                     @error('deskripsi')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
                 </div>
                 <div class="md:col-span-2">
-                    <label class="block text-sm font-medium text-gray-700">Foto</label>
-                    <div class="flex flex-col sm:flex-row sm:items-start gap-4">
-                        @if($guru->foto)
-                            <img src="{{ Storage::url($guru->foto) }}" alt="{{ $guru->name }}" class="w-24 h-24 rounded-full object-cover border border-gray-200">
-                        @endif
-                        <div class="flex-1">
-                            <input type="file" name="foto" accept="image/*"
-                                   class="block w-full text-sm text-gray-600 border border-gray-300 rounded-md px-3 py-2">
-                            <p class="text-xs text-gray-500 mt-1">Format JPG, JPEG, PNG, atau WebP. Maksimal 2 MB.</p>
-                            @if($guru->foto)
-                                <p class="text-xs text-gray-500 mt-1">File saat ini: {{ $guru->foto }}</p>
-                            @endif
-                            @error('foto')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
-                        </div>
-                    </div>
+                    <x-guru-photo-upload :current="$guru->foto ? Storage::url($guru->foto) : null" />
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700">Urutan Tampil</label>
