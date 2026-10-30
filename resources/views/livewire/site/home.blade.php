@@ -178,10 +178,10 @@
                         class="group bg-white dark:bg-gray-800 rounded-xl p-6 text-center shadow-sm hover:shadow-lg border border-gray-100 dark:border-gray-700 transition">
                         @if ($guru->foto)
                             <x-site-image :path="$guru->foto" :alt="$guru->name" sizes="80px"
-                                class="w-20 h-20 rounded-full object-cover mx-auto mb-4 border-2 border-green-100 dark:border-gray-600" />
+                                class="w-20 h-20 rounded-full object-cover mx-auto mb-4 border-4 border-white bg-white shadow-md" />
                         @else
                             <div
-                                class="w-20 h-20 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center text-green-700 dark:text-green-400 font-bold text-2xl mx-auto mb-4">
+                                class="w-20 h-20 rounded-full bg-white shadow-md flex items-center justify-center text-gray-700 font-bold text-2xl mx-auto mb-4">
                                 {{ strtoupper(substr($guru->name, 0, 1)) }}
                             </div>
                         @endif

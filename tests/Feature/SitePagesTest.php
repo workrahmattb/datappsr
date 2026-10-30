@@ -198,3 +198,12 @@ test('kode embed peta yang tidak aman tidak dirender', function () {
         ->assertDontSee('javascript:alert', false)
         ->assertDontSee('Lokasi');
 });
+
+test('foto profil guru memakai lingkaran putih dengan shadow', function () {
+    buatGuruSite(['name' => 'Guru Foto Putih', 'foto' => 'images/guru-test.webp']);
+    foreach (['home', 'guru.index'] as $route) {
+        $this->get(route($route))->assertSuccessful()
+            ->assertSee('border-4 border-white bg-white shadow-md', false)
+            ->assertDontSee('border-2 border-green-100 dark:border-gray-600', false);
+    }
+});

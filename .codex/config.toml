@@ -1,0 +1,9 @@
+
+[mcp_servers.laravel-boost]
+command = "/usr/local/bin/php"
+args = ["artisan", "boost:mcp"]
+cwd = "/Users/rahmattanri/Documents/Project Code/ppsr2025putra"
+startup_timeout_sec = 30
+
+[mcp_servers.laravel-boost.env]
+CACHE_STORE = "array"

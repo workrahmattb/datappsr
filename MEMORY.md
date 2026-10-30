@@ -3418,3 +3418,18 @@ Dipasang **satu kali** di `resources/views/layouts/public.blade.php` (setelah `<
 - Tombol Daftar Ulang di CariSiswaTable dan PendaftaranTable disembunyikan ketika periode daftar ulang ditutup (tahap awal penerimaan dan semua proses selesai), pada tabel desktop dan kartu mobile. Data hasil pencarian tetap tampil; aksi Update Foto untuk siswa tetap seperti sebelumnya.
 - Status periode dibaca saat render, sehingga refresh/pencarian berikutnya mengikuti pengaturan terbaru. Proteksi akses langsung dan submit tetap menggunakan kontrol periode yang telah dibuat sebelumnya.
 - AdmissionPeriodTest: 14 passed, 95 assertions, mencakup empat tahap pada kedua tabel dan kedua tampilan serta perubahan periode saat komponen sudah terbuka. Pint dirty lulus. Tidak ada perubahan CSS/JS baru; tidak perlu build tambahan. Belum push/deploy.
+
+## Koneksi Laravel Boost ke Codex — 29 Oktober 2026
+- Memastikan laravel/boost v1.8.0 terpasang; .mcp.json dan pedoman AGENTS.md sudah tersedia, tetapi belum ada entri Boost pada konfigurasi MCP Codex yang diperiksa.
+- Menambahkan .codex/config.toml khusus project dengan command PHP absolut, artisan boost:mcp, cwd project, timeout startup 30 detik. CACHE_STORE=array diterapkan hanya pada proses MCP agar discovery tool tidak bergantung pada cache MySQL yang diblokir sandbox. Konfigurasi website/.env dan data santri tidak diubah.
+- Validasi TOML berhasil; menjalankan transport JSON-RPC dari konfigurasi baru berhasil mengambil 16 tool dan menjalankan list-routes untuk home. Akses database dan search-docs daring belum diuji. Tool Boost belum terpasang pada katalog sesi chat berjalan; perlu memuat ulang aplikasi/sesi untuk memverifikasi integrasi penuh.
+- CLI codex global yang tersedia mengalami ENOENT binary vendor, sehingga konfigurasi ditulis langsung sesuai dokumentasi resmi; tidak menginstal ulang atau mengubah CLI global.
+
+## Verifikasi Boost Setelah Restart Codex — 29 Oktober 2026
+- Namespace tool Laravel Boost sudah tersedia langsung pada sesi Codex setelah aplikasi dibuka ulang.
+- Pemanggilan application-info berhasil: PHP 8.4.10, Laravel 12.37.0, Livewire 3.7.11, Flux 2.6.1, dan paket lainnya terbaca. list-routes dengan nama home juga berhasil, mengarah ke App\Livewire\Site\Home.
+- Integrasi langsung terkonfirmasi untuk kedua tool tersebut. Belum menguji akses database atau pencarian dokumentasi daring; tidak mengubah kode aplikasi maupun data santri.
+
+## Lingkaran Foto Guru Putih — 31 Oktober 2026
+- Mengganti border hijau foto profil guru menjadi border putih dengan shadow-md pada homepage dan halaman daftar guru. Avatar inisial tanpa foto juga memakai latar putih dan shadow, termasuk mode gelap.
+- SitePagesTest: 19 passed, 68 assertions. Pint dirty dan npm run build berhasil. Build terbaru disertakan; belum push/deploy. Perubahan konfigurasi/pedoman lain yang sudah ada tidak diubah.
