@@ -3450,3 +3450,8 @@ Dipasang **satu kali** di `resources/views/layouts/public.blade.php` (setelah `<
 ## Ringkasan Error Sebelum Kirim Pendaftaran — 31 Oktober 2026
 - Menambahkan ringkasan seluruh pesan validasi tepat di atas tombol Kirim Pendaftaran. Pesan per kolom tetap tersedia. Ringkasan memakai role alert, judul yang jelas, daftar pesan, dan dukungan dark mode; hanya tampil saat ada error.
 - PendaftaranGroupLinkTest: 3 passed, 30 assertions. Memeriksa error submit, isi ringkasan dan urutannya sebelum tombol, serta tidak tampil pada form awal/sukses. Pint dirty dan build berhasil. Belum push/deploy.
+
+## Tombol Tambah Pendaftaran pada Halaman Berhasil — 31 Oktober 2026
+- Mengubah grup tombol Beranda/Tambah Pendaftaran menjadi grid satu kolom di HP dan dua kolom sama lebar mulai sm. Tinggi minimal 48px, teks 14px, ikon tidak menyusut, dan menghapus efek membesar saat hover agar tombol tidak berdesakan.
+- Tombol reset memakai type button dan nonaktif saat proses reset; tautan Beranda menggunakan named route home. Tidak mengubah proses penyimpanan pendaftaran.
+- PendaftaranGroupLinkTest: 3 passed, 37 assertions; memeriksa struktur tombol pada hasil pendaftaran sukses. Pint dirty dan npm run build berhasil. Belum verifikasi visual perangkat pengguna atau push/deploy.

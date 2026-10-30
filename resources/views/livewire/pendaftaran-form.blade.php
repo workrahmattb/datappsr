@@ -95,17 +95,18 @@
                         </div>
 
                         <!-- Action Buttons -->
-                        <div class="flex gap-3 pt-4">                                <a href="/"
-                                class="flex-1 bg-gray-600 hover:bg-gray-700 text-white font-semibold py-3 px-6 rounded-lg transition duration-200 transform hover:scale-105 flex items-center justify-center gap-2 dark:active:bg-gray-800">
-                                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div data-registration-success-actions class="grid grid-cols-1 gap-3 pt-4 sm:grid-cols-2">
+                            <a href="{{ route('home') }}"
+                                class="w-full min-w-0 min-h-12 text-sm text-center bg-gray-600 hover:bg-gray-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600 flex items-center justify-center gap-2 dark:active:bg-gray-800">
+                                <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M3 12l2-3m0 0l7-4 7 4M5 9v10a1 1 0 001 1h12a1 1 0 001-1V9m-9 11l4-4"></path>
                                 </svg>
                                 Beranda
                             </a>
-                            <button wire:click="resetForm"
-                                class="flex-1 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-semibold py-3 px-6 rounded-lg transition duration-200 transform hover:scale-105 flex items-center justify-center gap-2 dark:active:from-green-800 dark:active:to-emerald-800">
-                                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <button type="button" wire:click="resetForm" wire:loading.attr="disabled" wire:target="resetForm"
+                                class="w-full min-w-0 min-h-12 text-sm text-center bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600 flex items-center justify-center gap-2 dark:active:from-green-800 dark:active:to-emerald-800 disabled:opacity-60 disabled:cursor-wait">
+                                <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M12 4v16m8-8H4"></path>
                                 </svg>

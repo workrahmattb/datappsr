@@ -29,6 +29,12 @@ test('successful registration displays the new WhatsApp group invitation', funct
     $document = new DOMDocument;
     @$document->loadHTML('<?xml encoding="UTF-8">'.$component->html());
     $xpath = new DOMXPath($document);
+    $actions = $xpath->query('//*[@data-registration-success-actions]')->item(0);
+    expect($actions)->not->toBeNull();
+    expect($actions->getAttribute('class'))->toContain('grid-cols-1', 'sm:grid-cols-2');
+    $button = $xpath->query('.//button', $actions)->item(0);
+    expect($button->getAttribute('type'))->toBe('button');
+    expect($button->getAttribute('class'))->toContain('min-w-0', 'min-h-12')->not->toContain('hover:scale-105');
     $link = $xpath->query('//a[starts-with(@href, "https://chat.whatsapp.com/")]')->item(0);
     expect($link)->not->toBeNull();
     expect($link->getAttribute('href'))->toBe('https://chat.whatsapp.com/FMyYh8xiajs6YFDaZwCEmr?s=cl&p=a&mlu=4&ilr=4')
