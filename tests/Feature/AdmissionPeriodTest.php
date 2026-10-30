@@ -107,7 +107,7 @@ test('search tables show re registration actions only while the period is open',
     }
 })->with([['registration', false], ['both', true], ['reregistration', true], ['closed', false]]);
 
-test('kolom NIK daftar ulang meminta keyboard angka tanpa mengubah tipe teks', function () {
+test('kolom identitas dan tanggal daftar ulang memiliki atribut ramah perangkat mobile', function () {
     $html = view('livewire.daftar-ulang-form', [
         'errors' => new \Illuminate\Support\ViewErrorBag,
         'submitted' => false, 'currentStep' => 2, 'jenjangPendidikan' => 'MTs Putra',
@@ -119,11 +119,23 @@ test('kolom NIK daftar ulang meminta keyboard angka tanpa mengubah tipe teks', f
     $document = new DOMDocument;
     @$document->loadHTML('<?xml encoding="UTF-8">'.$html);
     $xpath = new DOMXPath($document);
-    foreach (['nik', 'nik_ayah', 'nik_ibu'] as $field) {
+    foreach (['nik', 'nik_ayah', 'nik_ibu', 'kk', 'nisn', 'npsn_sekolah_sebelumnya'] as $field) {
         $input = $xpath->query('//input[@*[name()="wire:model"]="'.$field.'"]')->item(0);
         expect($input)->not->toBeNull();
         expect($input->getAttribute('type'))->toBe('text')
-            ->and($input->getAttribute('inputmode'))->toBe('numeric')
-            ->and($input->getAttribute('maxlength'))->toBe('16');
+            ->and($input->getAttribute('inputmode'))->toBe('numeric');
+        if (in_array($field, ['nik', 'nik_ayah', 'nik_ibu', 'kk', 'nisn'])) {
+            expect($input->getAttribute('maxlength'))->toBe($field === 'nisn' ? '10' : '16');
+        }
     }
+    foreach (['tanggal_lahir', 'tanggal_lahir_ayah', 'tanggal_lahir_ibu'] as $field) {
+        $input = $xpath->query('//input[@*[name()="wire:model"]="'.$field.'"]')->item(0);
+        expect($input)->not->toBeNull();
+        expect($input->getAttribute('type'))->toBe('date');
+        foreach (['block', 'box-border', 'min-w-0', 'max-w-full', 'w-full', 'appearance-none', 'text-base'] as $class) {
+            expect(explode(' ', $input->getAttribute('class')))->toContain($class);
+        }
+        expect($input->parentNode->getAttribute('class'))->toContain('min-w-0');
+    }
+
 });

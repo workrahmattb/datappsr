@@ -374,9 +374,9 @@
                                 @error('tempat_lahir') <p class="text-red-500 dark:text-red-400 text-sm mt-1">{{ $message }}</p> @enderror
                             </div>
 
-                            <div>
+                            <div class="min-w-0">
                                 <label class="block text-sm font-semibold text-gray-800 dark:text-gray-200 mb-2">Tanggal Lahir <span class="text-red-500 dark:text-red-400">*</span></label>
-                                <input type="date" wire:model="tanggal_lahir" required class="w-full px-4 py-3 rounded-lg border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:border-green-500 dark:focus:border-green-400 focus:outline-none @error('tanggal_lahir') border-red-500 @enderror">
+                                <input type="date" wire:model="tanggal_lahir" required class="block box-border min-w-0 max-w-full min-h-12 appearance-none text-base w-full px-4 py-3 rounded-lg border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:border-green-500 dark:focus:border-green-400 focus:outline-none @error('tanggal_lahir') border-red-500 @enderror">
                                 @error('tanggal_lahir') <p class="text-red-500 dark:text-red-400 text-sm mt-1">{{ $message }}</p> @enderror
                             </div>
 
@@ -388,13 +388,13 @@
 
                             <div>
                                 <label class="block text-sm font-semibold text-gray-800 dark:text-gray-200 mb-2">NISN (Nomor Induk Siswa Nasional) <span class="text-red-500 dark:text-red-400">*</span></label>
-                                <input type="text" wire:model="nisn" maxlength="10" required class="w-full px-4 py-3 rounded-lg border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:border-green-500 dark:focus:border-green-400 focus:outline-none">
+                                <input type="text" inputmode="numeric" wire:model="nisn" maxlength="10" required class="w-full px-4 py-3 rounded-lg border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:border-green-500 dark:focus:border-green-400 focus:outline-none">
                                 @error('nisn') <p class="text-red-500 dark:text-red-400 text-sm mt-1">{{ $message }}</p> @enderror
                             </div>
 
                             <div>
                                 <label class="block text-sm font-semibold text-gray-800 dark:text-gray-200 mb-2">Nomor Kartu Keluarga (KK)</label>
-                                <input type="text" wire:model="kk" maxlength="16" class="w-full px-4 py-3 rounded-lg border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:border-green-500 dark:focus:border-green-400 focus:outline-none">
+                                <input type="text" inputmode="numeric" wire:model="kk" maxlength="16" class="w-full px-4 py-3 rounded-lg border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:border-green-500 dark:focus:border-green-400 focus:outline-none">
                                 <p class="text-xs text-gray-600 dark:text-gray-400 mt-2">16 digit nomor KK (jika ada)</p>
                                 @error('kk') <p class="text-red-500 dark:text-red-400 text-sm mt-1">{{ $message }}</p> @enderror
                             </div>
@@ -434,7 +434,7 @@
 
                             <div>
                                 <label class="block text-sm font-semibold text-gray-800 dark:text-gray-200 mb-2">NPSN (Nomor Pokok Sekolah Nasional) <span class="text-red-500 dark:text-red-400">*</span></label>
-                                <input type="text" wire:model="npsn_sekolah_sebelumnya" required class="w-full px-4 py-3 rounded-lg border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:border-green-500 dark:focus:border-green-400 focus:outline-none">
+                                <input type="text" inputmode="numeric" wire:model="npsn_sekolah_sebelumnya" required class="w-full px-4 py-3 rounded-lg border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:border-green-500 dark:focus:border-green-400 focus:outline-none">
                                 @error('npsn_sekolah_sebelumnya') <p class="text-red-500 dark:text-red-400 text-sm mt-1">{{ $message }}</p> @enderror
                             </div>
 
@@ -479,9 +479,9 @@
                                 @error('tempat_lahir_ayah') <p class="text-red-500 dark:text-red-400 text-sm mt-1">{{ $message }}</p> @enderror
                             </div>
 
-                            <div>
+                            <div class="min-w-0">
                                 <label class="block text-sm font-semibold text-gray-800 dark:text-gray-200 mb-2">Tanggal Lahir Ayah <span class="text-red-500 dark:text-red-400">*</span></label>
-                                <input type="date" wire:model="tanggal_lahir_ayah" required class="w-full px-4 py-3 rounded-lg border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:border-green-500 dark:focus:border-green-400 focus:outline-none">
+                                <input type="date" wire:model="tanggal_lahir_ayah" required class="block box-border min-w-0 max-w-full min-h-12 appearance-none text-base w-full px-4 py-3 rounded-lg border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:border-green-500 dark:focus:border-green-400 focus:outline-none">
                                 @error('tanggal_lahir_ayah') <p class="text-red-500 dark:text-red-400 text-sm mt-1">{{ $message }}</p> @enderror
                             </div>
 
@@ -575,9 +575,9 @@
                                 @error('tempat_lahir_ibu') <p class="text-red-500 dark:text-red-400 text-sm mt-1">{{ $message }}</p> @enderror
                             </div>
 
-                            <div>
+                            <div class="min-w-0">
                                 <label class="block text-sm font-semibold text-gray-800 dark:text-gray-200 mb-2">Tanggal Lahir Ibu <span class="text-red-500 dark:text-red-400">*</span></label>
-                                <input type="date" wire:model="tanggal_lahir_ibu" required class="w-full px-4 py-3 rounded-lg border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:border-green-500 dark:focus:border-green-400 focus:outline-none">
+                                <input type="date" wire:model="tanggal_lahir_ibu" required class="block box-border min-w-0 max-w-full min-h-12 appearance-none text-base w-full px-4 py-3 rounded-lg border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:border-green-500 dark:focus:border-green-400 focus:outline-none">
                                 @error('tanggal_lahir_ibu') <p class="text-red-500 dark:text-red-400 text-sm mt-1">{{ $message }}</p> @enderror
                             </div>
 

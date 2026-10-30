@@ -3455,3 +3455,8 @@ Dipasang **satu kali** di `resources/views/layouts/public.blade.php` (setelah `<
 - Mengubah grup tombol Beranda/Tambah Pendaftaran menjadi grid satu kolom di HP dan dua kolom sama lebar mulai sm. Tinggi minimal 48px, teks 14px, ikon tidak menyusut, dan menghapus efek membesar saat hover agar tombol tidak berdesakan.
 - Tombol reset memakai type button dan nonaktif saat proses reset; tautan Beranda menggunakan named route home. Tidak mengubah proses penyimpanan pendaftaran.
 - PendaftaranGroupLinkTest: 3 passed, 37 assertions; memeriksa struktur tombol pada hasil pendaftaran sukses. Pint dirty dan npm run build berhasil. Belum verifikasi visual perangkat pengguna atau push/deploy.
+
+## Input Mobile Form Daftar Ulang — 31 Oktober 2026
+- Menambahkan inputmode numeric untuk KK, NISN, dan NPSN sekolah sebelumnya; tipe tetap text dan batas panjang/validasi tidak berubah.
+- Menyesuaikan input tanggal lahir santri, ayah, dan ibu dengan block, box-border, min-w-0/max-w-full, min-h-12, appearance-none, text-base, serta wrapper min-w-0 agar mengikuti lebar kolom pada layar kecil. Pemilih tanggal tetap native.
+- Test render form tahap kedua: 1 passed, 53 assertions untuk enam kolom identitas dan tiga input tanggal. Pint dirty dan build berhasil. Belum verifikasi visual di HP pengguna atau push/deploy.
