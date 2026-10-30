@@ -3464,3 +3464,7 @@ Dipasang **satu kali** di `resources/views/layouts/public.blade.php` (setelah `<
 ## Keyboard Angka Anak Ke dan Jumlah Saudara — 31 Oktober 2026
 - Menambahkan inputmode="numeric" dan step="1" pada Anak Ke dan Jumlah Saudara di form daftar ulang. Tipe number tetap dipertahankan, minimum Anak Ke 1 dan Jumlah Saudara 0; validasi server tidak berubah.
 - Test atribut form: 1 passed, 63 assertions. Pint dirty lulus. Tidak ada perubahan CSS/JS sehingga tidak perlu build ulang. Belum push/deploy.
+
+## Hapus Tombol Beranda Form Daftar Ulang — 31 Oktober 2026
+- Menghapus tiga tombol Beranda dalam template daftar ulang (tahap upload, form lengkap, dan tampilan berhasil). Tombol lanjut/simpan dan Kembali ke Daftar tetap tersedia.
+- Pengujian terkait: 2 passed, 67 assertions; Pint dirty lulus. Tidak menambah CSS/JS, tidak perlu build ulang. Belum push/deploy.

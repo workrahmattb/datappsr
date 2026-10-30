@@ -116,6 +116,7 @@ test('kolom identitas dan tanggal daftar ulang memiliki atribut ramah perangkat 
         'fotokk' => null, 'fotoakta' => null, 'foto' => null,
         'pekerjaan_ayah' => '', 'pekerjaan_ibu' => '',
     ])->render();
+    expect($html)->not->toContain('Beranda');
     $document = new DOMDocument;
     @$document->loadHTML('<?xml encoding="UTF-8">'.$html);
     $xpath = new DOMXPath($document);
@@ -146,4 +147,10 @@ test('kolom identitas dan tanggal daftar ulang memiliki atribut ramah perangkat 
         expect($input->parentNode->getAttribute('class'))->toContain('min-w-0');
     }
 
+});
+
+test('template daftar ulang tidak menyediakan tombol Beranda pada semua tahap', function () {
+    $template = file_get_contents(resource_path('views/livewire/daftar-ulang-form.blade.php'));
+    expect($template)->not->toContain('Beranda')
+        ->toContain('Kembali ke Daftar', 'wire:submit.prevent="submit"');
 });

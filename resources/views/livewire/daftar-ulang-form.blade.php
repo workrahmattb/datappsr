@@ -143,12 +143,6 @@
                             </svg>
                             <span>Kembali ke Daftar</span>
                         </a>
-                        <a href="/" class="flex-1 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-semibold py-3 sm:py-4 px-4 sm:px-6 rounded-lg transition duration-200 text-center flex items-center justify-center gap-2 active:from-green-700 active:to-emerald-700 dark:active:from-green-800 dark:active:to-emerald-800">
-                            <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
-                            </svg>
-                            <span>Beranda</span>
-                        </a>
                     </div>
                 </div>
 
@@ -305,12 +299,6 @@
 
                     <div class="rounded-xl shadow-lg border-2 border-gray-200 dark:border-gray-700 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-gray-800 dark:to-gray-700 p-4 sm:p-6">
                         <div class="flex flex-col-reverse sm:flex-row gap-3">
-                            <a href="/" class="flex-1 bg-gray-600 hover:bg-gray-700 text-white font-semibold py-3 sm:py-4 px-4 sm:px-6 rounded-lg transition text-center flex items-center justify-center gap-2 active:bg-gray-800 dark:active:bg-gray-900">
-                                <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
-                                </svg>
-                                <span>Beranda</span>
-                            </a>
                             <button type="submit" wire:loading.attr="disabled" 
                                     class="flex-1 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-semibold py-3 sm:py-4 px-4 sm:px-6 rounded-lg transition-all duration-300 flex items-center justify-center gap-2 active:from-green-700 active:to-emerald-700 dark:active:from-green-800 dark:active:to-emerald-800 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:from-green-600 disabled:hover:to-emerald-600 relative overflow-hidden group">
                                 {{-- Default state --}}
@@ -1008,12 +996,6 @@
                     {{-- SUBMIT --}}
                     <div class="rounded-xl shadow-lg border-2 border-gray-200 dark:border-gray-700 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-gray-800 dark:to-gray-700 p-4 sm:p-6">
                         <div class="flex flex-col-reverse sm:flex-row gap-3">
-                            <a href="/" class="flex-1 bg-gray-600 hover:bg-gray-700 text-white font-semibold py-3 sm:py-4 px-4 sm:px-6 rounded-lg transition flex items-center justify-center gap-2 active:bg-gray-800 dark:active:bg-gray-900">
-                                <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
-                                </svg>
-                                <span>Beranda</span>
-                            </a>
                             <button type="submit" wire:loading.attr="disabled" 
                                     class="flex-1 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-semibold py-3 sm:py-4 px-4 sm:px-6 rounded-lg transition-all duration-300 flex items-center justify-center gap-2 active:from-green-700 active:to-emerald-700 dark:active:from-green-800 dark:active:to-emerald-800 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:from-green-600 disabled:hover:to-emerald-600 relative overflow-hidden group">
                                 {{-- Default state --}}
