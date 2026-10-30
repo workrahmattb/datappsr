@@ -128,6 +128,14 @@ test('kolom identitas dan tanggal daftar ulang memiliki atribut ramah perangkat 
             expect($input->getAttribute('maxlength'))->toBe($field === 'nisn' ? '10' : '16');
         }
     }
+    foreach (['anak_ke' => '1', 'jumlah_saudara' => '0'] as $field => $minimum) {
+        $input = $xpath->query('//input[@*[name()="wire:model"]="'.$field.'"]')->item(0);
+        expect($input)->not->toBeNull();
+        expect($input->getAttribute('type'))->toBe('number')
+            ->and($input->getAttribute('inputmode'))->toBe('numeric')
+            ->and($input->getAttribute('step'))->toBe('1')
+            ->and($input->getAttribute('min'))->toBe($minimum);
+    }
     foreach (['tanggal_lahir', 'tanggal_lahir_ayah', 'tanggal_lahir_ibu'] as $field) {
         $input = $xpath->query('//input[@*[name()="wire:model"]="'.$field.'"]')->item(0);
         expect($input)->not->toBeNull();

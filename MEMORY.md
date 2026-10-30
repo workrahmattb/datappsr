@@ -3460,3 +3460,7 @@ Dipasang **satu kali** di `resources/views/layouts/public.blade.php` (setelah `<
 - Menambahkan inputmode numeric untuk KK, NISN, dan NPSN sekolah sebelumnya; tipe tetap text dan batas panjang/validasi tidak berubah.
 - Menyesuaikan input tanggal lahir santri, ayah, dan ibu dengan block, box-border, min-w-0/max-w-full, min-h-12, appearance-none, text-base, serta wrapper min-w-0 agar mengikuti lebar kolom pada layar kecil. Pemilih tanggal tetap native.
 - Test render form tahap kedua: 1 passed, 53 assertions untuk enam kolom identitas dan tiga input tanggal. Pint dirty dan build berhasil. Belum verifikasi visual di HP pengguna atau push/deploy.
+
+## Keyboard Angka Anak Ke dan Jumlah Saudara — 31 Oktober 2026
+- Menambahkan inputmode="numeric" dan step="1" pada Anak Ke dan Jumlah Saudara di form daftar ulang. Tipe number tetap dipertahankan, minimum Anak Ke 1 dan Jumlah Saudara 0; validasi server tidak berubah.
+- Test atribut form: 1 passed, 63 assertions. Pint dirty lulus. Tidak ada perubahan CSS/JS sehingga tidak perlu build ulang. Belum push/deploy.

@@ -401,13 +401,13 @@
 
                             <div>
                                 <label class="block text-sm font-semibold text-gray-800 dark:text-gray-200 mb-2">Anak Ke- <span class="text-red-500 dark:text-red-400">*</span></label>
-                                <input type="number" wire:model="anak_ke" min="1" required class="w-full px-4 py-3 rounded-lg border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:border-green-500 dark:focus:border-green-400 focus:outline-none">
+                                <input type="number" inputmode="numeric" step="1" wire:model="anak_ke" min="1" required class="w-full px-4 py-3 rounded-lg border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:border-green-500 dark:focus:border-green-400 focus:outline-none">
                                 @error('anak_ke') <p class="text-red-500 dark:text-red-400 text-sm mt-1">{{ $message }}</p> @enderror
                             </div>
 
                             <div>
                                 <label class="block text-sm font-semibold text-gray-800 dark:text-gray-200 mb-2">Jumlah Saudara <span class="text-red-500 dark:text-red-400">*</span></label>
-                                <input type="number" wire:model="jumlah_saudara" min="0" required class="w-full px-4 py-3 rounded-lg border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:border-green-500 dark:focus:border-green-400 focus:outline-none">
+                                <input type="number" inputmode="numeric" step="1" wire:model="jumlah_saudara" min="0" required class="w-full px-4 py-3 rounded-lg border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:border-green-500 dark:focus:border-green-400 focus:outline-none">
                                 @error('jumlah_saudara') <p class="text-red-500 dark:text-red-400 text-sm mt-1">{{ $message }}</p> @enderror
                             </div>
                         </div>
