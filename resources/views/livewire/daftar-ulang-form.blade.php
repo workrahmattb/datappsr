@@ -382,7 +382,7 @@
 
                             <div>
                                 <label class="block text-sm font-semibold text-gray-800 dark:text-gray-200 mb-2">NIK (Nomor Induk Keluarga) <span class="text-red-500 dark:text-red-400">*</span></label>
-                                <input type="text" wire:model="nik" maxlength="16" required class="w-full px-4 py-3 rounded-lg border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:border-green-500 dark:focus:border-green-400 focus:outline-none">
+                                <input type="text" inputmode="numeric" wire:model="nik" maxlength="16" required class="w-full px-4 py-3 rounded-lg border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:border-green-500 dark:focus:border-green-400 focus:outline-none">
                                 @error('nik') <p class="text-red-500 dark:text-red-400 text-sm mt-1">{{ $message }}</p> @enderror
                             </div>
 
@@ -469,7 +469,7 @@
 
                             <div>
                                 <label class="block text-sm font-semibold text-gray-800 dark:text-gray-200 mb-2">NIK Ayah (Nomor Induk Keluarga) <span class="text-red-500 dark:text-red-400">*</span></label>
-                                <input type="text" wire:model="nik_ayah" maxlength="16" required class="w-full px-4 py-3 rounded-lg border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:border-green-500 dark:focus:border-green-400 focus:outline-none">
+                                <input type="text" inputmode="numeric" wire:model="nik_ayah" maxlength="16" required class="w-full px-4 py-3 rounded-lg border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:border-green-500 dark:focus:border-green-400 focus:outline-none">
                                 @error('nik_ayah') <p class="text-red-500 dark:text-red-400 text-sm mt-1">{{ $message }}</p> @enderror
                             </div>
 
@@ -565,7 +565,7 @@
 
                             <div>
                                 <label class="block text-sm font-semibold text-gray-800 dark:text-gray-200 mb-2">NIK Ibu (Nomor Induk Keluarga) <span class="text-red-500 dark:text-red-400">*</span></label>
-                                <input type="text" wire:model="nik_ibu" maxlength="16" required class="w-full px-4 py-3 rounded-lg border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:border-green-500 dark:focus:border-green-400 focus:outline-none">
+                                <input type="text" inputmode="numeric" wire:model="nik_ibu" maxlength="16" required class="w-full px-4 py-3 rounded-lg border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:border-green-500 dark:focus:border-green-400 focus:outline-none">
                                 @error('nik_ibu') <p class="text-red-500 dark:text-red-400 text-sm mt-1">{{ $message }}</p> @enderror
                             </div>
 

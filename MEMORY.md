@@ -3438,3 +3438,15 @@ Dipasang **satu kali** di `resources/views/layouts/public.blade.php` (setelah `<
 - Form tambah/edit Profil Guru kini menggunakan komponen unggah bersama dengan rekomendasi 800 × 800 piksel (1:1), panduan wajah di tengah dan ruang kepala/hijab, serta template SVG 800 × 800 yang dapat diunduh dari public/images/template-foto-guru.svg. Panduan harus dihapus sebelum ekspor foto final JPG/PNG/WebP.
 - Pratinjau foto lokal berbentuk lingkaran putih dengan shadow, object-cover/object-center sama seperti frontend. Menampilkan dimensi file dan keterangan pemotongan jika tidak persegi. Batas tetap 2 MB; tidak memaksa dimensi baru atau mengubah foto lama/file asli. Edit menampilkan foto tersimpan sebelum memilih foto pengganti.
 - GuruAdminTest: 11 passed, 47 assertions; uji JavaScript dengan DOM simulasi untuk pemilihan foto, ukuran berlebih, dan pembatalan berhasil. Pint dirty dan build berhasil. Belum verifikasi visual browser, push, atau deploy. Saat deploy sertakan template SVG pada public_html/images bersama build terbaru.
+
+## Keyboard Angka Kolom NIK Daftar Ulang — 31 Oktober 2026
+- Menambahkan inputmode="numeric" pada NIK santri, NIK ayah, dan NIK ibu agar browser HP meminta keyboard angka. type="text" dan maxlength="16" tetap dipertahankan; tidak mengubah aturan validasi atau data.
+- Test render form tahap kedua memeriksa atribut ketiga input: 1 passed, 12 assertions. Pint dirty lulus. Tidak memerlukan build CSS/JS. Belum push/deploy.
+
+## Lebar Input Tanggal Lahir Pendaftaran — 31 Oktober 2026
+- Membatasi input date pada form Pendaftaran dengan min-w-0, max-w-full, w-full, box-border dan block; wrapper juga min-w-0. appearance-none mengurangi perbedaan tampilan native browser, text-base dan min-h-12 menjaga ukuran input. Pemilih tanggal native tetap digunakan.
+- PendaftaranGroupLinkTest: 2 passed, 17 assertions (submit dan atribut input). Pint dirty dan build berhasil. Belum verifikasi visual pada perangkat pelapor; belum push/deploy.
+
+## Ringkasan Error Sebelum Kirim Pendaftaran — 31 Oktober 2026
+- Menambahkan ringkasan seluruh pesan validasi tepat di atas tombol Kirim Pendaftaran. Pesan per kolom tetap tersedia. Ringkasan memakai role alert, judul yang jelas, daftar pesan, dan dukungan dark mode; hanya tampil saat ada error.
+- PendaftaranGroupLinkTest: 3 passed, 30 assertions. Memeriksa error submit, isi ringkasan dan urutannya sebelum tombol, serta tidak tampil pada form awal/sukses. Pint dirty dan build berhasil. Belum push/deploy.

@@ -106,3 +106,24 @@ test('search tables show re registration actions only while the period is open',
         Setting::set(AdmissionPeriod::key('2026/2027'), $stage);
     }
 })->with([['registration', false], ['both', true], ['reregistration', true], ['closed', false]]);
+
+test('kolom NIK daftar ulang meminta keyboard angka tanpa mengubah tipe teks', function () {
+    $html = view('livewire.daftar-ulang-form', [
+        'errors' => new \Illuminate\Support\ViewErrorBag,
+        'submitted' => false, 'currentStep' => 2, 'jenjangPendidikan' => 'MTs Putra',
+        'nama' => 'Santri Uji', 'nisn' => '1234567890', 'tahun_ajaran' => '2026/2027',
+        'fototransferPath' => null, 'fototransfer' => null,
+        'fotokk' => null, 'fotoakta' => null, 'foto' => null,
+        'pekerjaan_ayah' => '', 'pekerjaan_ibu' => '',
+    ])->render();
+    $document = new DOMDocument;
+    @$document->loadHTML('<?xml encoding="UTF-8">'.$html);
+    $xpath = new DOMXPath($document);
+    foreach (['nik', 'nik_ayah', 'nik_ibu'] as $field) {
+        $input = $xpath->query('//input[@*[name()="wire:model"]="'.$field.'"]')->item(0);
+        expect($input)->not->toBeNull();
+        expect($input->getAttribute('type'))->toBe('text')
+            ->and($input->getAttribute('inputmode'))->toBe('numeric')
+            ->and($input->getAttribute('maxlength'))->toBe('16');
+    }
+});

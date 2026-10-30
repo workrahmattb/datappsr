@@ -343,13 +343,13 @@
                     </div>
 
                     <!-- Tanggal Lahir -->
-                    <div class="mb-7">
+                    <div class="mb-7 min-w-0">
                         <label for="tanggal_lahir" class="block text-sm font-semibold text-gray-800 dark:text-gray-200 mb-2">
                             Tanggal Lahir
                             <span class="text-red-500 dark:text-red-400">*</span>
                         </label>
                         <input type="date" id="tanggal_lahir" wire:model="tanggal_lahir"
-                            class="w-full px-4 py-3 rounded-lg border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:border-green-500 dark:focus:border-green-400 focus:outline-none focus:ring-0 transition duration-200 @error('tanggal_lahir') border-red-500 @enderror">
+                            class="block box-border min-w-0 max-w-full min-h-12 appearance-none text-base w-full px-4 py-3 rounded-lg border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:border-green-500 dark:focus:border-green-400 focus:outline-none focus:ring-0 transition duration-200 @error('tanggal_lahir') border-red-500 @enderror">
                         @error('tanggal_lahir')
                             <p class="text-red-500 dark:text-red-400 text-sm mt-2 flex items-center">
                                 <svg class="h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
@@ -518,6 +518,18 @@
                             </p>
                         @enderror
                     </div>
+
+                    @if ($errors->any())
+                        <div id="pendaftaran-error-summary" role="alert" aria-labelledby="pendaftaran-error-heading"
+                            class="rounded-lg border border-red-200 bg-red-50 p-4 text-red-800 dark:border-red-800 dark:bg-red-950 dark:text-red-200">
+                            <h2 id="pendaftaran-error-heading" class="text-sm font-bold">Mohon perbaiki data berikut sebelum mengirim pendaftaran:</h2>
+                            <ul class="mt-2 flex list-disc flex-col gap-1 pl-5 text-sm">
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
 
                     <!-- Submit Button -->
                     <div class="flex gap-3 pt-4">
