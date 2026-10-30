@@ -117,6 +117,8 @@ test('kolom identitas dan tanggal daftar ulang memiliki atribut ramah perangkat 
         'pekerjaan_ayah' => '', 'pekerjaan_ibu' => '',
     ])->render();
     expect($html)->not->toContain('Beranda');
+    expect($html)->toContain('data-reregistration-submit', 'wire:loading.flex', 'sm:min-w-52')
+        ->not->toContain('style="width: 65%"');
     $document = new DOMDocument;
     @$document->loadHTML('<?xml encoding="UTF-8">'.$html);
     $xpath = new DOMXPath($document);

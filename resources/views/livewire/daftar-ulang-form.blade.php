@@ -993,40 +993,24 @@
                         </div>
                     @endif
 
-                    {{-- SUBMIT --}}
-                    <div class="rounded-xl shadow-lg border-2 border-gray-200 dark:border-gray-700 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-gray-800 dark:to-gray-700 p-4 sm:p-6">
-                        <div class="flex flex-col-reverse sm:flex-row gap-3">
-                            <button type="submit" wire:loading.attr="disabled" 
-                                    class="flex-1 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-semibold py-3 sm:py-4 px-4 sm:px-6 rounded-lg transition-all duration-300 flex items-center justify-center gap-2 active:from-green-700 active:to-emerald-700 dark:active:from-green-800 dark:active:to-emerald-800 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:from-green-600 disabled:hover:to-emerald-600 relative overflow-hidden group">
-                                {{-- Default state --}}
-                                <span wire:loading.remove wire:target="submit" class="flex items-center justify-center gap-2">
-                                    <svg class="w-5 h-5 flex-shrink-0 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                                    </svg>
-                                    <span>Simpan Data</span>
-                                </span>
-                                {{-- Loading state di dalam tombol --}}
-                                <span wire:loading wire:target="submit" class="flex items-center justify-center gap-3 w-full">
-                                    {{-- Animated spinner --}}
-                                    <svg class="animate-spin h-5 w-5 flex-shrink-0 text-white" fill="none" viewBox="0 0 24 24">
-                                        <circle class="opacity-30" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                        <path class="opacity-100" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                    </svg>
-                                    {{-- Pulsing text --}}
-                                    <span class="animate-pulse font-semibold">Menyimpan...</span>
-                                    {{-- Bouncing dots --}}
-                                    <span class="flex items-center gap-1">
-                                        <span class="w-1.5 h-1.5 bg-white rounded-full animate-bounce" style="animation-delay: 0ms"></span>
-                                        <span class="w-1.5 h-1.5 bg-white rounded-full animate-bounce" style="animation-delay: 150ms"></span>
-                                        <span class="w-1.5 h-1.5 bg-white rounded-full animate-bounce" style="animation-delay: 300ms"></span>
-                                    </span>
-                                </span>
-                                {{-- Progress bar animasi di bottom tombol --}}
-                                <span wire:loading wire:target="submit" 
-                                      class="absolute bottom-0 left-0 h-1 bg-gradient-to-r from-green-300 via-white to-green-300 animate-pulse rounded-full"
-                                      style="width: 65%"></span>
-                            </button>
-                        </div>
+                    <div data-reregistration-submit class="flex flex-col gap-4 border-t border-gray-200 pt-6 dark:border-gray-700 sm:flex-row sm:items-center sm:justify-between">
+                        <p class="text-sm leading-relaxed text-gray-500 dark:text-gray-400">Pastikan data dan dokumen yang Anda isi sudah benar.</p>
+                        <button type="submit" wire:loading.attr="disabled"
+                            class="inline-flex min-h-12 w-full shrink-0 items-center justify-center rounded-lg bg-emerald-700 px-6 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-emerald-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 disabled:cursor-wait disabled:opacity-60 dark:bg-emerald-600 dark:hover:bg-emerald-700 sm:w-auto sm:min-w-52">
+                            <span wire:loading.remove wire:target="submit" class="inline-flex items-center justify-center gap-2">
+                                <svg class="h-5 w-5 shrink-0" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                </svg>
+                                Simpan Data
+                            </span>
+                            <span wire:loading.flex wire:target="submit" role="status" class="items-center justify-center gap-2">
+                                <svg class="h-5 w-5 shrink-0 animate-spin motion-reduce:animate-none" aria-hidden="true" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                                </svg>
+                                Menyimpan...
+                            </span>
+                        </button>
                     </div>
                 </form>
             @endif

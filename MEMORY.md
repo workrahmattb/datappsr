@@ -3468,3 +3468,8 @@ Dipasang **satu kali** di `resources/views/layouts/public.blade.php` (setelah `<
 ## Hapus Tombol Beranda Form Daftar Ulang — 31 Oktober 2026
 - Menghapus tiga tombol Beranda dalam template daftar ulang (tahap upload, form lengkap, dan tampilan berhasil). Tombol lanjut/simpan dan Kembali ke Daftar tetap tersedia.
 - Pengujian terkait: 2 passed, 67 assertions; Pint dirty lulus. Tidak menambah CSS/JS, tidak perlu build ulang. Belum push/deploy.
+
+## Tampilan Tombol Simpan Daftar Ulang — 31 Oktober 2026
+- Merapikan area Simpan Data: pemisah tipis dan pengingat pemeriksaan data, tombol hijau solid dengan shadow ringan, lebar penuh di HP dan proporsional di kanan pada desktop. Tinggi minimal 48px, focus keyboard, dark mode, dan status disabled dipertahankan.
+- Menyederhanakan loading menjadi spinner dan teks Menyimpan; menghapus bouncing dots, teks berkedip, dan indikator progress statis 65%. Menggunakan wire:loading.flex agar ikon dan teks tetap sejajar.
+- Test render terkait: 2 passed, 71 assertions. Pint dirty dan build berhasil. Tidak mengubah penyimpanan data. Belum verifikasi visual browser atau push/deploy.
