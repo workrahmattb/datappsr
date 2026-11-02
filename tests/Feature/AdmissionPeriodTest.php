@@ -117,11 +117,16 @@ test('kolom identitas dan tanggal daftar ulang memiliki atribut ramah perangkat 
         'pekerjaan_ayah' => '', 'pekerjaan_ibu' => '',
     ])->render();
     expect($html)->not->toContain('Beranda');
-    expect($html)->toContain('data-reregistration-submit', 'wire:loading.flex', 'sm:min-w-52')
+    expect($html)->toContain('data-reregistration-submit', 'wire:loading.flex', 'sm:w-72')
         ->not->toContain('style="width: 65%"');
     $document = new DOMDocument;
     @$document->loadHTML('<?xml encoding="UTF-8">'.$html);
     $xpath = new DOMXPath($document);
+    $actions = $xpath->query('//*[@data-reregistration-submit]')->item(0);
+    expect($actions)->not->toBeNull();
+    expect($actions->getAttribute('class'))->toContain('flex-col', 'items-center', 'text-center')
+        ->not->toContain('sm:flex-row', 'sm:justify-between');
+
     foreach (['nik', 'nik_ayah', 'nik_ibu', 'kk', 'nisn', 'npsn_sekolah_sebelumnya'] as $field) {
         $input = $xpath->query('//input[@*[name()="wire:model"]="'.$field.'"]')->item(0);
         expect($input)->not->toBeNull();
@@ -154,5 +159,21 @@ test('kolom identitas dan tanggal daftar ulang memiliki atribut ramah perangkat 
 test('template daftar ulang tidak menyediakan tombol Beranda pada semua tahap', function () {
     $template = file_get_contents(resource_path('views/livewire/daftar-ulang-form.blade.php'));
     expect($template)->not->toContain('Beranda')
-        ->toContain('Kembali ke Daftar', 'wire:submit.prevent="submit"');
+        ->toContain('Kembali ke PSB', 'wire:submit.prevent="submit"');
+});
+
+test('halaman berhasil daftar ulang mengarahkan tombol kembali ke PSB', function () {
+    $html = view('livewire.daftar-ulang-form', [
+        'submitted' => true, 'tahun_ajaran' => '2026/2027', 'jenjangPendidikan' => 'MTs Putra',
+        'nama' => 'Santri Uji', 'tempat_lahir' => 'Teluk Kuantan', 'tanggal_lahir' => '2013-01-01',
+        'desa' => 'Desa Uji', 'kecamatan' => 'Kecamatan Uji', 'kabupaten' => 'Kuansing',
+        'provinsi' => 'Riau', 'nama_ayah' => 'Ayah Uji', 'nama_ibu' => 'Ibu Uji',
+    ])->render();
+    $document = new DOMDocument;
+    @$document->loadHTML('<?xml encoding="UTF-8">'.$html);
+    $xpath = new DOMXPath($document);
+    $link = $xpath->query('//a[normalize-space(.)="Kembali ke PSB"]')->item(0);
+    expect($link)->not->toBeNull();
+    expect($link->getAttribute('href'))->toBe(route('psb'));
+    expect($html)->not->toContain(route('daftar-ulang.table'));
 });

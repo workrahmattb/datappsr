@@ -3473,3 +3473,19 @@ Dipasang **satu kali** di `resources/views/layouts/public.blade.php` (setelah `<
 - Merapikan area Simpan Data: pemisah tipis dan pengingat pemeriksaan data, tombol hijau solid dengan shadow ringan, lebar penuh di HP dan proporsional di kanan pada desktop. Tinggi minimal 48px, focus keyboard, dark mode, dan status disabled dipertahankan.
 - Menyederhanakan loading menjadi spinner dan teks Menyimpan; menghapus bouncing dots, teks berkedip, dan indikator progress statis 65%. Menggunakan wire:loading.flex agar ikon dan teks tetap sejajar.
 - Test render terkait: 2 passed, 71 assertions. Pint dirty dan build berhasil. Tidak mengubah penyimpanan data. Belum verifikasi visual browser atau push/deploy.
+
+## Posisi Tengah Tombol Simpan Data — 31 Oktober 2026
+- Mengubah area Simpan Data daftar ulang menjadi susunan vertikal rata tengah pada semua ukuran layar. Teks pengingat berada di atas tombol; tombol selebar 18rem pada desktop dan lebar penuh pada HP. Menghapus susunan desktop yang menempatkan tombol di kanan.
+- Test render: 1 passed, 73 assertions; Pint dirty dan build berhasil. Belum push/deploy.
+
+## Tombol Kembali Setelah Daftar Ulang Berhasil — 31 Oktober 2026
+- Mengarahkan tombol pada halaman sukses daftar ulang ke named route psb dan mengganti label menjadi Kembali ke PSB. Tidak mengubah alur penyimpanan.
+- Test terkait: 2 passed, 6 assertions; memeriksa href tombol dari render halaman sukses. Pint dirty lulus. Tidak perlu build CSS/JS. Belum push/deploy.
+
+## Tombol Kembali Setelah Pendaftaran Berhasil — 31 Oktober 2026
+- Mengarahkan tombol Beranda di halaman pendaftaran berhasil ke named route psb, dengan label Kembali ke PSB. Tombol Tambah Pendaftaran dan tautan grup WhatsApp tetap tersedia.
+- PendaftaranGroupLinkTest: 3 passed, 39 assertions; memeriksa tujuan dan label tombol pada hasil submit sukses. Pint dirty lulus. Tidak perlu build CSS/JS. Belum push/deploy.
+
+## Tata letak halaman Fasilitas — 2 November 2026
+- Di halaman publik Fasilitas, foto utama bergantian di kiri dan kanan pada desktop. Pada layar kecil, foto tampil di atas deskripsi. Keterangan berada di tengah secara vertikal dan label kategori memakai warna hijau lembut.
+- Dua pengujian halaman Fasilitas lulus (10 assertion), termasuk urutan foto desktop, galeri, dan kondisi kosong. Pint dan build produksi berhasil. Belum ditinjau secara visual di browser atau diterapkan di hosting.

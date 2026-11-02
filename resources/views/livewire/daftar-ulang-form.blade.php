@@ -137,11 +137,11 @@
 
                     <!-- Tombol Aksi -->
                     <div class="flex flex-col-reverse md:flex-row gap-3">
-                        <a href="{{ route('daftar-ulang.table') }}" class="flex-1 bg-gray-600 hover:bg-gray-700 text-white font-semibold py-3 sm:py-4 px-4 sm:px-6 rounded-lg transition duration-200 text-center flex items-center justify-center gap-2 active:bg-gray-800 dark:active:bg-gray-900">
+                        <a href="{{ route('psb') }}" class="flex-1 bg-gray-600 hover:bg-gray-700 text-white font-semibold py-3 sm:py-4 px-4 sm:px-6 rounded-lg transition duration-200 text-center flex items-center justify-center gap-2 active:bg-gray-800 dark:active:bg-gray-900">
                             <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 17l-5-5m0 0l5-5m-5 5h12"></path>
                             </svg>
-                            <span>Kembali ke Daftar</span>
+                            <span>Kembali ke PSB</span>
                         </a>
                     </div>
                 </div>
@@ -993,10 +993,10 @@
                         </div>
                     @endif
 
-                    <div data-reregistration-submit class="flex flex-col gap-4 border-t border-gray-200 pt-6 dark:border-gray-700 sm:flex-row sm:items-center sm:justify-between">
+                    <div data-reregistration-submit class="flex flex-col items-center gap-4 border-t border-gray-200 pt-6 text-center dark:border-gray-700">
                         <p class="text-sm leading-relaxed text-gray-500 dark:text-gray-400">Pastikan data dan dokumen yang Anda isi sudah benar.</p>
                         <button type="submit" wire:loading.attr="disabled"
-                            class="inline-flex min-h-12 w-full shrink-0 items-center justify-center rounded-lg bg-emerald-700 px-6 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-emerald-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 disabled:cursor-wait disabled:opacity-60 dark:bg-emerald-600 dark:hover:bg-emerald-700 sm:w-auto sm:min-w-52">
+                            class="inline-flex min-h-12 w-full shrink-0 items-center justify-center rounded-lg bg-emerald-700 px-6 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-emerald-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 disabled:cursor-wait disabled:opacity-60 dark:bg-emerald-600 dark:hover:bg-emerald-700 sm:w-72">
                             <span wire:loading.remove wire:target="submit" class="inline-flex items-center justify-center gap-2">
                                 <svg class="h-5 w-5 shrink-0" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>

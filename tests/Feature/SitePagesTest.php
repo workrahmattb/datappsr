@@ -131,14 +131,22 @@ test('halaman fasilitas menampilkan fasilitas aktif beserta galeri fotonya', fun
     $fasilitas = Fasilitas::factory()->create(['nama' => 'Masjid Utama', 'kategori' => 'Ibadah']);
     FasilitasFoto::create(['fasilitas_id' => $fasilitas->id, 'path' => 'konten/fasilitas/masjid-1.jpg', 'urutan' => 0]);
     FasilitasFoto::create(['fasilitas_id' => $fasilitas->id, 'path' => 'konten/fasilitas/masjid-2.jpg', 'urutan' => 1]);
+    Fasilitas::factory()->create(['nama' => 'Lapangan Pesantren']);
     Fasilitas::factory()->nonaktif()->create(['nama' => 'Fasilitas Nonaktif']);
 
-    $this->get(route('fasilitas.index'))
+    $response = $this->get(route('fasilitas.index'))
         ->assertSuccessful()
         ->assertSee('Masjid Utama')
         ->assertSee('Ibadah')
         ->assertSeeHtml(Storage::url('konten/fasilitas/masjid-2.jpg'))
         ->assertDontSee('Fasilitas Nonaktif');
+
+    $document = new DOMDocument;
+    @$document->loadHTML($response->getContent());
+    $photos = (new DOMXPath($document))->query('//div[starts-with(@id,"fasilitas-")]/div[1]/div[1]');
+    expect($photos->length)->toBe(2);
+    expect($photos->item(0)->getAttribute('class'))->not->toContain('lg:order-last');
+    expect($photos->item(1)->getAttribute('class'))->toContain('lg:order-last');
 });
 
 test('halaman fasilitas menampilkan pesan kosong bila belum ada data', function () {
