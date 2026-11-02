@@ -50,7 +50,7 @@
                                 @endif
                                 <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-3">{{ $fasilitas->nama }}
                                 </h2>
-                                <p class="text-gray-600 dark:text-gray-400 leading-relaxed whitespace-pre-line">{{ $fasilitas->deskripsi ?: 'Belum ada deskripsi untuk fasilitas ini.' }}</p>
+                                <p class="text-gray-600 dark:text-gray-400 text-justify leading-relaxed whitespace-pre-line">{{ $fasilitas->deskripsi ?: 'Belum ada deskripsi untuk fasilitas ini.' }}</p>
                             </div>
                         </div>
 

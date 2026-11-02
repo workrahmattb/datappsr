@@ -3489,3 +3489,6 @@ Dipasang **satu kali** di `resources/views/layouts/public.blade.php` (setelah `<
 ## Tata letak halaman Fasilitas — 2 November 2026
 - Di halaman publik Fasilitas, foto utama bergantian di kiri dan kanan pada desktop. Pada layar kecil, foto tampil di atas deskripsi. Keterangan berada di tengah secara vertikal dan label kategori memakai warna hijau lembut.
 - Dua pengujian halaman Fasilitas lulus (10 assertion), termasuk urutan foto desktop, galeri, dan kondisi kosong. Pint dan build produksi berhasil. Belum ditinjau secara visual di browser atau diterapkan di hosting.
+
+## Deskripsi Fasilitas — 2 November 2026
+- Teks deskripsi pada halaman Fasilitas menggunakan perataan kanan-kiri di desktop dan HP. Dua pengujian halaman lulus dan build produksi berhasil.

@@ -144,6 +144,7 @@ test('halaman fasilitas menampilkan fasilitas aktif beserta galeri fotonya', fun
     $document = new DOMDocument;
     @$document->loadHTML($response->getContent());
     $photos = (new DOMXPath($document))->query('//div[starts-with(@id,"fasilitas-")]/div[1]/div[1]');
+    expect((new DOMXPath($document))->query('//div[starts-with(@id,"fasilitas-")]//p[contains(@class,"text-justify")]')->length)->toBe(2);
     expect($photos->length)->toBe(2);
     expect($photos->item(0)->getAttribute('class'))->not->toContain('lg:order-last');
     expect($photos->item(1)->getAttribute('class'))->toContain('lg:order-last');
