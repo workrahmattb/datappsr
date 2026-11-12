@@ -26,6 +26,13 @@ test('successful registration displays the new WhatsApp group invitation', funct
         ->assertDontSee('pendaftaran-error-summary', false)
         ->assertDontSee('HKmThd3bFKn4WXBQvs5kYn');
 
+    $registration = \App\Models\Pendaftaran::query()->where('nisn', '1234567890')->firstOrFail();
+    Storage::disk('public')->assertExists($registration->buktitransfer);
+    $url = Storage::disk('public')->url($registration->buktitransfer);
+    $this->actingAs(\App\Models\User::factory()->create(['role' => 'admin']));
+    $this->get(route('admin.pendaftarans.index'))->assertOk()->assertSee($url)->assertSeeText('Alamat pengujian');
+    $this->get(route('admin.pendaftarans.show', $registration))->assertOk()->assertSee($url);
+
     $document = new DOMDocument;
     @$document->loadHTML('<?xml encoding="UTF-8">'.$component->html());
     $xpath = new DOMXPath($document);
@@ -71,4 +78,20 @@ test('ringkasan kesalahan pendaftaran muncul sebelum tombol kirim', function () 
     expect($summary)->not->toBeNull();
     expect($summary->textContent)->toContain('Nama lengkap wajib diisi', 'Tanggal lahir wajib diisi');
     expect($xpath->query('//*[@id="pendaftaran-error-summary"]/following-sibling::div[1]//button[@type="submit"]')->length)->toBe(1);
+});
+
+test('oversized receipt explains the size limit until replaced', function () {
+    Storage::fake('public');
+    $message = 'File bukti transfer terlalu besar. Silakan unggah file berukuran maksimal 2 MB.';
+    $file = fn (int $kb) => UploadedFile::fake()->createWithContent('bukti.pdf', str_pad('%PDF-1.4', $kb * 1024));
+
+    Livewire::test(PendaftaranForm::class)
+        ->set('buktitransfer', $file(2049))
+        ->assertHasErrors(['buktitransfer' => 'max'])
+        ->assertSee($message)
+        ->call('submit')
+        ->assertSee($message)
+        ->set('buktitransfer', $file(2048))
+        ->assertHasNoErrors('buktitransfer')
+        ->assertDontSee($message);
 });

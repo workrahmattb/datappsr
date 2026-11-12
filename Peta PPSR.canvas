@@ -1,0 +1,19 @@
+{
+	"nodes":[
+		{"id":"0000000000000001","type":"text","x":0,"y":0,"width":350,"height":170,"text":"## Situs publik\nInformasi pondok dan navigasi\n\n[[Alur Proyek PPSR#Situs publik|Baca alur]]"},
+		{"id":"0000000000000002","type":"text","x":500,"y":0,"width":350,"height":170,"text":"## Portal PSB\nPendaftaran awal dan pencarian\n\n[[Alur Proyek PPSR#Penerimaan dan daftar ulang|Baca alur]]"},
+		{"id":"0000000000000003","type":"text","x":1000,"y":0,"width":350,"height":170,"text":"## Daftar ulang\nBukti transfer → biodata dan berkas\n\n[[Alur Proyek PPSR#Penerimaan dan daftar ulang|Baca alur]]"},
+		{"id":"0000000000000004","type":"text","x":1500,"y":0,"width":350,"height":170,"text":"## Data santri\nMTs dan MA, Putra dan Putri\n\n[[Alur Proyek PPSR#Penerimaan dan daftar ulang|Baca alur]]"},
+		{"id":"0000000000000005","type":"text","x":500,"y":350,"width":350,"height":170,"text":"## Pengaturan admin\nTahap penerimaan per tahun ajaran\n\n[[Alur Proyek PPSR#Administrasi dan pengelolaan konten|Baca alur]]"},
+		{"id":"0000000000000006","type":"text","x":0,"y":350,"width":350,"height":170,"text":"## Konten admin\nBerita, fasilitas, guru dan kontak\n\n[[Alur Proyek PPSR#Administrasi dan pengelolaan konten|Baca alur]]"},
+		{"id":"0000000000000007","type":"text","x":1500,"y":350,"width":350,"height":170,"text":"## Tabel admin jenjang\nKelola dan ekspor data santri\n\n[[Alur Proyek PPSR#Administrasi dan pengelolaan konten|Baca alur]]"}
+	],
+	"edges":[
+		{"id":"0000000000000064","fromNode":"0000000000000001","toNode":"0000000000000002","fromSide":"right","toSide":"left","label":"Masuk PSB"},
+		{"id":"0000000000000065","fromNode":"0000000000000002","toNode":"0000000000000003","fromSide":"right","toSide":"left","label":"Saat periode dibuka"},
+		{"id":"0000000000000066","fromNode":"0000000000000003","toNode":"0000000000000004","fromSide":"right","toSide":"left","label":"Simpan"},
+		{"id":"0000000000000067","fromNode":"0000000000000005","toNode":"0000000000000002","fromSide":"top","toSide":"bottom","label":"Atur periode"},
+		{"id":"0000000000000068","fromNode":"0000000000000006","toNode":"0000000000000001","fromSide":"top","toSide":"bottom","label":"Tampilkan"},
+		{"id":"0000000000000069","fromNode":"0000000000000004","toNode":"0000000000000007","fromSide":"bottom","toSide":"top","label":"Kelola"}
+	]
+}

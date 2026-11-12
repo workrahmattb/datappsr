@@ -489,7 +489,7 @@
                         </div>
 
                         <!-- File preview -->
-                        @if ($buktitransfer)
+                        @if ($buktitransfer && ! $errors->has('buktitransfer'))
                             <div class="mt-3 p-3 bg-green-50 dark:bg-gray-700 border border-green-200 dark:border-gray-600 rounded-lg">
                                 <div class="flex items-center justify-between">
                                     <div class="flex items-center gap-2">

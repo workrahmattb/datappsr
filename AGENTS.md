@@ -1,3 +1,7 @@
+## Memulai sesi PPSR
+
+Sebelum mengubah kode, baca `MULAI-DI-SINI.md` dan `MEMORY.md` di akar repositori, termasuk entri terbaru dan riwayat fitur terkait. Setelah perubahan, catat hasil verifikasi dan pekerjaan tersisa di `MEMORY.md`.
+
 <laravel-boost-guidelines>
 === foundation rules ===
 

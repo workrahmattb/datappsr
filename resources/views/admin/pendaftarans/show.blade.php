@@ -242,6 +242,11 @@
                     </div>
                 </div>
 
+                <div class="rounded-lg border border-zinc-200 p-4">
+                    <p class="font-bold text-sm text-zinc-900">Bukti Transfer Pendaftaran</p>
+                    <x-bukti-pendaftaran :path="$pendaftaran->buktitransfer" />
+                </div>
+
                 <!-- Foto Transfer -->
                 <div class="border border-zinc-200 rounded-xl overflow-hidden group hover:border-zinc-300 transition-colors">
                     <div class="h-48 bg-zinc-50 flex items-center justify-center p-4 relative">

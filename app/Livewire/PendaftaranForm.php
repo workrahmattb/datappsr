@@ -106,33 +106,13 @@ class PendaftaranForm extends Component
             'buktitransfer.required' => 'Bukti transfer wajib diunggah',
             'buktitransfer.file' => 'Bukti transfer harus berupa file',
             'buktitransfer.mimes' => 'Bukti transfer harus berformat PDF, JPG, JPEG, atau PNG',
-            'buktitransfer.max' => 'Ukuran bukti transfer tidak boleh lebih dari 2 MB',
+            'buktitransfer.max' => 'File bukti transfer terlalu besar. Silakan unggah file berukuran maksimal 2 MB.',
         ];
     }
 
-    public function validateFile()
+    public function updatedBuktitransfer(): void
     {
-        try {
-            $this->validate([
-                'buktitransfer' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
-            ], [
-                'buktitransfer.required' => 'Bukti transfer wajib diunggah',
-                'buktitransfer.file' => 'Bukti transfer harus berupa file yang valid',
-                'buktitransfer.mimes' => 'Bukti transfer harus berformat PDF, JPG, JPEG, atau PNG',
-                'buktitransfer.max' => 'Ukuran bukti transfer tidak boleh lebih dari 2 MB',
-            ]);
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            throw $e;
-        }
-    }
-
-    public function updatedBuktitransfer()
-    {
-        try {
-            $this->validateFile();
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            $this->buktitransfer = null;
-        }
+        $this->validateOnly('buktitransfer');
     }
 
     public function submit()

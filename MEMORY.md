@@ -1,6 +1,7 @@
 # 🧠 MEMORY.md — Alur Kerja & Memori Project PPSR Putra
 
-> **Dokumen ini adalah memori kerja antara User (Rahmat) dan AI Assistant (Cline).**
+> **Dokumen ini adalah memori kerja antara User (Rahmat) dan asisten AI dari provider mana pun.**
+> Titik masuk untuk sesi baru: [[MULAI-DI-SINI]].
 > **Baca bagian ini PERTAMA KALI di setiap sesi**, sebelum menyentuh kode apa pun.
 >
 > - **Bagian atas** (1–7) = cara kita bekerja + kondisi project saat ini.
@@ -11,7 +12,7 @@
 | Project | Sistem PPDB Pondok Pesantren Syafa'aturrasul — 4 jenjang (MTs Putra/Putri, MA Putra/Putri) |
 | Repo | `workrahmattb/datappsr` — branch `main` |
 | Lokasi | `/Users/rahmattanri/Documents/Project Code/ppsr2025putra` |
-| Terakhir diperbarui | 26 Oktober 2026 — sesi 12 (logo navbar, SEO homepage, konsistensi footer publik) |
+| Terakhir diperbarui | 8 November 2026 — serah terima Obsidian dan lintas model |
 | Status kode saat ini | `/` = website sekolah, `/psb` = PSB & cari data — test terkait perubahan lulus; full suite belum dijalankan ulang |
 
 > ⚠️ Di macOS, `memory.md` dan `MEMORY.md` adalah **file yang sama** (filesystem case-insensitive).
@@ -3492,3 +3493,30 @@ Dipasang **satu kali** di `resources/views/layouts/public.blade.php` (setelah `<
 
 ## Deskripsi Fasilitas — 2 November 2026
 - Teks deskripsi pada halaman Fasilitas menggunakan perataan kanan-kiri di desktop dan HP. Dua pengujian halaman lulus dan build produksi berhasil.
+
+## Setup Docker Lokal — 6 November 2026
+- Menambahkan Dockerfile pengembangan PHP 8.4 CLI dengan ekstensi GD/WebP, intl, mbstring, bcmath, pcntl, PDO MySQL/SQLite, ZIP, Composer 2 dan Node 22. compose.yaml menjalankan app port localhost 8080 dan MySQL 8.4 pada jaringan internal dengan volume database terpisah.
+- Vendor dan node_modules memakai volume Docker. Compose mengatur database ppsr_docker, cache/session file, queue sync dan mail log khusus container. Kredensial compose hanya untuk pengembangan lokal. .dockerignore mengecualikan env, storage, git, dan dependensi dari build context.
+- docker compose config --quiet lulus dan Pint dirty lulus. Percobaan build setelah eskalasi gagal karena Docker Engine belum berjalan (socket desktop-linux tidak tersedia). Image dan runtime belum terverifikasi.
+- Setelah Docker Desktop berjalan, jalankan dari root project: docker compose build; docker compose run --rm app composer install; docker compose run --rm app npm ci; docker compose run --rm app npm run build; docker compose run --rm app php artisan migrate; docker compose up -d. Menggunakan .env lokal yang sudah ada untuk APP_KEY. Database container baru perlu data sendiri. docker compose stop menghentikan layanan dengan mempertahankan volume.
+
+## Obsidian untuk project PPSR — 8 November 2026
+- Folder project menjadi vault lokal tersendiri. MEMORY.md adalah catatan yang sama di Obsidian dan Git. Pengaturan pribadi Obsidian diabaikan oleh Git.
+- Skill dari repositori kepano/obsidian-skills terpasang pada Codex lokal. Enam paket yang terpasang adalah obsidian-markdown, obsidian-bases, json-canvas, obsidian-cli, defuddle, dan knap.
+
+## Serah terima lintas model — 8 November 2026
+- MULAI-DI-SINI.md menjadi indeks ke riwayat dan keputusan aktif. AGENTS.md, CLAUDE.md dan instruksi Copilot mengarahkan sesi baru ke memori yang sama. Perubahan hanya pada dokumentasi lokal.
+
+## Peta proyek di Obsidian — 8 November 2026
+- [[MULAI-DI-SINI]] menautkan [[Peta PPSR.canvas]] dan [[Alur Proyek PPSR]]. Peta menghubungkan situs publik, PSB, daftar ulang, data santri dan admin. Panduan memetakan alur ke rute, model dan tes.
+
+## Bukti pembayaran pendaftaran di admin — 12 November 2026
+- Tabel dan detail Pendaftaran Admin menautkan bukti pendaftaran awal dari kolom buktitransfer pada disk public. Jika kolom kosong, tampil “Belum ada bukti”.
+- Tes alur unggah melalui form publik memverifikasi file tersimpan serta tautannya tampil di kedua halaman admin. Tes terarah lulus (23 assertion), Pint lulus. Perubahan lokal, belum diverifikasi di hosting.
+
+## Alamat di tabel Pendaftaran Admin — 12 November 2026
+- Kolom Alamat sebelum Kontak menampilkan alamat dari form, dengan cadangan data wilayah untuk pendaftar lama. Tes form sampai tabel admin lulus (24 assertion), Pint lulus. Perubahan masih lokal.
+
+## Pesan ukuran bukti transfer pendaftaran — 13 November 2026
+- Form menampilkan alasan file terlalu besar saat validasi unggahan dan saat dikirim. Pesan hilang setelah diganti dengan file yang valid. Batas tetap 2 MB inklusif.
+- Empat tes form lulus (52 assertion), termasuk PDF tepat di batas dan di atas batas. Pint lulus. Perubahan lokal.
