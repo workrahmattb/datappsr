@@ -4,11 +4,10 @@ namespace App\Livewire\Admin;
 
 use App\Models\Pendaftaran;
 use Illuminate\Support\Facades\Storage;
-
-use Livewire\Component;
-use Livewire\WithPagination;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Validate;
+use Livewire\Component;
+use Livewire\WithPagination;
 use Spatie\SimpleExcel\SimpleExcelWriter;
 
 #[Layout('admin.layout')]
@@ -17,17 +16,44 @@ class PendaftaransTable extends Component
     use WithPagination;
 
     public string $search = '';
+
     public ?string $tahunAjaran = null;
+
     #[Validate('in:pending,completed')]
     public string $status = '';
+
     public ?string $jenjang = null;
+
     public string $sortField = 'created_at';
+
     public string $sortDirection = 'desc';
+
     public int $perPage = 15;
+
     public $deleteId = null;
+
     public string $deleteItemName = '';
+
     public $editingBayar = null;
+
     public string $bayarValue = '';
+
+    public array $keterangan = [];
+
+    public ?int $keteranganSavedId = null;
+
+    public function saveKeterangan(int $id): void
+    {
+        abort_unless(auth()->user()?->hasRole('admin'), 403);
+        $this->keteranganSavedId = null;
+        $this->validate(["keterangan.$id" => 'nullable|string|max:2000'], [
+            "keterangan.$id.max" => 'Keterangan maksimal 2.000 karakter.',
+        ]);
+        $registration = Pendaftaran::findOrFail($id);
+        $registration->keterangan = trim($this->keterangan[$id] ?? '') ?: null;
+        $registration->save();
+        $this->keteranganSavedId = $id;
+    }
 
     protected $queryString = [
         'search' => ['except' => ''],
@@ -104,10 +130,11 @@ class PendaftaransTable extends Component
         ]);
 
         $pendaftaran = Pendaftaran::find($id);
-        if (!$pendaftaran) {
+        if (! $pendaftaran) {
             $this->dispatch('error', 'Data pendaftaran tidak ditemukan.');
             $this->editingBayar = null;
             $this->bayarValue = '';
+
             return;
         }
 
@@ -140,10 +167,18 @@ class PendaftaransTable extends Component
 
             if ($pendaftaran) {
                 // Delete associated files
-                if ($pendaftaran->fotokk) Storage::disk('public')->delete($pendaftaran->fotokk);
-                if ($pendaftaran->fotoakta) Storage::disk('public')->delete($pendaftaran->fotoakta);
-                if ($pendaftaran->fototransfer) Storage::disk('public')->delete($pendaftaran->fototransfer);
-                if ($pendaftaran->buktitransfer) Storage::disk('public')->delete($pendaftaran->buktitransfer);
+                if ($pendaftaran->fotokk) {
+                    Storage::disk('public')->delete($pendaftaran->fotokk);
+                }
+                if ($pendaftaran->fotoakta) {
+                    Storage::disk('public')->delete($pendaftaran->fotoakta);
+                }
+                if ($pendaftaran->fototransfer) {
+                    Storage::disk('public')->delete($pendaftaran->fototransfer);
+                }
+                if ($pendaftaran->buktitransfer) {
+                    Storage::disk('public')->delete($pendaftaran->buktitransfer);
+                }
 
                 $pendaftaran->delete();
                 $this->dispatch('success', 'Data pendaftaran berhasil dihapus.');
@@ -159,15 +194,15 @@ class PendaftaransTable extends Component
     {
         $query = Pendaftaran::latest();
 
-        if (!auth()->user()->hasRole('admin') && auth()->user()->jenjang) {
+        if (! auth()->user()->hasRole('admin') && auth()->user()->jenjang) {
             $query->where('jenjang_pendidikan', auth()->user()->jenjang);
         }
 
         if ($this->search) {
-            $query->where(function($q) {
+            $query->where(function ($q) {
                 $q->where('nama', 'like', "%{$this->search}%")
-                  ->orWhere('nisn', 'like', "%{$this->search}%")
-                  ->orWhere('nik', 'like', "%{$this->search}%");
+                    ->orWhere('nisn', 'like', "%{$this->search}%")
+                    ->orWhere('nik', 'like', "%{$this->search}%");
             });
         }
 
@@ -183,13 +218,13 @@ class PendaftaransTable extends Component
             $query->where('jenjang_pendidikan', $this->jenjang);
         }
 
-        $filename = 'pendaftarans-' . now()->format('Y-m-d-His') . '.xlsx';
-        $tempPath = 'temp/' . $filename;
+        $filename = 'pendaftarans-'.now()->format('Y-m-d-His').'.xlsx';
+        $tempPath = 'temp/'.$filename;
 
         // Ensure temp directory exists & cleanup old files (>= 1 jam)
         Storage::disk('public')->makeDirectory('temp');
         collect(Storage::disk('public')->files('temp'))
-            ->each(fn($f) => Storage::disk('public')->lastModified($f) < now()->subHour()->timestamp
+            ->each(fn ($f) => Storage::disk('public')->lastModified($f) < now()->subHour()->timestamp
                 ? Storage::disk('public')->delete($f)
                 : null
             );
@@ -197,10 +232,11 @@ class PendaftaransTable extends Component
         SimpleExcelWriter::create(Storage::disk('public')->path($tempPath))
             ->addHeader([
                 'Nama', 'NISN', 'Tempat Lahir', 'Tanggal Lahir', 'Jenjang', 'Asal Sekolah', 'Tanggal Pendaftaran',
-                'Status', 'Uang Masuk', 'Kontak', 'Nama Ayah', 'Nama Ibu', 'Alamat'
+                'Status', 'Uang Masuk', 'Kontak', 'Nama Ayah', 'Nama Ibu', 'Alamat', 'Keterangan',
             ])
-            ->addRows($query->get()->map(function($p) {
+            ->addRows($query->get()->map(function ($p) {
                 $wib = $p->created_at->setTimezone('Asia/Jakarta');
+
                 return [
                     'nama' => $p->nama ?? '-',
                     'nisn' => $p->nisn ?? '-',
@@ -208,13 +244,14 @@ class PendaftaransTable extends Component
                     'tanggal_lahir' => $p->tanggal_lahir ? \Carbon\Carbon::parse($p->tanggal_lahir)->locale('id')->isoFormat('D MMMM Y') : '-',
                     'jenjang' => $p->jenjang_pendidikan ?? '-',
                     'asal_sekolah' => $p->nama_sekolah_sebelumnya ?? $p->asal_sekolah ?? '-',
-                    'tanggal_pendaftaran' => $wib->locale('id')->isoFormat('D MMMM Y') . ' ' . $wib->format('H:i') . ' WIB',
+                    'tanggal_pendaftaran' => $wib->locale('id')->isoFormat('D MMMM Y').' '.$wib->format('H:i').' WIB',
                     'status' => ucfirst($p->status_pendaftaran ?? '-'),
                     'uang_masuk' => $p->bayar_uang_masuk ? number_format($p->bayar_uang_masuk, 0, ',', '.') : '-',
                     'kontak' => $p->no_hp ?? '-',
                     'nama_ayah' => $p->nama_ayah ?? '-',
                     'nama_ibu' => $p->nama_ibu ?? '-',
                     'alamat' => $p->alamat ?? (collect([$p->desa, $p->kecamatan, $p->kabupaten, $p->provinsi])->filter()->implode(', ') ?: '-'),
+                    'keterangan' => $p->keterangan ?? '',
                 ];
             }));
 
@@ -223,22 +260,22 @@ class PendaftaransTable extends Component
 
     public static function waUrl($p): string
     {
-        $ttl = $p->tempat_lahir . ', ' . ($p->tanggal_lahir ? \Carbon\Carbon::parse($p->tanggal_lahir)->locale('id')->isoFormat('D MMMM Y') : '-');
+        $ttl = $p->tempat_lahir.', '.($p->tanggal_lahir ? \Carbon\Carbon::parse($p->tanggal_lahir)->locale('id')->isoFormat('D MMMM Y') : '-');
         $asalSekolah = $p->nama_sekolah_sebelumnya ?? $p->asal_sekolah ?? '-';
         $kontak = $p->no_hp ?? $p->no_hp_ayah ?? $p->no_hp_ibu ?? '-';
         $alamatLengkap = $p->alamat ?? (collect([$p->desa, $p->kecamatan, $p->kabupaten, $p->provinsi])->filter()->implode(', ') ?: '-');
 
-        return 'https://wa.me/6285259875754?text=' . rawurlencode(
-            "*Data Pendaftaran Siswa Baru*\n" .
-            "\n" .
-            "Nama: " . $p->nama . "\n" .
-            "Tempat/Tgl Lahir: " . $ttl . "\n" .
-            "Jenjang: " . $p->jenjang_pendidikan . "\n" .
-            "Nama Ayah: " . ($p->nama_ayah ?? '-') . "\n" .
-            "Nama Ibu: " . ($p->nama_ibu ?? '-') . "\n" .
-            "Asal Sekolah: " . $asalSekolah . "\n" .
-            "No. Kontak: " . $kontak . "\n" .
-            "Alamat: " . $alamatLengkap
+        return 'https://wa.me/6285259875754?text='.rawurlencode(
+            "*Data Pendaftaran Siswa Baru*\n".
+            "\n".
+            'Nama: '.$p->nama."\n".
+            'Tempat/Tgl Lahir: '.$ttl."\n".
+            'Jenjang: '.$p->jenjang_pendidikan."\n".
+            'Nama Ayah: '.($p->nama_ayah ?? '-')."\n".
+            'Nama Ibu: '.($p->nama_ibu ?? '-')."\n".
+            'Asal Sekolah: '.$asalSekolah."\n".
+            'No. Kontak: '.$kontak."\n".
+            'Alamat: '.$alamatLengkap
         );
     }
 
@@ -246,15 +283,15 @@ class PendaftaransTable extends Component
     {
         $query = Pendaftaran::query();
 
-        if (!auth()->user()->hasRole('admin') && auth()->user()->jenjang) {
+        if (! auth()->user()->hasRole('admin') && auth()->user()->jenjang) {
             $query->where('jenjang_pendidikan', auth()->user()->jenjang);
         }
 
         if ($this->search) {
-            $query->where(function($q) {
+            $query->where(function ($q) {
                 $q->where('nama', 'like', "%{$this->search}%")
-                  ->orWhere('nisn', 'like', "%{$this->search}%")
-                  ->orWhere('nik', 'like', "%{$this->search}%");
+                    ->orWhere('nisn', 'like', "%{$this->search}%")
+                    ->orWhere('nik', 'like', "%{$this->search}%");
             });
         }
 
@@ -275,8 +312,15 @@ class PendaftaransTable extends Component
         // PerPage: pilihan 15, 25, 50, 100 — validasi
         $perPage = in_array($this->perPage, [15, 25, 50, 100]) ? $this->perPage : 15;
 
+        $pendaftarans = $query->paginate($perPage);
+        foreach ($pendaftarans as $registration) {
+            if (! array_key_exists($registration->id, $this->keterangan)) {
+                $this->keterangan[$registration->id] = $registration->keterangan ?? '';
+            }
+        }
+
         return view('livewire.admin.pendaftarans-table', [
-            'pendaftarans' => $query->paginate($perPage),
+            'pendaftarans' => $pendaftarans,
             'tahunAjarans' => Pendaftaran::whereNotNull('tahun_ajaran')->pluck('tahun_ajaran')->unique(),
         ]);
     }

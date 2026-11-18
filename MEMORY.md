@@ -3520,3 +3520,19 @@ Dipasang **satu kali** di `resources/views/layouts/public.blade.php` (setelah `<
 ## Pesan ukuran bukti transfer pendaftaran — 13 November 2026
 - Form menampilkan alasan file terlalu besar saat validasi unggahan dan saat dikirim. Pesan hilang setelah diganti dengan file yang valid. Batas tetap 2 MB inklusif.
 - Empat tes form lulus (52 assertion), termasuk PDF tepat di batas dan di atas batas. Pint lulus. Perubahan lokal.
+
+## Keterangan Pendaftaran Admin — 18 November 2026
+- Kolom keterangan nullable ditambahkan ke pendaftarans. Admin dapat memilih Tambah keterangan/teks catatan, mengedit, Simpan atau Batal langsung di baris tabel. Maksimal 2.000 karakter, isian kosong menghapus catatan.
+- Aksi edit dan simpan memeriksa peran admin. Tiga tes lulus (11 assertion), Pint lulus. Hosting memerlukan migrasi baru setelah pull.
+- Migrasi database lokal belum terpasang karena koneksi MySQL ditolak (Connection refused). Pengujian memakai SQLite sementara.
+- Revisi mengikuti input Nama Arabic pada chat Rapor Pondok PPSR: input Keterangan selalu terlihat, otomatis simpan saat blur/Tab/Enter, indikator Tersimpan dan error per baris. Dua tes simpan, hapus, batas panjang dan akses lulus (10 assertion). Interaksi browser belum diuji. Migrasi lokal masih menunggu koneksi MySQL.
+
+## Kotak Keterangan dapat diperbesar — 19 November 2026
+- Input menjadi textarea tiga baris dengan lebar awal 256px, dapat ditarik horizontal dan vertikal. Enter membuat baris baru. Blur/Tab atau Ctrl+Enter menyimpan.
+- Dua tes lulus (13 assertion), termasuk penyimpanan multiline. Pint dan build Vite berhasil. Tampilan browser belum diverifikasi; deploy perlu menyertakan build terbaru.
+- Penyesuaian 19 November 2026: Enter menyimpan melalui blur, Shift+Enter membuat baris baru. Dua tes fitur lulus (14 assertion), handler keyboard diuji untuk kedua kombinasi tombol menggunakan Node. Pint lulus. Interaksi browser belum diuji langsung.
+- Export Excel Pendaftaran pada 19 November 2026 menyertakan kolom Keterangan setelah Alamat. Tes membaca hasil XLSX memastikan catatan dan baris baru tersimpan sesuai database. Dua tes lulus (16 assertion), Pint lulus.
+
+## Persiapan deploy Keterangan — 19 November 2026
+- Enam tes fitur terkait lulus (68 assertion), Pint dan build produksi berhasil. CSS app-CPx2Iy_w.css dirujuk manifest dan tersedia.
+- Setelah push/pull, hosting perlu menjalankan migrasi add_keterangan_to_pendaftarans_table, menyalin aset build ke public_html/build lalu manifest, serta membersihkan cache view. Belum dilakukan push atau deploy dari sesi ini.

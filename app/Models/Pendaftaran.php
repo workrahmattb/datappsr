@@ -1,11 +1,9 @@
 <?php
 
-
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-
+use Illuminate\Database\Eloquent\Model;
 
 class Pendaftaran extends Model
 {
@@ -86,6 +84,7 @@ class Pendaftaran extends Model
         'bukti_transfer_uang_masuk',
         'status_bayar_uang_masuk',
         'keterangan_bayar',
+        'keterangan',
         // Legacy fields
         'asal_sekolah',
         'alamat',
@@ -99,7 +98,7 @@ class Pendaftaran extends Model
      */
     public function getTargetModelClass(): ?string
     {
-        return match($this->jenjang_pendidikan) {
+        return match ($this->jenjang_pendidikan) {
             'MTs Putri' => Mtsputri::class,
             'MTs Putra' => Mtsputra::class,
             'MA Putri' => Maputri::class,
@@ -113,7 +112,7 @@ class Pendaftaran extends Model
      */
     public function getStudentType(): ?string
     {
-        return match($this->jenjang_pendidikan) {
+        return match ($this->jenjang_pendidikan) {
             'MTs Putri' => 'mtsputri',
             'MTs Putra' => 'mtsputra',
             'MA Putri' => 'maputri',
@@ -121,5 +120,4 @@ class Pendaftaran extends Model
             default => null,
         };
     }
-
 }

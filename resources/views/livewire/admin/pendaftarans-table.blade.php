@@ -110,6 +110,7 @@
                         <th class="px-6 py-4 text-left text-xs font-bold text-zinc-500 uppercase tracking-wider">Bukti Pendaftaran</th>
                         <th class="px-6 py-4 text-left text-xs font-bold text-zinc-500 uppercase tracking-wider">Alamat</th>
                         <th class="px-6 py-4 text-left text-xs font-bold text-zinc-500 uppercase tracking-wider">Kontak</th>
+                        <th class="px-6 py-4 text-right text-xs font-bold text-zinc-500 uppercase tracking-wider">Keterangan</th>
                         <th class="px-6 py-4 text-right text-xs font-bold text-zinc-500 uppercase tracking-wider">Aksi</th>
                     </tr>
                 </thead>
@@ -202,6 +203,21 @@
                         <td class="px-6 py-4">
                             <div class="text-sm text-zinc-900 font-medium">{{ $pendaftaran->no_hp ?? '-' }}</div>
                         </td>
+                        <td class="px-6 py-4" wire:key="keterangan-{{ $pendaftaran->id }}">
+                            <textarea rows="3" wire:model="keterangan.{{ $pendaftaran->id }}"
+                                wire:blur="saveKeterangan({{ $pendaftaran->id }})"
+                                x-on:keydown.enter="if (!$event.shiftKey && !$event.isComposing) { $event.preventDefault(); $el.blur(); }"
+                                aria-label="Keterangan {{ $pendaftaran->nama }}" maxlength="2000"
+                                title="Tarik sudut kotak untuk memperbesar. Enter untuk menyimpan. Shift+Enter untuk baris baru."
+                                class="w-64 min-w-64 resize overflow-auto px-3 py-2 border border-zinc-300 rounded-lg text-sm"
+                                placeholder="Isi keterangan"></textarea>
+                            @if ($keteranganSavedId === $pendaftaran->id)
+                                <span role="status" wire:dirty.remove wire:target="keterangan.{{ $pendaftaran->id }}" wire:loading.remove class="text-xs text-green-700">Tersimpan</span>
+                            @endif
+                            @error('keterangan.'.$pendaftaran->id)
+                                <p class="text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+                        </td>
                         <td class="px-6 py-4 text-right">
                             <div class="flex items-center justify-end gap-2">
                                 <a href="{{ \App\Livewire\Admin\PendaftaransTable::waUrl($pendaftaran) }}" target="_blank" class="p-1.5 text-zinc-500 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors" title="Kirim ke WhatsApp">
@@ -227,7 +243,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="10" class="px-6 py-12 text-center">
+                        <td colspan="11" class="px-6 py-12 text-center">
                             <div class="flex flex-col items-center justify-center">
                                 <div class="w-16 h-16 bg-zinc-50 rounded-full flex items-center justify-center border border-zinc-100 mb-4">
                                     <svg class="h-8 w-8 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
