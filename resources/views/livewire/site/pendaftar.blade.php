@@ -34,13 +34,13 @@ new #[Layout('layouts.public')] #[Title('Rekap Pendaftaran — PPSR')] class ext
         <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Rekap Pendaftaran</h1>
         <p class="text-gray-600 dark:text-gray-400">Tahun ajaran {{ $year }}</p>
     </div>
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
-        <div class="rounded-xl bg-green-700 text-white p-5">
+    <div class="grid grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4 mb-8">
+        <div class="col-span-2 lg:col-span-1 rounded-xl bg-green-700 text-white p-4 sm:p-5">
             <p>Total pendaftar</p>
             <p class="text-3xl font-bold mt-2">{{ number_format($total, 0, ',', '.') }}</p>
         </div>
         @foreach ($levels as $level)
-            <div class="rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 p-5" wire:key="count-{{ $loop->index }}">
+            <div class="rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 p-4 sm:p-5" wire:key="count-{{ $loop->index }}">
                 <p class="text-gray-600 dark:text-gray-400">{{ $level }}</p>
                 <p class="text-3xl font-bold text-gray-900 dark:text-white mt-2">{{ $counts[$level] ?? 0 }}</p>
             </div>

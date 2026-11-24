@@ -3545,3 +3545,12 @@ Dipasang **satu kali** di `resources/views/layouts/public.blade.php` (setelah `<
 - Query daftar hanya memilih id dan jenjang_pendidikan. Dua tes lulus (9 assertion) untuk akses publik, batas tahun, field yang diambil dan keadaan kosong. Pint serta build berhasil. Belum diperiksa visual di browser atau deploy.
 - Pengguna mengonfirmasi persetujuan wali untuk publikasi nama dan asal sekolah pada 24 November 2026. Rekap kini menampilkan Nama, Jenjang Pendidikan, Asal Sekolah untuk tahun aktif. Asal sekolah memakai nama_sekolah_sebelumnya dengan cadangan asal_sekolah. Dua tes lulus (15 assertion), Pint dan build lulus. Belum deploy.
 - Ditambahkan kolom No. dengan nomor urut berdasarkan posisi pagination: halaman pertama 1–25, halaman berikutnya mulai 26. Tiga tes rekap lulus (16 assertion), termasuk nomor pada halaman kedua; Pint lulus. Perubahan masih lokal, belum diverifikasi visual atau deploy.
+
+## Pemeriksaan build CSS — 24 November 2026
+- Build ulang dengan npm run build berhasil; seluruh file yang dirujuk public/build/manifest.json tersedia. Hasil bundel sama dengan yang sudah dilacak Git.
+- Ditemukan public/hot menunjuk http://[::1]:5173, tetapi koneksi ke alamat tersebut gagal saat pemeriksaan. File penanda hot dihapus agar Laravel menggunakan manifest build lokal.
+- Validasi keberadaan aset manifest lulus. Tidak ada perubahan kode aplikasi. Hosting dan tampilan browser belum diverifikasi; jika masalah terjadi di hosting, salinan public_html/build perlu diperiksa terpisah.
+
+## Kartu rekap mobile dua kolom — 24 November 2026
+- Empat kartu jumlah per jenjang kini tersusun dua kolom pada mobile, dengan kartu total selebar dua kolom di atasnya. Desktop tetap lima kolom. Padding dan jarak mobile dipadatkan.
+- Tiga tes PublicPendaftarTest lulus (16 assertion), Pint dan build produksi berhasil. Aset terbaru tersedia di public/build. Belum diverifikasi visual di browser atau deploy.
