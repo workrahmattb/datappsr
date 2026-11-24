@@ -23,6 +23,19 @@ Buka [[Peta PPSR.canvas]] untuk melihat hubungan antarmodul. Baca [[Alur Proyek 
 - Hosting memakai Git pull di `/home/ppsyafaa/datappsr`. Aset publik disajikan dari `/home/ppsyafaa/public_html`: saat deploy, pastikan manifest, berkas CSS/JS yang dirujuk, dan gambar baru tersedia bersama. Riwayat insiden: [[MEMORY#Pemeriksaan Insiden CSS Setelah Deploy — 25 Oktober 2026]].
 - Gunakan instruksi dan pengujian proyek di AGENTS.md. Simpan catatan tanpa kredensial, isi .env, atau data pribadi pendaftar.
 
-## Titik lanjut
+## Urutan baca AI
 
-Pekerjaan terakhir yang dicatat adalah pemetaan alur proyek dalam vault. Tidak ada tugas implementasi baru yang ditetapkan oleh catatan ini. Untuk sesi berikutnya, mulai dari permintaan terbaru pengguna.
+1. Baca catatan ini dan [[AGENTS]] untuk keputusan serta aturan kerja.
+2. Baca [[README]] dan [[Alur Proyek PPSR]] untuk konteks pengguna.
+3. Gunakan [[Panduan Teknis PPSR]] untuk menemukan kode, tes dan langkah deploy.
+4. Baca entri terbaru [[MEMORY]] serta riwayat fitur terkait sebelum memeriksa implementasi.
+
+## Kondisi terakhir yang diketahui
+
+Ditinjau 24 November 2026. Fitur terakhir adalah Keterangan pada tabel Pendaftaran Admin dan export Excel. Enter menyimpan, Shift+Enter membuat baris baru. Riwayat pengujian 19 November mencatat enam tes lulus dengan 68 assertion.
+
+Git lokal bersih saat peninjauan awal. Keberhasilan migrasi dan deploy hosting belum dikonfirmasi. Kegagalan koneksi MySQL lokal pada 18 November merupakan hasil pemeriksaan saat itu dan perlu diperiksa ulang jika dibutuhkan.
+
+## Memperbarui dokumentasi
+
+Setiap perubahan dicatat di MEMORY.md. Jika alur, data, akses atau deploy berubah, perbarui panduan terkait dan ringkasan ini dalam pekerjaan yang sama. Catat hasil verifikasi lokal dan hosting beserta tanggalnya. Cocokkan catatan yang berbeda versi dengan kode, migrasi dan tes.

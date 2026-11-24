@@ -49,3 +49,14 @@ Untuk masalah tampilan, mulai dari URL di `routes/web.php`, ikuti komponen Livew
 Alur rilis yang digunakan adalah lokal → Git push → Git pull di hosting → sinkronisasi aset publik. Jika tampilan lokal benar tetapi CSS atau gambar hilang setelah deploy, periksa kesesuaian aset di dua lokasi hosting yang tercantum di [[MULAI-DI-SINI#Keputusan yang tetap berlaku]]. Modul Rapor ditangguhkan dan Docker merupakan opsi lokal.
 
 Untuk melanjutkan pekerjaan, baca [[AGENTS]] dan entri terbaru [[MEMORY]]. Perbarui catatan alur ini ketika rute, aturan periode, peran, atau penyimpanan data berubah.
+
+
+## Keterangan dan export pendaftaran
+
+Admin mengisi Keterangan langsung pada tabel. Enter atau keluar dari input menyimpan, Shift+Enter membuat baris baru. Aksi saveKeterangan memeriksa peran admin dan batas 2.000 karakter. Nilai kosong disimpan sebagai null. Catatan dimuat kembali dari pendaftarans.keterangan. Export menyertakannya setelah Alamat dengan filter tabel aktif.
+
+Bukti transfer awal tampil melalui kolom buktitransfer. Tabel juga menampilkan Alamat dari form, dengan cadangan data wilayah untuk data lama. Petunjuk file sumber, tes dan rilis tersedia di [[Panduan Teknis PPSR]].
+
+## Rekap publik
+
+Halaman /rekap-pendaftaran menampilkan Nama, Jenjang Pendidikan dan Asal Sekolah sesuai persetujuan publikasi yang dikonfirmasi pengguna, dengan total serta jumlah per jenjang pada tahun ajaran aktif. Data berasal dari pendaftarans dengan pagination 25 baris. Implementasi berada di resources/views/livewire/site/pendaftar.blade.php dan tes di tests/Feature/PublicPendaftarTest.php.

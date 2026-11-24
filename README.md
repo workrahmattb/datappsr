@@ -4,6 +4,8 @@ Sistem Pendaftaran Peserta Didik Baru (PPDB) berbasis web untuk Pondok Pesantren
 
 Aplikasi ini menangani seluruh alur PPDB: **pendaftaran awal** (publik) → **daftar ulang** (upload dokumen + data lengkap) → **kelola data santri** (admin per jenjang) → **uang masuk** → **galeri foto santri** → **pencarian data santri** hingga **cetak rapor PDF**.
 
+Panduan kondisi terkini berada di [[MULAI-DI-SINI]], alur pengguna di [[Alur Proyek PPSR]], dan petunjuk kode, tes serta deploy di [[Panduan Teknis PPSR]].
+
 ---
 
 ## 🧰 Teknologi & Framework
@@ -182,7 +184,7 @@ Form **2 langkah**:
 - Auto-set: jika pekerjaan "Tidak Bekerja" → penghasilan otomatis "Tidak Ada".
 - Upload wajib: **KK**, **Akta** (PDF/JPG/PNG, 2MB), dan **Pas Photo** (JPG/PNG, 2MB) — masing-masing dengan progress bar + preview.
 - Error Summary Box merah menampilkan semua error validasi sebelum disimpan.
-- Submit memakai `DB::transaction`: upload KK/Akta/Foto → buat baris di tabel siswa sesuai jenjang → update `pendaftarans` jadi `completed` + isi `student_id`/`student_type`.
+- Submit memakai transaksi database eksplisit (beginTransaction, commit, rollBack): upload KK/Akta/Foto → buat baris di tabel siswa sesuai jenjang → update `pendaftarans` jadi `completed` + isi `student_id`/`student_type`.
 - Halaman sukses dengan pesan terima kasih.
 
 **Struktur storage:**
@@ -194,7 +196,7 @@ storage/app/public/dokumen-siswa/
 storage/app/public/foto/  FOTO_{NISN}_{Nama}_{Timestamp}.{ext}
 ```
 
-### 3. Cari Siswa (Beranda Publik) — `/`
+### 3. Cari Siswa (Portal PSB) — `/psb`
 
 Komponen: `App\Livewire\CariSiswaTable` | View: `livewire.cari-siswa-table`
 
@@ -263,14 +265,14 @@ Komponen: `App\Livewire\Admin\Settings` | View: `livewire.admin.settings` | Layo
 - **Tahun Ajaran Aktif** — dropdown (2025/2026 s.d. 2032/2033), disimpan ke `settings.tahun_ajaran_aktif`. Semua halaman otomatis memakainya.
 - **Header Image Pendaftaran** — upload gambar (JPG/JPEG/PNG/WebP, max 2MB, rekomendasi 1600×400px) ke `storage/app/public/settings/`, preview live, tombol reset ke default (`images/psb.webp`).
 
-### 11. Cetak Rapor PDF — `/cetak-rapor/generate` (butuh login)
+### 11. Cetak Rapor PDF (pengembangan ditangguhkan) — `/cetak-rapor/generate` (butuh login)
 
 `App\Http\Controllers\CetakRaporController` + `barryvdh/laravel-dompdf`
 
 - Input: `siswa_id`, `siswa_type`, `semester`, `tahun_ajaran`.
 - Mengambil nilai (Pengetahuan/Keterampilan/Sikap) dari tabel `nilais` per mata pelajaran, menghitung rata-rata & predikat (A–E), lalu men-download PDF (`pdf.rapor`).
 
-### 12. API — `/api/*` (Sanctum)
+### 12. API — `/api/*`
 
 | Route | Fungsi | Auth |
 |-------|--------|------|
@@ -354,7 +356,7 @@ php artisan serve
 
 | Method | URL | Nama | Komponen/Controller |
 |--------|-----|------|---------------------|
-| GET | `/` | `home` | `welcome` (Cari Siswa) |
+| GET | `/` | `home` | `Site\Home` (website sekolah) |
 | GET | `/pendaftaran` | `pendaftaran` | `PendaftaranForm` |
 | GET | `/daftar-ulang` | `daftar-ulang.table` | `DaftarUlangTable` |
 | GET | `/daftar-ulang/{id}` | `daftar-ulang.form` | `DaftarUlangForm` |

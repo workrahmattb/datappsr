@@ -163,3 +163,5 @@ Route::get('/foto', \App\Livewire\FotoTable::class)->name('foto.index');
 
 // Uang Masuk (Public)
 Route::get('/uangmasuk', \App\Livewire\UangMasukTable::class)->name('uangmasuk.index');
+
+\Livewire\Volt\Volt::route('/rekap-pendaftaran', 'site.pendaftar')->name('pendaftar.index');

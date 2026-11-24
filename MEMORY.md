@@ -12,7 +12,7 @@
 | Project | Sistem PPDB Pondok Pesantren Syafa'aturrasul — 4 jenjang (MTs Putra/Putri, MA Putra/Putri) |
 | Repo | `workrahmattb/datappsr` — branch `main` |
 | Lokasi | `/Users/rahmattanri/Documents/Project Code/ppsr2025putra` |
-| Terakhir diperbarui | 8 November 2026 — serah terima Obsidian dan lintas model |
+| Terakhir diperbarui | 24 November 2026 — dokumentasi alur dan teknis |
 | Status kode saat ini | `/` = website sekolah, `/psb` = PSB & cari data — test terkait perubahan lulus; full suite belum dijalankan ulang |
 
 > ⚠️ Di macOS, `memory.md` dan `MEMORY.md` adalah **file yang sama** (filesystem case-insensitive).
@@ -3536,3 +3536,12 @@ Dipasang **satu kali** di `resources/views/layouts/public.blade.php` (setelah `<
 ## Persiapan deploy Keterangan — 19 November 2026
 - Enam tes fitur terkait lulus (68 assertion), Pint dan build produksi berhasil. CSS app-CPx2Iy_w.css dirujuk manifest dan tersedia.
 - Setelah push/pull, hosting perlu menjalankan migrasi add_keterangan_to_pendaftarans_table, menyalin aset build ke public_html/build lalu manifest, serta membersihkan cache view. Belum dilakukan push atau deploy dari sesi ini.
+
+## Dokumentasi untuk AI — 24 November 2026
+- Menyelaraskan indeks, README dan alur dengan PSB serta fitur Keterangan. Panduan Teknis PPSR merangkum kode, data, akses, tes dan deploy. Status hosting tetap menunggu konfirmasi.
+
+## Rekap publik pendaftaran — 24 November 2026
+- Halaman /rekap-pendaftaran (route pendaftar.index) menggunakan Volt site.pendaftar. Menampilkan ID pendaftaran sebagai nomor, jenjang, jumlah empat jenjang dan total untuk tahun ajaran aktif, 25 baris per halaman.
+- Query daftar hanya memilih id dan jenjang_pendidikan. Dua tes lulus (9 assertion) untuk akses publik, batas tahun, field yang diambil dan keadaan kosong. Pint serta build berhasil. Belum diperiksa visual di browser atau deploy.
+- Pengguna mengonfirmasi persetujuan wali untuk publikasi nama dan asal sekolah pada 24 November 2026. Rekap kini menampilkan Nama, Jenjang Pendidikan, Asal Sekolah untuk tahun aktif. Asal sekolah memakai nama_sekolah_sebelumnya dengan cadangan asal_sekolah. Dua tes lulus (15 assertion), Pint dan build lulus. Belum deploy.
+- Ditambahkan kolom No. dengan nomor urut berdasarkan posisi pagination: halaman pertama 1–25, halaman berikutnya mulai 26. Tiga tes rekap lulus (16 assertion), termasuk nomor pada halaman kedua; Pint lulus. Perubahan masih lokal, belum diverifikasi visual atau deploy.
